@@ -89,6 +89,12 @@ function ParserAnalysisPanel(props: {
           
           {!props.document && <BuilderSourceNotice analysis={props.analysis} />}
           
+          {props.document?.sessionError && (
+            <p className="rounded-lg border border-amber-400/20 bg-amber-400/5 p-3 text-xs text-amber-100" role="alert">
+              {props.document.sessionError}
+            </p>
+          )}
+
           {props.document?.embeddedState && (
             <ParserRestoreAction embeddedState={props.document.embeddedState} />
           )}

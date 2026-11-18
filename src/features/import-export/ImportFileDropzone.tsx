@@ -31,7 +31,7 @@ export function ImportFileDropzone({ onFileSelect, error }: ImportFileDropzonePr
           <div className="space-y-2">
             <p className="text-xs font-medium text-ink">Local-first Import</p>
             <p className="text-[11px] text-ink-3 leading-relaxed">
-              Importing a file will replace your current local builder data.
+              Review your file before confirming replacement of your current CV.
               External PDF import is heuristic and requires manual verification.
             </p>
           </div>

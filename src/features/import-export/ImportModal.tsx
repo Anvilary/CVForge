@@ -10,35 +10,31 @@ import { type ImportModalProps } from './importModalTypes'
 import { useImportModalFlow } from './useImportModalFlow'
 import { useDialogFocus } from '@/shared/hooks/useDialogFocus'
 
-export function ImportModal({
-  isOpen,
+export function ImportModal({ isOpen, ...props }: ImportModalProps) {
+  if (!isOpen || typeof document === 'undefined') return null
+  return <OpenImportModal {...props} />
+}
+
+function OpenImportModal({
   onClose,
   onComplete,
   restoreFocus = true,
-}: ImportModalProps) {
+}: Omit<ImportModalProps, 'isOpen'>) {
   const {
-    analysis,
-    error,
+    step,
     fileInputRef,
     handleCancelPending,
+    handleClose,
     handleConfirm,
     handleFileChange,
-    importType,
-    isAnalyzing,
     openFileDialog,
-    pendingState,
-    resetPendingImport,
   } = useImportModalFlow({ onClose, onComplete })
-  const handleClose = () => {
-    resetPendingImport()
-    onClose()
-  }
-  const dialogRef = useDialogFocus(isOpen, handleClose, { restoreFocus })
+  const dialogRef = useDialogFocus(true, handleClose, { restoreFocus })
+  const pending = step.status === 'review' ? step.pending : null
+  const isAnalyzing = step.status === 'analyzing'
 
-  if (!isOpen || typeof document === 'undefined') return null
-
-  const modalWidth = importType === 'pdf-heuristic' ? '540px' : '460px'
-  const ownerName = pendingState?.resume.profile.name || 'Anonymous User'
+  const modalWidth = pending?.type === 'pdf-heuristic' ? '540px' : '460px'
+  const ownerName = pending?.state.resume.profile.name || 'Anonymous User'
 
   return createPortal((
     <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && handleClose()}>
@@ -68,8 +64,8 @@ export function ImportModal({
         </div>
 
         <div className="modal-body">
-          {!importType && !isAnalyzing && (
-            <ImportFileDropzone onFileSelect={openFileDialog} error={error} />
+          {step.status === 'idle' && (
+            <ImportFileDropzone onFileSelect={openFileDialog} error={step.error ?? null} />
           )}
 
           {isAnalyzing && (
@@ -79,7 +75,7 @@ export function ImportModal({
             </div>
           )}
 
-          {importType === 'json' && pendingState && (
+          {pending?.type === 'json' && (
             <ImportConfirmStep
               icon="check"
               title="Valid Backup Found"
@@ -90,7 +86,7 @@ export function ImportModal({
             />
           )}
 
-          {importType === 'pdf-embedded' && pendingState && (
+          {pending?.type === 'pdf-embedded' && (
             <ImportConfirmStep
               icon="circle-check"
               title="CVForge Session Detected"
@@ -101,9 +97,9 @@ export function ImportModal({
             />
           )}
 
-          {importType === 'pdf-heuristic' && analysis?.heuristic && (
+          {pending?.type === 'pdf-heuristic' && (
             <PdfHeuristicReview
-              result={analysis.heuristic}
+              result={pending.heuristic}
               onConfirm={handleConfirm}
               onCancel={handleCancelPending}
             />

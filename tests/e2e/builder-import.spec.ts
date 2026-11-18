@@ -1,4 +1,4 @@
-import { expect, test, type Dialog, type Page } from '@playwright/test'
+import { expect, test, type Dialog, type Locator, type Page } from '@playwright/test'
 import {
   PDFDocument,
   PDFNumber,
@@ -9,6 +9,7 @@ import {
   type PDFPage,
 } from 'pdf-lib'
 import { defaultCVState } from '../../src/features/cv/model/defaults'
+import { MAX_JSON_IMPORT_BYTES } from '../../src/features/import-export/importCVState'
 import { CV_STATE_KEY, readStorage, savedProfileName, seedStorage } from './support/cvStorage'
 import { downloadBuilderPdf } from './support/pdfText'
 
@@ -28,7 +29,7 @@ function drawRun(pdf: PDFDocument, page: PDFPage, font: PDFFont, parts: RunPart[
   )
 }
 
-async function olderCVForgePdf() {
+async function olderCVForgePdf(session?: string) {
   const pdf = await PDFDocument.create()
   pdf.setCreator('react-pdf')
   pdf.setProducer('CVForge')
@@ -50,6 +51,9 @@ async function olderCVForgePdf() {
   line(['Example University'], 618)
   line(['BSc Computer Science'], 604)
   line(['2015 - 2019'], 604, 440)
+  if (session !== undefined) {
+    await pdf.attach(Buffer.from(session), 'cvforge-state.json', { mimeType: 'application/json' })
+  }
   return Buffer.from(await pdf.save())
 }
 
@@ -61,6 +65,167 @@ async function importPdf(page: Page, buffer: Buffer) {
   await expect(page.getByText('Best-Effort Draft Review')).toBeVisible({ timeout: 20_000 })
   await page.getByRole('button', { name: 'Create Editable Draft' }).click()
 }
+
+function backup(name: string) {
+  return JSON.stringify({
+    ...defaultCVState,
+    resume: { ...defaultCVState.resume, profile: { ...defaultCVState.resume.profile, name } },
+  })
+}
+
+async function openImport(page: Page) {
+  await page.getByRole('button', { name: 'Import', exact: true }).click()
+  return page.getByRole('dialog', { name: 'Import CV Data' })
+}
+
+function importInput(page: Page) {
+  return page.getByLabel('Choose a JSON backup or PDF resume to import')
+}
+
+async function deferImportRead(
+  input: Locator,
+  name: string,
+  contents: string | number[],
+  method: 'text' | 'arrayBuffer' | 'signature' = 'text',
+) {
+  await input.evaluate(async (element: HTMLInputElement, { name, contents, method }) => {
+    const data = new DataTransfer()
+    const bytes = typeof contents === 'string' ? contents : new Uint8Array(contents)
+    data.items.add(new File([bytes], name))
+    element.files = data.files
+    const file = element.files[0]
+    let markStarted: () => void
+    const started = new Promise<void>((resolve) => { markStarted = resolve })
+    const release = new Promise<string | ArrayBuffer>((resolve) => {
+      document.addEventListener(`release-import:${name}`, () => {
+        resolve(typeof bytes === 'string' ? bytes : bytes.buffer)
+      }, { once: true })
+    })
+    const read = () => {
+      markStarted()
+      return release
+    }
+    if (method === 'signature') {
+      Object.defineProperty(file, 'slice', { value: () => ({ arrayBuffer: read }) })
+    } else {
+      Object.defineProperty(file, method, { value: read })
+    }
+    element.dispatchEvent(new Event('change', { bubbles: true }))
+    await started
+  }, { name, contents, method })
+}
+
+async function releaseImportRead(page: Page, name: string) {
+  await page.evaluate(async (name) => {
+    document.dispatchEvent(new Event(`release-import:${name}`))
+    // Let the read, its continuation, and React's next render run.
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+  }, name)
+}
+
+test('older import completion preserves a newer active read and its eventual review', async ({ page }) => {
+  await seedStorage(page, { [CV_STATE_KEY]: backup('Saved Owner') })
+  await page.goto('/builder')
+  const dialog = await openImport(page)
+  const input = importInput(page)
+  await deferImportRead(input, 'older.json', backup('Outdated Owner'))
+  await deferImportRead(input, 'superseded.json', backup('Superseded Owner'))
+  await deferImportRead(input, 'latest.json', backup('Intended Owner'))
+
+  await releaseImportRead(page, 'older.json')
+  await expect(dialog.getByRole('status')).toContainText('Analyzing')
+  await expect(dialog.getByRole('button', { name: /Replace current CV/ })).toHaveCount(0)
+  await releaseImportRead(page, 'latest.json')
+  await expect(dialog.getByText('Intended Owner')).toBeVisible()
+  await releaseImportRead(page, 'superseded.json')
+  await expect(dialog.getByText('Intended Owner')).toBeVisible()
+  await expect.poll(() => savedProfileName(page)).toBe('Saved Owner')
+  await dialog.getByRole('button', { name: 'Replace current CV & Restore' }).click()
+  await expect.poll(() => savedProfileName(page)).toBe('Intended Owner')
+})
+
+test('an older import rejection preserves the newer file error and allows retry and cancel', async ({ page }) => {
+  await seedStorage(page, { [CV_STATE_KEY]: backup('Saved Owner') })
+  await page.goto('/builder')
+  const dialog = await openImport(page)
+  const input = importInput(page)
+  await expect(dialog.getByRole('button', { name: 'Choose File' })).toHaveAccessibleDescription(/up to 5 MiB/)
+  await deferImportRead(input, 'older.json', '{broken')
+  await input.setInputFiles({
+    name: 'oversized.json',
+    mimeType: 'application/json',
+    buffer: Buffer.alloc(MAX_JSON_IMPORT_BYTES + 1),
+  })
+  await expect(dialog.getByRole('alert')).toContainText('exceeds the 5 MiB file size limit')
+  await releaseImportRead(page, 'older.json')
+  await expect(dialog.getByRole('alert')).toContainText('exceeds the 5 MiB file size limit')
+
+  await input.setInputFiles({
+    name: 'valid.json', mimeType: 'application/json', buffer: Buffer.from(backup('Retry Owner')),
+  })
+  await expect(dialog.getByText('Retry Owner')).toBeVisible()
+  await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await expect(dialog.getByRole('button', { name: 'Choose File' })).toBeVisible()
+  await expect(dialog.getByRole('alert')).toHaveCount(0)
+  await expect.poll(() => savedProfileName(page)).toBe('Saved Owner')
+})
+
+test('closing a pending PDF import and reopening starts a fresh review', async ({ page }) => {
+  await seedStorage(page, { [CV_STATE_KEY]: backup('Saved Owner') })
+  await page.goto('/builder')
+  const dialog = await openImport(page)
+  await deferImportRead(importInput(page), 'pending.pdf', [...await olderCVForgePdf()], 'arrayBuffer')
+  await expect(dialog.getByRole('status')).toContainText('Analyzing')
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await openImport(page)
+  await expect(dialog.getByRole('button', { name: 'Choose File' })).toBeVisible()
+
+  await importInput(page).setInputFiles({
+    name: 'valid.json', mimeType: 'application/json', buffer: Buffer.from(backup('New Review')),
+  })
+  await expect(dialog.getByText('New Review')).toBeVisible()
+  await releaseImportRead(page, 'pending.pdf')
+  await expect(dialog.getByText('New Review')).toBeVisible()
+  await expect.poll(() => savedProfileName(page)).toBe('Saved Owner')
+})
+
+test('navigating away during a file read clears its import workflow', async ({ page }) => {
+  await seedStorage(page, { [CV_STATE_KEY]: backup('Saved Owner') })
+  await page.goto('/builder')
+  const dialog = await openImport(page)
+  await deferImportRead(importInput(page), 'pending.json', backup('Abandoned Owner'))
+  const nav = page.locator('.app-header')
+  await nav.getByRole('link', { name: 'Analyzer', exact: true }).evaluate((link: HTMLElement) => link.click())
+  await expect(page).toHaveURL(/\/analyzer$/)
+  await expect(dialog).toHaveCount(0)
+  await releaseImportRead(page, 'pending.json')
+  await nav.getByRole('link', { name: 'Builder', exact: true }).click()
+  await openImport(page)
+  await expect(dialog.getByRole('button', { name: 'Choose File' })).toBeVisible()
+  await expect.poll(() => savedProfileName(page)).toBe('Saved Owner')
+})
+
+test('a future embedded session is explained in Builder and Analyzer without a draft', async ({ page }) => {
+  await seedStorage(page, { [CV_STATE_KEY]: backup('Saved Owner') })
+  await page.goto('/builder')
+  const session = { ...defaultCVState, schemaVersion: '2.0.0' }
+  const file = {
+    name: 'future-session.pdf', mimeType: 'application/pdf', buffer: await olderCVForgePdf(JSON.stringify(session)),
+  }
+  const dialog = await openImport(page)
+  await importInput(page).setInputFiles(file)
+  await expect(dialog.getByRole('alert')).toContainText('session from a newer version of CVForge')
+  await expect(dialog.getByRole('button', { name: /Create Editable Draft|Restore Embedded Session/ })).toHaveCount(0)
+  await dialog.getByRole('button', { name: 'Close import' }).click()
+
+  await page.locator('.app-header').getByRole('link', { name: 'Analyzer', exact: true }).click()
+  await page.getByLabel('Choose a PDF for local CV analysis').setInputFiles(file)
+  await expect(page.getByRole('alert').filter({ hasText: 'session from a newer version of CVForge' })).toBeVisible()
+  await expect(page.getByText('CVForge PDF Extraction Only')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Create Editable Draft|Restore Session/ })).toHaveCount(0)
+  await expect.poll(() => savedProfileName(page)).toBe('Saved Owner')
+})
 
 test('importing an older CVForge PDF removes phantom spaces inside words', async ({ page }) => {
   await page.goto('/builder')
@@ -112,10 +277,20 @@ test('an embedded session restored in Analyzer opens Builder sections and preser
 
   const nav = page.locator('.app-header')
   await nav.getByRole('link', { name: 'Analyzer', exact: true }).click()
-  await page.locator('input[type=file]').setInputFiles({
-    name: 'cvforge-session.pdf', mimeType: 'application/pdf', buffer: pdf,
-  })
+  const input = page.getByLabel('Choose a PDF for local CV analysis')
+  const file = { name: 'cvforge-session.pdf', mimeType: 'application/pdf', buffer: pdf }
   const restore = page.getByRole('button', { name: 'Restore Session' })
+  await input.setInputFiles(file)
+  await expect(restore).toBeVisible({ timeout: 20_000 })
+
+  await deferImportRead(input, 'replacement.pdf', [...Buffer.from('wrong')], 'signature')
+  await expect(page.getByRole('button', { name: 'Choose another PDF' })).toBeVisible()
+  await expect(restore).toHaveCount(0)
+  await releaseImportRead(page, 'replacement.pdf')
+  await expect(page.getByRole('alert').filter({ hasText: 'valid PDF signature' })).toBeVisible()
+  await expect.poll(() => savedProfileName(page)).toBe('Replacement Owner')
+
+  await input.setInputFiles(file)
   await expect(restore).toBeVisible({ timeout: 20_000 })
   const acceptDialog = (dialog: Dialog) => dialog.accept()
   page.on('dialog', acceptDialog)

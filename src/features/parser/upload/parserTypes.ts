@@ -10,5 +10,6 @@ export interface ParserDocument {
   extraction?: PdfExtractionResult
   embeddedState?: CVState
   heuristic?: HeuristicResult
+  sessionError?: string
   error?: string
 }

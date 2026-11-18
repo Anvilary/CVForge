@@ -1,58 +1,54 @@
-import type { PDFDocumentLoadingTask, PDFDocumentProxy } from 'pdfjs-dist'
+import type { PDFDocumentProxy } from 'pdfjs-dist'
 import { type CVState } from '@/features/cv/model/types'
 import { parseCVState } from '@/features/cv/model/parse'
-import { migrateCVState } from '@/features/cv/persistence/cvMigrations'
+import { isNewerSchemaVersion, migrateCVState } from '@/features/cv/persistence/cvMigrations'
 
 export const CVFORGE_ATTACHMENT_NAME = 'cvforge-state.json'
 
 type AttachmentSource = Pick<PDFDocumentProxy, 'getAttachments' | 'getAttachmentContent'>
 
+type CVForgeAttachment =
+  | { status: 'restored'; state: CVState }
+  | { status: 'absent' | 'unsupported' | 'malformed' | 'failed' }
+
 export async function extractCVForgeAttachment(
-  file: File,
-  options: { signal?: AbortSignal } = {},
-): Promise<CVState | null> {
-  let loadingTask: PDFDocumentLoadingTask | null = null
-  const abortLoading = () => {
-    void loadingTask?.destroy()
-  }
+  pdf: AttachmentSource,
+  signal?: AbortSignal,
+): Promise<CVForgeAttachment> {
+  let content: Uint8Array | null
   try {
-    if (options.signal?.aborted) return null
-    const pdfjs = await import('pdfjs-dist')
-    pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
-
-    loadingTask = pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) })
-    options.signal?.addEventListener('abort', abortLoading, { once: true })
-    const pdf = await loadingTask.promise
-    if (options.signal?.aborted) return null
-
-    const content = await readCVForgeAttachment(pdf)
-    if (!content) return null
-    const parsed = JSON.parse(new TextDecoder().decode(content))
-    return parseCVState(migrateCVState(parsed))
-  } catch (error) {
-    if (!options.signal?.aborted) console.warn('Failed to extract CVForge attachment:', error)
-    return null
-  } finally {
-    options.signal?.removeEventListener('abort', abortLoading)
-    // PDF.js 6 releases the document through its loading task only.
-    try {
-      await loadingTask?.destroy()
-    } catch {
-      // Loading-task cleanup is best effort after parse failure.
-    }
+    signal?.throwIfAborted()
+    content = await readCVForgeAttachment(pdf, signal)
+    signal?.throwIfAborted()
+  } catch {
+    signal?.throwIfAborted()
+    return { status: 'failed' }
   }
+  if (!content) return { status: 'absent' }
+
+  let input: unknown
+  try {
+    input = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(content))
+  } catch {
+    return { status: 'malformed' }
+  }
+  if (isNewerSchemaVersion(input)) return { status: 'unsupported' }
+
+  const state = parseCVState(migrateCVState(input))
+  return state ? { status: 'restored', state } : { status: 'malformed' }
 }
 
-// PDF.js 6 returns attachments as a Map keyed by the embedded-file name, and
-// usually omits the bytes, which are then fetched on demand.
-export async function readCVForgeAttachment(pdf: AttachmentSource): Promise<Uint8Array | null> {
+// PDF.js 6 usually omits the bytes from its attachment Map.
+async function readCVForgeAttachment(pdf: AttachmentSource, signal?: AbortSignal): Promise<Uint8Array | null> {
   const attachments = await pdf.getAttachments()
+  signal?.throwIfAborted()
   if (!attachments) return null
 
   for (const [id, attachment] of attachments) {
-    const isCVForgeState = id === CVFORGE_ATTACHMENT_NAME || attachment.filename === CVFORGE_ATTACHMENT_NAME
-    if (!isCVForgeState) continue
-    return attachment.content ?? await pdf.getAttachmentContent(id) ?? null
+    if (id !== CVFORGE_ATTACHMENT_NAME && attachment.filename !== CVFORGE_ATTACHMENT_NAME) continue
+    const content = attachment.content ?? await pdf.getAttachmentContent(id)
+    if (!content) throw new Error('CVForge attachment content is unavailable.')
+    return content
   }
   return null
 }

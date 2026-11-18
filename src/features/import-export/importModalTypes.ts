@@ -4,5 +4,3 @@ export interface ImportModalProps {
   onComplete?: () => void
   restoreFocus?: boolean
 }
-
-export type ImportType = 'json' | 'pdf-embedded' | 'pdf-heuristic'

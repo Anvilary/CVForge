@@ -1,46 +1,63 @@
 import { describe, expect, it, vi } from 'vitest'
-import { CVFORGE_ATTACHMENT_NAME, readCVForgeAttachment } from './extractCVForgeAttachment'
+import { defaultCVState } from '@/features/cv/model/defaults'
+import { CVFORGE_ATTACHMENT_NAME, extractCVForgeAttachment } from './extractCVForgeAttachment'
 
-const bytes = new TextEncoder().encode('{"ok":true}')
+const bytes = (text: string) => new TextEncoder().encode(text)
 
 function attachment(filename: string, content?: Uint8Array) {
   return { filename, rawFilename: filename, description: '', content }
 }
 
-describe('CVForge attachment lookup (PDF.js 6 Map API)', () => {
-  it('reads inline content from the attachment Map', async () => {
-    const pdf = {
-      getAttachments: async () => new Map([[CVFORGE_ATTACHMENT_NAME, attachment(CVFORGE_ATTACHMENT_NAME, bytes)]]),
-      getAttachmentContent: vi.fn(),
-    }
-    expect(await readCVForgeAttachment(pdf)).toEqual(bytes)
+function withAttachment(content?: Uint8Array) {
+  return {
+    getAttachments: async () => new Map([[CVFORGE_ATTACHMENT_NAME, attachment(CVFORGE_ATTACHMENT_NAME, content)]]),
+    getAttachmentContent: vi.fn(),
+  }
+}
+
+describe('CVForge attachment extraction (PDF.js 6 Map API)', () => {
+  it('restores inline content without a second lookup', async () => {
+    const pdf = withAttachment(bytes(JSON.stringify(defaultCVState)))
+    expect(await extractCVForgeAttachment(pdf)).toEqual({ status: 'restored', state: defaultCVState })
     expect(pdf.getAttachmentContent).not.toHaveBeenCalled()
   })
 
-  it('fetches content on demand when the Map omits it', async () => {
+  it('restores a historical session with omitted version and passthrough fields', async () => {
+    const { schemaVersion, ...legacy } = defaultCVState
+    const contents = { ...legacy, extension: { source: 'historical' } }
     const pdf = {
-      getAttachments: async () => new Map([[CVFORGE_ATTACHMENT_NAME, attachment(CVFORGE_ATTACHMENT_NAME)]]),
-      getAttachmentContent: vi.fn(async () => bytes),
+      getAttachments: async () => new Map([['alternate-key', attachment(CVFORGE_ATTACHMENT_NAME)]]),
+      getAttachmentContent: vi.fn(async () => bytes(JSON.stringify(contents))),
     }
-    expect(await readCVForgeAttachment(pdf)).toEqual(bytes)
-    expect(pdf.getAttachmentContent).toHaveBeenCalledWith(CVFORGE_ATTACHMENT_NAME)
+    expect(await extractCVForgeAttachment(pdf)).toEqual({
+      status: 'restored', state: { ...contents, schemaVersion },
+    })
+    expect(pdf.getAttachmentContent).toHaveBeenCalledWith('alternate-key')
   })
 
-  it('matches by filename when the name-tree key differs', async () => {
-    const pdf = {
-      getAttachments: async () => new Map([['other-key', attachment(CVFORGE_ATTACHMENT_NAME)]]),
-      getAttachmentContent: vi.fn(async (id: string) => (id === 'other-key' ? bytes : null)),
-    }
-    expect(await readCVForgeAttachment(pdf)).toEqual(bytes)
-  })
-
-  it('returns null without attachments or without a CVForge attachment', async () => {
+  it('reports absence only when no CVForge attachment exists', async () => {
     const none = { getAttachments: async () => null, getAttachmentContent: vi.fn() }
     const other = {
-      getAttachments: async () => new Map([['invoice.xml', attachment('invoice.xml', bytes)]]),
+      getAttachments: async () => new Map([['invoice.xml', attachment('invoice.xml', bytes('<invoice/>'))]]),
       getAttachmentContent: vi.fn(),
     }
-    expect(await readCVForgeAttachment(none)).toBeNull()
-    expect(await readCVForgeAttachment(other)).toBeNull()
+    expect(await extractCVForgeAttachment(none)).toEqual({ status: 'absent' })
+    expect(await extractCVForgeAttachment(other)).toEqual({ status: 'absent' })
+    expect(other.getAttachmentContent).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    [JSON.stringify({ ...defaultCVState, schemaVersion: '2.0.0' }), 'unsupported'],
+    ['{broken', 'malformed'],
+    [JSON.stringify({ ...defaultCVState, resume: null }), 'malformed'],
+  ])('classifies an unreadable session (%#)', async (json, status) => {
+    expect(await extractCVForgeAttachment(withAttachment(bytes(json)))).toEqual({ status })
+  })
+
+  it('reports missing bytes and lookup rejection as failures', async () => {
+    const pdf = withAttachment()
+    pdf.getAttachmentContent.mockResolvedValueOnce(null).mockRejectedValueOnce(new Error('lookup failed'))
+    expect(await extractCVForgeAttachment(pdf)).toEqual({ status: 'failed' })
+    expect(await extractCVForgeAttachment(pdf)).toEqual({ status: 'failed' })
   })
 })

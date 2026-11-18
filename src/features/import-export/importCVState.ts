@@ -5,7 +5,10 @@ import { isNewerSchemaVersion, migrateCVState } from '@/features/cv/persistence/
 export const MAX_JSON_IMPORT_MIB = 5
 export const MAX_JSON_IMPORT_BYTES = MAX_JSON_IMPORT_MIB * 1024 * 1024
 
-export async function importCVState(file: Pick<File, 'size' | 'text'>): Promise<CVState> {
+export async function importCVState(
+  file: Pick<File, 'size' | 'text'>,
+  signal?: AbortSignal,
+): Promise<CVState> {
   if (file.size === 0) throw new Error('The selected JSON backup is empty.')
   if (file.size > MAX_JSON_IMPORT_BYTES) {
     throw new Error(`This JSON backup exceeds the ${MAX_JSON_IMPORT_MIB} MiB file size limit.`)
@@ -14,6 +17,7 @@ export async function importCVState(file: Pick<File, 'size' | 'text'>): Promise<
   const text = await file.text().catch(() => {
     throw new Error('CVForge could not read this backup. Choose the file again and retry.')
   })
+  signal?.throwIfAborted()
   let input: unknown
   try {
     input = JSON.parse(text)

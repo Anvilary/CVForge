@@ -31,25 +31,25 @@ export function useParserDocument() {
     generationRef.current = generation
     controllerRef.current?.abort()
     releaseObjectUrl()
-
-    const validationError = await validateAnalysisFile(file)
-    if (generation !== generationRef.current) return
-    if (validationError) {
-      setIsAnalyzing(false)
-      setDocument({ fileName: file.name, objectUrl: '', error: validationError })
-      setAnnouncement(`Analysis failed. ${validationError}`)
-      return
-    }
+    setDocument(null)
+    setIsAnalyzing(true)
 
     const controller = new AbortController()
     controllerRef.current = controller
-    const objectUrl = URL.createObjectURL(file)
-    objectUrlRef.current = objectUrl
-    setDocument(null)
-    setIsAnalyzing(true)
     setAnnouncement(`Analysis started for ${file.name}.`)
 
+    let objectUrl = ''
     try {
+      const validationError = await validateAnalysisFile(file)
+      if (!isCurrentAnalysisRequest(generation, generationRef.current, controller.signal)) return
+      if (validationError) {
+        setDocument({ fileName: file.name, objectUrl, error: validationError })
+        setAnnouncement(`Analysis failed. ${validationError}`)
+        return
+      }
+
+      objectUrl = URL.createObjectURL(file)
+      objectUrlRef.current = objectUrl
       const result = await analyzePdfImport(file, { signal: controller.signal })
       if (!isCurrentAnalysisRequest(generation, generationRef.current, controller.signal)) {
         if (objectUrlRef.current === objectUrl) releaseObjectUrl()
