@@ -19,7 +19,7 @@ import {
   metricPoints,
   summaryPoints,
 } from './scoreSignals'
-import { normalizedVisibleText } from './visibleText'
+import { normalizedVisibleText } from '@/features/cv/visibleContent'
 import {
   type ScoreDimension,
   type ScoreDimensionId,

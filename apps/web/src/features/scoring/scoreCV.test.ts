@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { defaultCVState, type CVState } from '@/types/cv'
 import { analyzeExtractionEvidence, type PdfPageEvidence } from '@/lib/parser/extractionDiagnostics'
 import { scoreCV } from './scoreCV'
-import { normalizedVisibleText } from './visibleText'
+import { normalizedVisibleText } from '@/features/cv/visibleContent'
 
 describe('scoreCV scoring method v3', () => {
   it('scores an empty CV poorly and deterministically', () => {

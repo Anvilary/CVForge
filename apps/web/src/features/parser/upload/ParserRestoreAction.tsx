@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useCV } from '@/context/CVContext'
-import { markCVImported } from '@/features/builder/workbench/importExpansion'
+import { markCVImported } from '@/features/cv/events/importEvents'
 import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { type CVState } from '@/types/cv'
 

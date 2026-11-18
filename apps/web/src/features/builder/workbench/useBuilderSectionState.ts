@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { type RepeatableSectionKey } from '@/context/CVContext'
-import { clearImportedSections, peekImportedSections } from './importExpansion'
+import { clearImportedSections, peekImportedSections } from '@/features/cv/events/importEvents'
 
 export function useBuilderSectionState() {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(

@@ -1,5 +1,5 @@
 import { type CVState } from '@/types/cv'
-import { normalizedVisibleText } from '@/features/scoring/visibleText'
+import { normalizedVisibleText } from '@/features/cv/visibleContent'
 
 // Characters outside Windows-1252 (WinAnsi) Latin-1 that the standard PDF
 // fonts can still encode. Listed as code points to keep this file ASCII.

@@ -1,6 +1,6 @@
 import { type CVState } from '@/types/cv'
 import { hasQuantifiedImpact } from './impactMetrics'
-import { normalizedVisibleText } from './visibleText'
+import { normalizedVisibleText } from '@/features/cv/visibleContent'
 
 export function hasLinks(state: CVState) {
   const { website, github, linkedin } = state.resume.profile

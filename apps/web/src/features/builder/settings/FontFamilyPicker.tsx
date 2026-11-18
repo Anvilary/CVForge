@@ -1,7 +1,7 @@
 'use client'
 
 import { resolvePdfFont } from '@/features/resume-pdf/resumePdfFontHelpers'
-import { FONT_FAMILY_OPTIONS } from './settingsConstants'
+import { FONT_FAMILY_OPTIONS } from '@/features/resume-pdf/resumePdfFontHelpers'
 
 interface FontFamilyPickerProps {
   value: string

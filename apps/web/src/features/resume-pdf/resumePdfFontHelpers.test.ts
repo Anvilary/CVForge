@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { FONT_FAMILY_OPTIONS } from '@/features/builder/settings/settingsConstants'
-import { resolvePdfFont } from './resumePdfFontHelpers'
+import { FONT_FAMILY_OPTIONS, resolvePdfFont } from './resumePdfFontHelpers'
 
 describe('PDF font resolution', () => {
   it('maps every offered option to the family its label names', () => {

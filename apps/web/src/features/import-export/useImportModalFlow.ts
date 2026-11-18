@@ -6,7 +6,7 @@ import { analyzePdfImport, type PdfImportAnalysis } from '@/lib/parser/pdfImport
 import { type CVState } from '@/types/cv'
 import { importCVState } from './importCVState'
 import { announce } from '@/lib/accessibility/announce'
-import { markCVImported } from '@/features/builder/workbench/importExpansion'
+import { markCVImported } from '@/features/cv/events/importEvents'
 import { type ImportModalProps, type ImportType } from './importModalTypes'
 
 type ImportModalFlowOptions = Pick<ImportModalProps, 'onClose' | 'onComplete'>

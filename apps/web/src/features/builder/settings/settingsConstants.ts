@@ -7,14 +7,6 @@ export const SECTION_LABELS: Record<string, string> = {
   customSections: 'Custom Sections',
 }
 
-// Only the PDF core fonts are offered, because the exported PDF does not
-// embed font files. Each option is exactly the family the PDF uses.
-export const FONT_FAMILY_OPTIONS = [
-  { value: 'Helvetica', display: 'Helvetica', category: 'Sans' },
-  { value: 'Times New Roman', display: 'Times', category: 'Serif' },
-  { value: 'Courier New', display: 'Courier', category: 'Mono' },
-] as const
-
 export const THEME_COLORS = [
   '#2c1f19',
   '#111827',

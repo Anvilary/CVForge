@@ -1,5 +1,5 @@
 import { BuilderSectionList } from './BuilderSectionList'
-import { useImportVersion } from './importExpansion'
+import { useImportVersion } from '@/features/cv/events/importEvents'
 import { ImportExportActions } from '@/features/import-export/ImportExportActions'
 import { WorkbenchHeader } from '@/components/shared/workbench/WorkbenchHeader'
 

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCV } from '@/context/CVContext'
-import { markCVImported } from '@/features/builder/workbench/importExpansion'
+import { markCVImported } from '@/features/cv/events/importEvents'
 import { Icon } from '@/components/ui/Icon'
 import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { ImportReviewTable } from '@/features/import-export/ImportReviewTable'
