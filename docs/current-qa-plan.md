@@ -90,10 +90,11 @@ At every size confirm:
 - **Dialogs:** Tab and Shift+Tab remain inside the active dialog. Escape closes only the active dialog. Child import closes back to its parent control. Closing the full flow returns focus to the page trigger.
 - **Builder:** Edit all section types. Confirm card expansion, visibility, ordering, title editing, settings reset, and mobile edit/preview switching.
 - **PDF preview:** Confirm updates after content and setting changes. Check zoom, Fit, sharpness, empty, loading, and error states.
-- **JSON:** Export a backup, change the CV, cancel one import without replacement, then restore the backup.
+- **JSON:** Export a backup, change the CV, cancel one import without replacement, then restore the backup. Confirm files larger than 5 MiB are rejected before review.
 - **PDF export:** Download a CVForge PDF, compare it with the preview, and confirm the embedded session is detected on re-import.
 - **Analyzer with Builder state:** Confirm empty and populated Builder analysis remains distinct from uploaded-file results.
 - **Analyzer with CVForge PDF:** Confirm source preview, embedded-session detection, restore action, extraction confidence, and scoring target.
+- **Unreadable embedded session:** Confirm newer or damaged sessions give explicit feedback in both import entry points. Analyzer retains text diagnostics and the current Builder CV stays intact.
 - **Analyzer with external PDF:** Confirm extraction analysis, Parseability dimension, and a mandatory best-effort review before Builder replacement.
 - **Unsupported formats:** Confirm DOCX and plain text receive an honest PDF-only message.
 - **File safety:** Confirm zero-byte, renamed non-PDF, malformed, truncated, encrypted,
@@ -119,8 +120,9 @@ At every size confirm:
 
 ## Accessibility Matrix
 
-Automated axe coverage includes homepage, Builder initial/populated/mobile states,
-Analyzer empty/result states, and the Import review dialog. Manually verify one H1,
+Automated axe coverage includes homepage, expanded Builder forms on desktop and mobile,
+Analyzer empty/result states, and the Import dialog. The Builder test also checks
+description and End Date accessible names and keyboard navigation. Manually verify one H1,
 landmarks, heading order, dialog names/descriptions, focus trap/restoration, keyboard-only
 operation, score semantics, icon labels, disabled controls, touch targets, contrast,
 reduced motion, and 200% zoom. Record any assistive technology and version used.

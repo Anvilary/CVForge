@@ -147,6 +147,7 @@ new schema.
 
 `.github/workflows/validation.yml` validates pushes and pull requests to `main` with
 repository policy checks, lint, typechecking, unit tests, a production build, and
-focused Chromium tests for persistence, import, and PDF output. The full browser
-matrix and isolated Docker runtime are verified by `make release-check`.
+focused Chromium tests for persistence, import, PDF output, accessibility, and
+privacy. The complete Chromium suite, Firefox and WebKit smoke tests, and
+isolated Docker runtime are verified by `make release-check`.
 The owner can require CI and independent review for `main` in repository settings.

@@ -63,9 +63,11 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Persistence, import, and PDF smoke
+      - name: Persistence, import, PDF, accessibility, and privacy smoke
         run: >-
           pnpm exec playwright test --project=chromium
           tests/e2e/data-integrity.spec.ts
           tests/e2e/builder-import.spec.ts
           tests/e2e/pdf-text.spec.ts
+          tests/e2e/accessibility.spec.ts
+          tests/e2e/privacy.spec.ts
