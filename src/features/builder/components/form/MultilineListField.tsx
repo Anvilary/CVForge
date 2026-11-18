@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { FieldLabel } from './FieldLabel'
 import { TextArea } from './TextArea'
 
@@ -11,13 +11,15 @@ interface MultilineListFieldProps {
 }
 
 export function MultilineListField({ label, placeholder, value, onChange, action }: MultilineListFieldProps) {
+  const id = useId()
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <FieldLabel>{label}</FieldLabel>
+        <FieldLabel htmlFor={id}>{label}</FieldLabel>
         {action}
       </div>
       <TextArea
+        id={id}
         placeholder={placeholder}
         value={value.join('\n')}
         onChange={(e) => onChange(e.target.value.split('\n'))}

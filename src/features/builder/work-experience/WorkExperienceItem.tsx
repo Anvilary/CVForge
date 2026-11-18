@@ -1,5 +1,6 @@
 'use client'
 
+import { useId } from 'react'
 import { FormField } from '@/features/builder/components/form/FormField'
 import { FieldLabel } from '@/features/builder/components/form/FieldLabel'
 import { TextInput } from '@/features/builder/components/form/TextInput'
@@ -19,6 +20,7 @@ interface WorkExperienceItemProps {
 }
 
 export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast }: WorkExperienceItemProps) {
+  const endDateId = useId()
   const { mode, toggleMode } = useDescriptionModeToggle('workExperience')
   const handleChange = useRepeatableItemUpdate<keyof WorkExperience>('workExperience', item.id)
 
@@ -85,7 +87,7 @@ export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast
 
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <FieldLabel>End Date</FieldLabel>
+          <FieldLabel htmlFor={endDateId}>End Date</FieldLabel>
           <label className="flex items-center gap-1.5 cursor-pointer select-none">
             <input
               type="checkbox"
@@ -99,6 +101,7 @@ export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast
           </label>
         </div>
         <TextInput
+          id={endDateId}
           placeholder="e.g. Dec 2023"
           value={item.endDate}
           onChange={(e) => handleChange('endDate', e.target.value)}
