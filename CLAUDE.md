@@ -31,18 +31,23 @@ CVForge is a local-first, browser-only CV Builder, PDF exporter, and ATS-style C
 ## Repository Layout
 
 ```
-Repository root    Next.js app
-  src/
-    app/           Next.js App Router pages (builder, analyzer, parser redirect, resume-import redirect)
-    context/       Global state (CVContext)
-    features/      Feature modules (builder, parser, resume-pdf, import-export, scoring)
-    types/cv/      Zod schemas and CV types - the data contract for the entire app
-    lib/           Utilities (storage, cvState, exportCVState, importCVState, parser)
-    components/    Shared UI primitives (workbench shell, form controls, section cards)
-    styles/        Global CSS tokens and workspace styles
-  public/brand/    brand assets
-Makefile           Developer commands (see above)
-Dockerfile         Production Docker image
+src/
+  app/              App Router pages and compatibility routes
+  features/
+    cv/             Model, state, persistence, events, and visible content
+    builder/        Builder workbench, editors, and settings
+    parser/         Analyzer workbench and document review
+    resume-pdf/     PDF rendering, download, and session embedding
+    scoring/        Deterministic scoring rules
+    import-export/  Validated backup and import workflows
+    home/           Landing page and Builder entry dialog
+  shared/           Shared UI, hooks, utilities, and styles
+  lib/parser/       PDF extraction and heuristic engine
+public/             Static assets
+tests/e2e/          Playwright browser suites
+tooling/            Repository checks
+Makefile            Developer commands
+Dockerfile          Standalone production image
 ```
 
 ## State Architecture
@@ -51,20 +56,25 @@ Dockerfile         Production Docker image
 
 - `Resume` holds profile, workExperience, education, projects, skills, languages, customSections.
 - `Settings` holds all PDF rendering controls: themeColor, fontFamily, fontSize, spacings, section order, visibility, description modes, section titles.
-- Both are defined with Zod in `src/types/cv.ts`. This is the authoritative schema.
+- Both are defined with Zod in `src/features/cv/model/schemas.ts`.
 
 **Reducer pattern:**
 - `CVContext.tsx` provides state + dispatch.
 - `cvReducer.ts` handles all mutations.
 - `useCVActions.ts` wraps dispatch into typed action helpers - prefer this over raw dispatch.
-- State is persisted to `localStorage` on every change via `lib/storage.ts`.
+- `src/features/cv/persistence/useCVPersistence.ts` hydrates and saves to `localStorage`
+  through `storage.ts`. Autosave pauses during hydration, unreadable-state recovery,
+  and cross-tab conflicts.
 
 **Schema versioning and migration:**
-- `CURRENT_CV_SCHEMA_VERSION` is exported from `types/cv.ts` - the single source of truth for the current version string.
+- `CURRENT_CV_SCHEMA_VERSION` is defined in `src/features/cv/model/version.ts`.
 - `CVStateSchema` uses `z.literal(CURRENT_CV_SCHEMA_VERSION)` for `schemaVersion`, so states saved by a newer build are rejected rather than silently loaded.
-- `lib/cvMigrations.ts` exports `migrateCVState(input: unknown): unknown`. Call it before `parseCVState` on any externally-sourced state (localStorage, JSON import, PDF attachment restore). It stamps the current version on missing/older states and passes newer states through for Zod to reject safely.
+- `src/features/cv/persistence/cvMigrations.ts` exports `migrateCVState`. Call it before
+  `parseCVState` on externally sourced state. It stamps the current version on older
+  or unversioned payloads and passes newer states through for Zod to reject.
 
-**Before adding a settings field:** Add to `SettingsSchema` in `types/cv.ts`, add a default in `defaultSettings`, update `cvReducer.ts` if a dedicated action is needed, then consume in `resumePdfStyles.ts`.
+When adding a settings field, update `SettingsSchema` and `defaultSettings` in
+`src/features/cv/model/`. Update `cvReducer.ts` for a dedicated action and consume PDF-visible settings in `resumePdfStyles.ts`.
 
 ## PDF Pipeline
 
@@ -118,7 +128,7 @@ validation, extraction diagnostics, and internal heuristic helpers remain local:
 - `ImportConfirmStep.tsx` - shared confirm UI for JSON and PDF-embedded flows
 - `PdfHeuristicReview.tsx` - best-effort draft review with confidence/warning display
 
-**`context/`** - `cvActions.ts` defines action type strings; `cvStateUpdates.ts` / `cvSkillsUpdates.ts` contain pure reducer helpers; `sectionItemFactories.ts` creates blank section items.
+**`features/cv/state/`** - `cvActions.ts` defines actions, `cvStateUpdates.ts` and `cvSkillsUpdates.ts` contain reducer helpers, and `sectionItemFactories.ts` creates blank section items.
 
 ## Core Product Rules
 
@@ -142,6 +152,6 @@ validation, extraction diagnostics, and internal heuristic helpers remain local:
 
 - Functions roughly under 25 lines, few parameters.
 - No clever inline code - prefer named variables and explicit logic.
-- Use `cleanText()` / `cleanList()` from `lib/resume-formatting.ts` for all content guards.
+- Use `cleanText()` and `cleanList()` from `src/shared/utils/resume-formatting.ts` for content guards.
 - No new dependencies without explicit approval.
-- Shared primitives in `components/shared/` before creating new ones.
+- Reuse shared primitives in `src/shared/components/`.

@@ -17,12 +17,11 @@ CVForge is a clean-room rebuild. Comparable features can be rebuilt, but source 
   - `package.json`: application dependencies and commands.
   - `.gitignore`: excludes dependencies, build output, `tmp/`, `.handoff/`, and TypeScript build caches.
 - `src/app`: route pages and app layout.
-- `src/context`: CV state provider, reducer actions, and state update helpers.
-- `src/types`: Zod schemas and inferred TypeScript types.
-- `src/components`: shared layout, form, section, workbench, home, and UI components.
-- `src/features`: feature-specific builder, parser, scoring, PDF, and import/export modules.
-- `src/lib`: browser storage and parser helpers.
-- `src/styles`: Anvilary-family CSS tokens, atmosphere, landing, modal, and workbench styles.
+- `src/features/cv`: schemas, inferred types, reducer, browser persistence, and import notifications.
+- `src/features`: CV, Builder, Parser, PDF, scoring, import/export, and home modules.
+- `src/shared`: shared components, hooks, CSS, and utilities.
+- `src/lib/parser`: browser PDF extraction and heuristic parsing engine.
+- `tests/e2e`: Playwright and accessibility suites. Unit tests stay with their source.
 
 Current builder feature folders:
 - `src/features/builder/profile`
@@ -40,8 +39,8 @@ Current builder feature folders:
 
 ## 3. Data Flow
 
-1. The CV contract is defined in `src/types/cv.ts` with Zod.
-2. `CVProvider` in `src/context/CVContext.tsx` owns reducer state.
+1. The CV contract is defined in `src/features/cv/model/schemas.ts` with Zod.
+2. `CVProvider` in `src/features/cv/state/CVContext.tsx` owns reducer state.
 3. Builder editors call context actions to update profile, settings, and repeatable sections.
 4. State changes are saved to browser `localStorage`.
 5. Stored state is parsed as JSON, migrated to the current schema version, and validated with the CV schema before it is loaded.
@@ -93,4 +92,4 @@ Builder and Analyzer must stay on the shared workbench template:
 - Analyzer left: local analysis and parser controls.
 - Analyzer right: uploaded/source PDF preview.
 
-Route files should compose workbench modes. Feature internals belong under `src/features`, shared UI belongs under `src/components/shared`, and responsive workbench behavior belongs in the workbench shell/hook.
+Route files should compose workbench modes. Feature internals belong under `src/features`, shared UI belongs under `src/shared/components`, and responsive workbench behavior belongs in the workbench shell and hook.

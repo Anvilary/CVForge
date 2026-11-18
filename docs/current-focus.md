@@ -1,10 +1,10 @@
-# Current Focus: Final Deployment Hardening
+# Current Focus: Architecture Consolidation and Independent Review
 
 ## 1. Current State
 
-CVForge is a safe-to-deploy public-beta candidate pending final gate execution and owner
-review. The Anvilary visual direction, local-first boundary, Builder/Analyzer model, and
-protected serialized CV architecture remain intact.
+CVForge is a root-level Next.js application. The CV feature owns its schema, reducer,
+browser persistence, and import notifications. Builder, Analyzer, PDF, scoring,
+import/export, and home code retain their feature boundaries.
 
 Implemented release work:
 
@@ -39,7 +39,8 @@ versions, and JSON/PDF restore contracts remain backward compatible.
 
 ## 2. Immediate Work
 
-- Run the complete production-origin `make release-check`.
+- Review the architecture changes and their production-origin `make release-check` results.
+- Conduct the independent application audit before production deployment.
 - Complete the manual viewport, keyboard, zoom, assistive-technology, and PDF
   preview/export comparison matrix in `docs/current-qa-plan.md`.
 - Review the exact release commit and follow `docs/deployment.md`. Deployment remains an

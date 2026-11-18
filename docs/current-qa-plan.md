@@ -6,21 +6,19 @@ Run this checklist before deployment. Record browser, viewport, source PDF type,
 
 ```bash
 pnpm install --frozen-lockfile
-make check
+pnpm exec playwright install chromium firefox webkit
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make check
+pnpm check:commits
 pnpm audit-prod
 pnpm test:unit
-pnpm test:e2e:chromium
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools pnpm test:e2e:chromium
 pnpm test:e2e:cross-browser
 git diff --check
 ```
 
-Install managed browsers with:
-
-```bash
-pnpm exec playwright install chromium firefox webkit
-```
-
-The full suite runs on Chromium; the critical subset runs on Firefox and WebKit. On
+Run these commands from the repository root. Playwright serves the standalone
+artifact in `.next/standalone` and runs the suites in `tests/e2e`. The full Chromium
+suite includes axe checks. Firefox and WebKit run the critical subset. On
 Linux hosts that lack WebKit runtime libraries, use the version-matched fallback:
 
 ```bash

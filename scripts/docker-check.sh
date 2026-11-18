@@ -84,15 +84,25 @@ async function fetchWithRetry(path, options) {
 }
 
 (async () => {
+  const brandAsset = '/brand/anvilary-logo-mark-square-180.png'
   const ok = [
     '/', '/builder', '/analyzer', '/health', '/robots.txt', '/sitemap.xml',
-    '/site.webmanifest', '/opengraph-image',
+    '/site.webmanifest', '/opengraph-image', brandAsset,
   ]
   for (const path of ok) {
     const response = await fetchWithRetry(path)
     if (!response.ok) throw new Error(`${path} returned ${response.status}`)
     console.log(response.status, path)
   }
+  const imageQuery = new URLSearchParams({ url: brandAsset, w: '64', q: '75' })
+  const optimized = await fetchWithRetry(`/_next/image?${imageQuery}`, {
+    headers: { Accept: 'image/webp' },
+  })
+  const imageType = optimized.headers.get('content-type')
+  if (!optimized.ok || imageType !== 'image/webp') {
+    throw new Error(`Image optimizer returned ${optimized.status} ${imageType}`)
+  }
+  console.log(optimized.status, '/_next/image', imageType)
   for (const [path, status, location] of [
     ['/parser', 308, '/analyzer'],
     ['/resume-import', 307, '/builder'],

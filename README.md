@@ -170,9 +170,16 @@ Analyzer
 ```
 
 The maintained data contract is defined by the Zod schemas in
-`src/types/cv/`. Import validation and schema migrations protect
+`src/features/cv/model/`. The same feature owns the reducer, browser
+persistence, and import notifications. Import validation and schema migrations protect
 the stored format, and external PDF parsing never silently replaces the
 Builder's current CV.
+
+The repository root hosts the single Next.js application. Routes live in
+`src/app/`, product modules in `src/features/`, shared workbench and UI
+foundations in `src/shared/`, and the PDF extraction engine in
+`src/lib/parser/`. Unit tests live alongside their source, and browser tests
+live under `tests/e2e/`.
 
 The public web server serves the application, static assets, metadata,
 and health information. Normal Builder and Analyzer workflows do not

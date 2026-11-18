@@ -18,19 +18,21 @@
 - `src/app/not-found.tsx`
 
 ### State and Persistence
-- `src/context/CVContext.tsx`
-- `src/context/cvReducer.ts`
-- `src/types/cv.ts` (Zod schemas + `CURRENT_CV_SCHEMA_VERSION`)
-- `src/lib/cvState.ts`
-- `src/lib/storage.ts`
-- `src/lib/cvMigrations.ts` (run `migrateCVState` before `parseCVState` on all external state)
+- `src/features/cv/state/CVContext.tsx`
+- `src/features/cv/state/cvReducer.ts`
+- `src/features/cv/model/schemas.ts` (Zod schemas)
+- `src/features/cv/model/version.ts` (serialized CV schema version)
+- `src/features/cv/events/importEvents.ts` (import notifications and pending Builder sections)
+- `src/features/cv/persistence/useCVPersistence.ts` (hydration, autosave, and cross-tab conflicts)
+- `src/features/cv/model/isEmptyCV.ts`
+- `src/features/cv/persistence/storage.ts`
+- `src/features/cv/persistence/cvMigrations.ts` (run `migrateCVState` before `parseCVState` on all external state)
 
 ### Builder Workbench
 - `src/features/builder/workbench/BuilderWorkbench.tsx`
 - `src/features/builder/workbench/BuilderEditorPanel.tsx`
 - `src/features/builder/workbench/BuilderPreviewPanel.tsx`
 - `src/features/builder/workbench/BuilderSectionList.tsx`
-- `src/features/builder/workbench/BuilderEntryModal.tsx`
 - `src/features/builder/workbench/builderSectionConfig.tsx` (static section metadata)
 - `src/features/builder/workbench/BuilderSectionCard.tsx` (per-card render component)
 - `src/features/builder/workbench/SectionReorderControls.tsx` (up/down button pair)
@@ -56,7 +58,7 @@
 - `src/features/resume-pdf/ResumePdfDocument.tsx`
 - `src/features/resume-pdf/DownloadPdfButton.tsx`
 - `src/features/resume-pdf/embedCVStateAttachment.ts`
-- `src/lib/resume-formatting.ts` (cleanText, cleanList, formatDateRange, joinNonEmpty)
+- `src/shared/utils/resume-formatting.ts` (cleanText, cleanList, formatDateRange, joinNonEmpty)
 - `src/features/builder/workbench/PdfCanvasPreview.tsx` (canvas render + dock UI)
 - `src/features/builder/workbench/useZoomControl.ts` (zoom/fit state)
 - `src/features/builder/workbench/useDevicePixelRatio.ts` (DPR tracking)
@@ -67,7 +69,7 @@
 - `src/features/parser/upload/analysisFileSupport.ts` (PDF-only boundary)
 - `src/lib/parser/analysisFileValidation.ts`
 - `src/lib/parser/analysisLimits.ts`
-- `src/lib/parser/pdfExtraction.ts`
+- `src/lib/parser/pdfTextExtraction.ts`
 - `src/features/parser/upload/ParserHeuristicAction.tsx`
 - `src/features/parser/upload/ParserRestoreAction.tsx`
 - `src/features/parser/diagnostics/ExtractionDiagnostics.tsx`
@@ -83,8 +85,8 @@
 - `src/features/scoring/scoreCV.ts`
 - `src/features/scoring/scoreSignals.ts`
 - `src/features/scoring/scoringTypes.ts`
-- `src/features/scoring/languageSignals.ts`
-- `src/features/scoring/visibleResumeText.ts`
+- `src/features/scoring/languageDiagnostics.ts`
+- `src/features/cv/visibleContent.ts`
 
 ### Import and Export
 - `src/features/import-export/ImportModal.tsx` (orchestrator)
@@ -93,42 +95,46 @@
 - `src/features/import-export/PdfHeuristicReview.tsx`
 - `src/features/import-export/ImportReviewTable.tsx`
 - `src/features/import-export/importCVState.ts`
+- `src/features/import-export/WorkbenchActionGroup.tsx`
 
 ### Shared UI Primitives
-- `src/components/shared/workbench/WorkbenchShell.tsx`
-- `src/components/shared/workbench/WorkbenchPanel.tsx`
-- `src/components/shared/workbench/WorkbenchHeader.tsx`
-- `src/components/shared/workbench/WorkbenchActionGroup.tsx`
-- `src/components/shared/workbench/PreviewCanvas.tsx`
-- `src/components/shared/workbench/WorkbenchSectionCard.tsx`
-- `src/components/shared/form/FormField.tsx`
-- `src/components/shared/sections/RepeatableSectionEditor.tsx`
-- `src/components/shared/sections/SectionItemHeader.tsx`
-- `src/components/shared/sections/ConfirmDeleteButton.tsx`
+- `src/shared/components/workbench/WorkbenchShell.tsx`
+- `src/shared/components/workbench/WorkbenchPanel.tsx`
+- `src/shared/components/workbench/WorkbenchHeader.tsx`
+- `src/shared/components/workbench/PreviewCanvas.tsx`
+- `src/shared/components/workbench/WorkbenchSectionCard.tsx`
 
-### Branding and Atmosphere
-- `src/components/ui/Brand.tsx`
-- `src/components/ui/EmberBackground.tsx`
-- `src/components/layout/SiteHeader.tsx`
-- `src/components/layout/AppHeader.tsx`
-- `src/components/layout/SiteFooter.tsx`
+### Builder Components
+- `src/features/builder/components/form/FormField.tsx`
+- `src/features/builder/components/sections/RepeatableSectionEditor.tsx`
+- `src/features/builder/components/sections/SectionItemHeader.tsx`
+- `src/features/builder/components/sections/ConfirmDeleteButton.tsx`
+
+### Landing, Branding, and Atmosphere
+- `src/features/home/Homepage.tsx`
+- `src/features/home/BuilderEntryModal.tsx`
+- `src/shared/components/ui/Brand.tsx`
+- `src/shared/components/ui/EmberBackground.tsx`
+- `src/features/home/SiteHeader.tsx`
+- `src/shared/components/layout/AppHeader.tsx`
+- `src/features/home/SiteFooter.tsx`
 - `public/brand/`
-- `src/styles/workspace.css`
+- `src/shared/styles/workspace.css`
 
 ### SEO
-- `src/lib/siteConfig.ts` (`NEXT_PUBLIC_SITE_URL` source of truth)
-- `src/components/seo/StructuredData.tsx`
+- `src/shared/utils/siteConfig.ts` (`NEXT_PUBLIC_SITE_URL` source of truth)
+- `src/features/home/StructuredData.tsx`
 - `src/app/robots.ts`
 - `src/app/sitemap.ts`
 - `src/app/opengraph-image.tsx`
 
 ### Styles
-- `src/styles/tokens.css`
-- `src/styles/base.css`
-- `src/styles/ui.css`
-- `src/styles/site.css`
-- `src/styles/workspace.css`
-- `src/styles/modals.css`
+- `src/shared/styles/tokens.css`
+- `src/shared/styles/base.css`
+- `src/shared/styles/ui.css`
+- `src/shared/styles/site.css`
+- `src/shared/styles/workspace.css`
+- `src/shared/styles/modals.css`
 
 ### Documentation
 - `README.md`
@@ -144,7 +150,7 @@
 ### Tooling
 - `Makefile`
 - `package.json`
-- `package.json`
+- `tooling/`
 - `playwright.config.ts`
 - `tests/e2e/release-smoke.spec.ts`
 - `tests/e2e/accessibility.spec.ts`
@@ -178,8 +184,8 @@
 - `make release-check` is the single strict release gate. The standalone preview defaults
   to port 3030 and stops only its recorded process. Docker validation uses an isolated
   random container name and removes it on every exit path.
-- GitHub Actions validates static checks, Chromium, Firefox/WebKit critical smoke, and
-  Docker without secrets, publication, or deployment.
+- GitHub Actions runs static checks and focused Chromium coverage on `main` and its
+  pull requests. The full browser matrix and Docker runtime run in the local release gate.
 - Production deployment and rollback are owner operations documented in
   `docs/deployment.md`.
 

@@ -10,7 +10,7 @@ pnpm build
 
 ## Phase 1: Foundation (Completed)
 
-- [x] Scaffold root monorepo (pnpm).
+- [x] Set up the Next.js app and pnpm. The app now runs from the repository root.
 - [x] Establish `.gitignore` and `tmp/` reference quarantine.
 - [x] Rebuild Forge-family design tokens and atoms for this app.
 - [x] Implement responsive `WorkbenchShell` and layout hook.
@@ -30,9 +30,9 @@ Workbench contract:
 - [x] Add automated `localStorage` persistence with safe validation.
 
 Implementation notes:
-- CV schema location: `src/types/cv.ts`.
-- State provider location: `src/context/CVContext.tsx`.
-- Storage helper location: `src/lib/storage.ts`.
+- CV schema location: `src/features/cv/model/schemas.ts`.
+- State provider location: `src/features/cv/state/CVContext.tsx`.
+- Storage helper location: `src/features/cv/persistence/storage.ts`.
 - Current CV storage key: `cvforge:state`.
 
 ## Phase 3: Builder Interface (Completed)

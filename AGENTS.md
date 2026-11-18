@@ -3,6 +3,9 @@
 ## Project Shape
 
 - CVForge is a single Next.js app at the repository root.
+- Routes live in `src/app`, product modules in `src/features`, and shared foundations in `src/shared`.
+- The CV data contract, reducer, persistence, and import notifications live in `src/features/cv`.
+- Unit tests are colocated with source. Playwright suites live in `tests/e2e`.
 - The product is local-first and browser-only.
 - There is currently no backend, API service, database, or auth system.
 - Use `pnpm` for package commands.
@@ -22,5 +25,6 @@ The user runs validation manually:
 ```bash
 pnpm typecheck
 pnpm lint
+pnpm test:unit
 pnpm build
 ```

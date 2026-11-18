@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - main
-      - dev
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -23,6 +25,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
         with:
@@ -37,6 +41,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Repository policy
+        run: |
+          pnpm check:em-dash
+          pnpm check:commits
+
       - name: Lint
         run: pnpm lint
 
@@ -50,3 +59,13 @@ jobs:
         run: pnpm build
         env:
           NEXT_PUBLIC_SITE_URL: ${{ env.CI_SITE_URL }}
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Persistence, import, and PDF smoke
+        run: >-
+          pnpm exec playwright test --project=chromium
+          tests/e2e/data-integrity.spec.ts
+          tests/e2e/builder-import.spec.ts
+          tests/e2e/pdf-text.spec.ts

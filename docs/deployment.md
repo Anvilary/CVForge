@@ -31,6 +31,7 @@ make preview-stop
 ```
 
 The test URL is `http://127.0.0.1:3030`. `preview-start` uses existing standalone output,
+launching `.next/standalone/server.js` from the root application's build. It
 never rebuilds, refuses an occupied port, and records both PID and kernel process start
 time before it can stop that process. Use `PREVIEW_PORT=4321` consistently on the preview
 commands when 3030 is unavailable.
@@ -144,8 +145,8 @@ new schema.
 
 ## CI and Branch Protection
 
-`.github/workflows/validation.yml` validates pushes and pull requests without secrets or
-deployment. Recommended branch protection for `main`: require the static, Chromium,
-cross-browser, and Docker jobs; require the branch to be current; require at least one
-review; prohibit force pushes and deletion; and restrict direct pushes. Repository
-settings remain an owner/admin action and are not changed by this project.
+`.github/workflows/validation.yml` validates pushes and pull requests to `main` with
+repository policy checks, lint, typechecking, unit tests, a production build, and
+focused Chromium tests for persistence, import, and PDF output. The full browser
+matrix and isolated Docker runtime are verified by `make release-check`.
+The owner can require CI and independent review for `main` in repository settings.
