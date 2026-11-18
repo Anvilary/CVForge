@@ -2,6 +2,7 @@ import { Link, Text, View } from '@react-pdf/renderer'
 import { type Profile, type Settings } from '@/features/cv/model/types'
 import { cleanText } from '@/shared/utils/resume-formatting'
 import { ResumePdfIcon, type ResumePdfIconName } from './ResumePdfIcons'
+import { resolveEntryLink } from './resolveEntryLink'
 import { type PdfStyles } from './types'
 
 interface HeaderProps {
@@ -21,9 +22,9 @@ function buildContactItems(profile: Profile): ContactItem[] {
     contactItem('email', profile.email, emailHref),
     contactItem('phone', profile.phone),
     contactItem('location', profile.location),
-    contactItem('website', profile.website, webHref, displayUrl),
-    contactItem('github', profile.github, webHref, displayUrl),
-    contactItem('linkedin', profile.linkedin, webHref, displayUrl),
+    contactItem('website', profile.website, resolveEntryLink, displayUrl),
+    contactItem('github', profile.github, resolveEntryLink, displayUrl),
+    contactItem('linkedin', profile.linkedin, resolveEntryLink, displayUrl),
   ]
     .filter((item) => item.value)
 }
@@ -31,20 +32,16 @@ function buildContactItems(profile: Profile): ContactItem[] {
 function contactItem(
   icon: ResumePdfIconName,
   value: string,
-  hrefFactory?: (value: string) => string,
+  hrefFactory?: (value: string) => string | null,
   displayFactory?: (value: string) => string,
 ): ContactItem {
   const cleaned = cleanText(value)
   const displayValue = cleaned && displayFactory ? displayFactory(cleaned) : cleaned
-  return { icon, value: displayValue, href: cleaned && hrefFactory ? hrefFactory(cleaned) : undefined }
+  return { icon, value: displayValue, href: hrefFactory?.(cleaned) ?? undefined }
 }
 
 function emailHref(value: string) {
-  return `mailto:${value}`
-}
-
-function webHref(value: string) {
-  return /^https?:\/\//i.test(value) ? value : `https://${value}`
+  return value ? `mailto:${value}` : null
 }
 
 function displayUrl(value: string) {

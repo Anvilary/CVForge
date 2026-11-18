@@ -118,8 +118,13 @@ async function pdfUriAnnotations(bytes: Buffer) {
   return uris
 }
 
-test('work and project links export selectable titles and valid URI annotations', async ({ page }) => {
+test('work, project, and contact links export selectable text and valid URI annotations', async ({ page }) => {
   const payload = JSON.parse(cvPayload())
+  Object.assign(payload.resume.profile, {
+    website: '  https://portfolio.example.org/work?q=1  ',
+    github: 'github.example.org/candidate',
+    linkedin: 'http://intranet.example.org/candidate',
+  })
   payload.resume.workExperience[0].companyLink = 'company.example.org/careers'
   payload.resume.workExperience.push({
     ...payload.resume.workExperience[0],
@@ -142,15 +147,39 @@ test('work and project links export selectable titles and valid URI annotations'
   for (const label of ['Senior Software Engineer', 'Example Organization 1', 'Company Only', 'Selectable Project', 'Unlinked Project', 'Malformed Link Project']) {
     expect(text).toContain(label)
   }
+  expect(text).toContain('portfolio.example.org/work?q=1')
+  expect(text).not.toContain('https://portfolio.example.org')
   expectInsidePrintableBounds(pdf)
 
   const uris = await pdfUriAnnotations(bytes)
-  expect(uris.filter((uri) => !uri.startsWith('mailto:') && !uri.startsWith('tel:')).sort()).toEqual([
+  expect(uris.filter((uri) => !uri.startsWith('tel:')).sort()).toEqual([
+    'http://intranet.example.org/candidate',
     'https://company.example.org/careers',
+    'https://github.example.org/candidate',
     'https://other.example.org/',
+    'https://portfolio.example.org/work?q=1',
     'https://project.example.org/',
     'https://project.example.org/',
+    'mailto:zoe@example.org',
   ])
+})
+
+test('rejected contact URLs stay selectable without PDF annotations', async ({ page }) => {
+  const payload = JSON.parse(cvPayload())
+  Object.assign(payload.resume.profile, {
+    website: 'javascript:disabled',
+    github: 'data:text/plain,disabled',
+    linkedin: 'https://user:password@example.org',
+  })
+  await openBuilderWithCV(page, JSON.stringify(payload))
+  await waitForFirstPreview(page)
+
+  const bytes = await downloadBuilderPdf(page)
+  const text = joinWrapped((await extractPdf(bytes)).lines)
+  expect(text).toContain('javascript:disabled')
+  expect(text).toContain('data:text/plain,disabled')
+  expect(text).toContain('user:password@example.org')
+  expect((await pdfUriAnnotations(bytes)).filter((uri) => !uri.startsWith('tel:'))).toEqual(['mailto:zoe@example.org'])
 })
 
 function denseSkillsPayload(
