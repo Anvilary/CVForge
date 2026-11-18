@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFString } from 'pdf-lib'
 import { cvPayload, LONG_URL, openBuilderWithCV, previewCanvases, waitForFirstPreview } from './support/previewFixtures'
 import { downloadBuilderPdf, extractPdf, joinWrapped, type ExtractedPdf } from './support/pdfText'
 import { PAGE_PADDING_HORIZONTAL } from '../../src/features/resume-pdf/resumePdfGeometry'
@@ -101,6 +102,56 @@ function expectInsidePrintableBounds(pdf: ExtractedPdf) {
     ).toBeLessThanOrEqual(printableRight + PDF_BOUNDARY_TOLERANCE_PT)
   }
 }
+
+async function pdfUriAnnotations(bytes: Buffer) {
+  const pdf = await PDFDocument.load(bytes)
+  const uris: string[] = []
+  for (const page of pdf.getPages()) {
+    const annotations = page.node.lookupMaybe(PDFName.of('Annots'), PDFArray)
+    for (const ref of annotations?.asArray() ?? []) {
+      const dictionary = pdf.context.lookup(ref, PDFDict)
+      const action = dictionary.lookupMaybe(PDFName.of('A'), PDFDict)
+      const uri = action?.lookup(PDFName.of('URI'))
+      if (uri instanceof PDFString || uri instanceof PDFHexString) uris.push(uri.decodeText())
+    }
+  }
+  return uris
+}
+
+test('work and project links export selectable titles and valid URI annotations', async ({ page }) => {
+  const payload = JSON.parse(cvPayload())
+  payload.resume.workExperience[0].companyLink = 'company.example.org/careers'
+  payload.resume.workExperience.push({
+    ...payload.resume.workExperience[0],
+    id: 'company-only',
+    role: '',
+    company: 'Company Only',
+    companyLink: 'https://other.example.org/',
+  })
+  payload.resume.projects = [
+    { id: 'linked', name: 'Selectable Project', link: 'https://project.example.org/' },
+    { id: 'unsafe', name: 'Unlinked Project', link: 'data:text/plain,unsafe' },
+    { id: 'malformed', name: 'Malformed Link Project', link: 'https:///invalid.example.org' },
+  ]
+  await openBuilderWithCV(page, JSON.stringify(payload))
+  await waitForFirstPreview(page)
+
+  const bytes = await downloadBuilderPdf(page)
+  const pdf = await extractPdf(bytes)
+  const text = joinWrapped(pdf.lines)
+  for (const label of ['Senior Software Engineer', 'Example Organization 1', 'Company Only', 'Selectable Project', 'Unlinked Project', 'Malformed Link Project']) {
+    expect(text).toContain(label)
+  }
+  expectInsidePrintableBounds(pdf)
+
+  const uris = await pdfUriAnnotations(bytes)
+  expect(uris.filter((uri) => !uri.startsWith('mailto:') && !uri.startsWith('tel:')).sort()).toEqual([
+    'https://company.example.org/careers',
+    'https://other.example.org/',
+    'https://project.example.org/',
+    'https://project.example.org/',
+  ])
+})
 
 function denseSkillsPayload(
   documentSize: 'A4' | 'Letter',

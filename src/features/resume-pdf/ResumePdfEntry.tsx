@@ -1,16 +1,18 @@
 import { Link, Text, View } from '@react-pdf/renderer'
 import { cleanText } from '@/shared/utils/resume-formatting'
 import { type PdfStyles } from './types'
+import { resolveEntryLink } from './resolveEntryLink'
 
 interface ResumePdfEntryProps {
   title?: string
+  titleLink?: unknown
   organization?: string
   subtitle?: string
   dates?: string
   styles: PdfStyles
 }
 
-export function ResumePdfEntry({ title, organization, subtitle, dates, styles }: ResumePdfEntryProps) {
+export function ResumePdfEntry({ title, titleLink, organization, subtitle, dates, styles }: ResumePdfEntryProps) {
   const cleanTitle = cleanText(title)
   const cleanOrganization = cleanText(organization)
   const cleanSubtitle = cleanText(subtitle)
@@ -18,11 +20,18 @@ export function ResumePdfEntry({ title, organization, subtitle, dates, styles }:
 
   if (!cleanTitle && !cleanOrganization && !cleanSubtitle && !cleanDates) return null
 
+  const resolvedLink = resolveEntryLink(titleLink)
+
   return (
     <View style={styles.entry} wrap={false}>
       {(cleanTitle || cleanOrganization || cleanDates) && (
         <View style={styles.entryRow}>
-          <EntryTitle title={cleanTitle} organization={cleanOrganization} styles={styles} />
+          <EntryTitle
+            title={cleanTitle}
+            titleLink={resolvedLink}
+            organization={cleanOrganization}
+            styles={styles}
+          />
           {cleanDates && <Text style={styles.entryDates}>{cleanDates}</Text>}
         </View>
       )}
@@ -31,34 +40,34 @@ export function ResumePdfEntry({ title, organization, subtitle, dates, styles }:
   )
 }
 
-function EntryTitle({ title, organization, styles }: { title: string; organization: string; styles: PdfStyles }) {
+interface EntryTitleProps {
+  title: string
+  titleLink: string | null
+  organization: string
+  styles: PdfStyles
+}
+
+function EntryTitle({ title, titleLink, organization, styles }: EntryTitleProps) {
   if (!title && !organization) return <Text />
 
   return (
     <Text style={styles.entryTitle}>
-      {title}
+      {titleLink ? <Link src={titleLink} style={styles.entryTitleLink}>{title || organization}</Link> : title}
       {title && organization ? <Text style={styles.entryOrg}> · </Text> : null}
-      {organization ? <Text style={styles.entryOrg}>{organization}</Text> : null}
+      {organization && (title || !titleLink) ? <Text style={styles.entryOrg}>{organization}</Text> : null}
     </Text>
   )
 }
 
 function Subtitle({ text, styles }: { text: string; styles: PdfStyles }) {
-  if (isUrl(text)) {
+  const href = resolveEntryLink(text)
+  if (href) {
     return (
-      <Link src={hrefForUrl(text)} style={[styles.entrySubtitle, styles.link]} wrap>
+      <Link src={href} style={[styles.entrySubtitle, styles.link]} wrap>
         {text}
       </Link>
     )
   }
 
   return <Text style={styles.entrySubtitle}>{text}</Text>
-}
-
-function isUrl(value: string) {
-  return /^(https?:\/\/|www\.|[\w.-]+\.[a-z]{2,})/i.test(value)
-}
-
-function hrefForUrl(value: string) {
-  return /^https?:\/\//i.test(value) ? value : `https://${value}`
 }

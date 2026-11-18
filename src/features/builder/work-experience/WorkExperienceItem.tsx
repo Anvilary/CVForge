@@ -59,6 +59,14 @@ export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast
         </FormField>
       </FieldGroup>
 
+      <FormField label="Company Link">
+        <TextInput
+          placeholder="e.g. github.com/acme or acme.com"
+          value={typeof item.companyLink === 'string' ? item.companyLink : ''}
+          onChange={(e) => handleChange('companyLink', e.target.value)}
+        />
+      </FormField>
+
       <FieldGroup columns={2}>
         <FormField label="Location">
           <TextInput

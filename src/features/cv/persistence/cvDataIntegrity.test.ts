@@ -5,7 +5,7 @@ import { parseCVState } from '@/features/cv/model/parse'
 import { type CVState } from '@/features/cv/model/types'
 import { importCVState } from '@/features/import-export/importCVState'
 import { migrateCVState } from './cvMigrations'
-import { storage } from './storage'
+import { readCVStateText, storage } from './storage'
 
 describe('CV data integrity', () => {
   beforeEach(() => {
@@ -55,6 +55,31 @@ describe('CV data integrity', () => {
       text: async () => JSON.stringify(input),
     })
     expect(imported).toEqual(input)
+  })
+
+  it('preserves historical work links and optional company links through JSON and storage reads', async () => {
+    const state = fixture()
+    const work = {
+      company: 'Example Co', role: 'Engineer', location: '',
+      startDate: '', endDate: '', isCurrent: false, bullets: [],
+    }
+    state.resume.workExperience = [
+      { ...work, id: 'absent' },
+      { ...work, id: 'null', link: null },
+      { ...work, id: 'numeric', link: 14 },
+      { ...work, id: 'array', link: ['historical'] },
+      {
+        ...work,
+        id: 'object',
+        link: { href: 'https://legacy.example.org/' },
+        companyLink: 'https://company.example.org/',
+      },
+      { ...work, id: 'string', link: 'https://opaque.example.org/' },
+      { ...work, id: 'extension', companyLink: { source: 'legacy' } },
+    ]
+    const raw = JSON.stringify(state)
+    await expect(importCVState({ text: async () => raw })).resolves.toEqual(state)
+    expect(readCVStateText(raw)).toEqual({ status: 'loaded', state, raw })
   })
 
   it.each([

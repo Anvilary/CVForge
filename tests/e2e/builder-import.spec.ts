@@ -78,10 +78,10 @@ test('importing an older CVForge PDF removes phantom spaces inside words', async
 
 test('an import opens every section that received content', async ({ page }) => {
   await page.goto('/builder')
-  await expect(page.getByLabel('Company')).toHaveCount(0)
+  await expect(page.getByLabel('Company', { exact: true })).toHaveCount(0)
   await importPdf(page, await olderCVForgePdf())
 
-  await expect(page.getByLabel('Company')).toHaveValue('Acme Corp')
+  await expect(page.getByLabel('Company', { exact: true })).toHaveValue('Acme Corp')
   await expect(page.getByLabel('School / Institution')).toHaveValue('Example University')
   await expect(page.getByLabel('Degree / Major')).toHaveValue('BSc Computer Science')
 })
@@ -126,6 +126,12 @@ test('an embedded session restored in Analyzer opens Builder sections and preser
   await expect(name).toHaveValue(original.resume.profile.name)
   await expect(page.getByLabel('Company', { exact: true })).toHaveValue('Example Co')
   await expect.poll(async () => JSON.parse((await readStorage(page, CV_STATE_KEY)) ?? 'null')).toEqual(original)
+
+  const companyLink = page.getByLabel('Company Link', { exact: true })
+  await expect(companyLink).toHaveValue('')
+  await companyLink.fill('example.org/careers')
+  await expect.poll(async () => JSON.parse((await readStorage(page, CV_STATE_KEY)) ?? 'null').resume.workExperience[0])
+    .toEqual({ ...original.resume.workExperience[0], companyLink: 'example.org/careers' })
 })
 
 test('section move arrows sit side by side in one row', async ({ page }) => {
