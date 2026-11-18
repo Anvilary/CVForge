@@ -3,132 +3,132 @@
 ## Source Map
 
 ### App Routes
-- `apps/web/src/app/page.tsx`
-- `apps/web/src/app/layout.tsx`
-- `apps/web/src/app/builder/page.tsx`
-- `apps/web/src/app/analyzer/page.tsx` (canonical Analyzer)
-- `apps/web/src/app/parser/page.tsx` (permanent compatibility redirect)
-- `apps/web/src/app/resume-import/page.tsx`
-- `apps/web/src/app/robots.ts`
-- `apps/web/src/app/sitemap.ts`
-- `apps/web/src/app/opengraph-image.tsx`
-- `apps/web/src/app/health/route.ts`
-- `apps/web/src/app/error.tsx`
-- `apps/web/src/app/global-error.tsx`
-- `apps/web/src/app/not-found.tsx`
+- `src/app/page.tsx`
+- `src/app/layout.tsx`
+- `src/app/builder/page.tsx`
+- `src/app/analyzer/page.tsx` (canonical Analyzer)
+- `src/app/parser/page.tsx` (permanent compatibility redirect)
+- `src/app/resume-import/page.tsx`
+- `src/app/robots.ts`
+- `src/app/sitemap.ts`
+- `src/app/opengraph-image.tsx`
+- `src/app/health/route.ts`
+- `src/app/error.tsx`
+- `src/app/global-error.tsx`
+- `src/app/not-found.tsx`
 
 ### State and Persistence
-- `apps/web/src/context/CVContext.tsx`
-- `apps/web/src/context/cvReducer.ts`
-- `apps/web/src/types/cv.ts` (Zod schemas + `CURRENT_CV_SCHEMA_VERSION`)
-- `apps/web/src/lib/cvState.ts`
-- `apps/web/src/lib/storage.ts`
-- `apps/web/src/lib/cvMigrations.ts` (run `migrateCVState` before `parseCVState` on all external state)
+- `src/context/CVContext.tsx`
+- `src/context/cvReducer.ts`
+- `src/types/cv.ts` (Zod schemas + `CURRENT_CV_SCHEMA_VERSION`)
+- `src/lib/cvState.ts`
+- `src/lib/storage.ts`
+- `src/lib/cvMigrations.ts` (run `migrateCVState` before `parseCVState` on all external state)
 
 ### Builder Workbench
-- `apps/web/src/features/builder/workbench/BuilderWorkbench.tsx`
-- `apps/web/src/features/builder/workbench/BuilderEditorPanel.tsx`
-- `apps/web/src/features/builder/workbench/BuilderPreviewPanel.tsx`
-- `apps/web/src/features/builder/workbench/BuilderSectionList.tsx`
-- `apps/web/src/features/builder/workbench/BuilderEntryModal.tsx`
-- `apps/web/src/features/builder/workbench/builderSectionConfig.tsx` (static section metadata)
-- `apps/web/src/features/builder/workbench/BuilderSectionCard.tsx` (per-card render component)
-- `apps/web/src/features/builder/workbench/SectionReorderControls.tsx` (up/down button pair)
-- `apps/web/src/features/builder/workbench/AddCustomSectionCard.tsx` (CTA for adding first custom section)
-- `apps/web/src/features/builder/workbench/useBuilderSectionState.ts` (expandedIds + focusVersions)
-- `apps/web/src/features/builder/workbench/useBuilderSectionActions.ts` (handleAdd, toggleVisibility, handleMove)
-- `apps/web/src/features/builder/hooks/useDescriptionModeToggle.ts` (shared mode toggle for item editors)
+- `src/features/builder/workbench/BuilderWorkbench.tsx`
+- `src/features/builder/workbench/BuilderEditorPanel.tsx`
+- `src/features/builder/workbench/BuilderPreviewPanel.tsx`
+- `src/features/builder/workbench/BuilderSectionList.tsx`
+- `src/features/builder/workbench/BuilderEntryModal.tsx`
+- `src/features/builder/workbench/builderSectionConfig.tsx` (static section metadata)
+- `src/features/builder/workbench/BuilderSectionCard.tsx` (per-card render component)
+- `src/features/builder/workbench/SectionReorderControls.tsx` (up/down button pair)
+- `src/features/builder/workbench/AddCustomSectionCard.tsx` (CTA for adding first custom section)
+- `src/features/builder/workbench/useBuilderSectionState.ts` (expandedIds + focusVersions)
+- `src/features/builder/workbench/useBuilderSectionActions.ts` (handleAdd, toggleVisibility, handleMove)
+- `src/features/builder/hooks/useDescriptionModeToggle.ts` (shared mode toggle for item editors)
 
 ### Builder Context
-- `apps/web/src/features/builder/context/BuilderAddFocusContext.tsx`
+- `src/features/builder/context/BuilderAddFocusContext.tsx`
 
 ### Builder Section Editors
-- `apps/web/src/features/builder/profile/ProfileEditor.tsx`
-- `apps/web/src/features/builder/work-experience/WorkExperienceEditor.tsx`
-- `apps/web/src/features/builder/education/EducationEditor.tsx`
-- `apps/web/src/features/builder/projects/ProjectsEditor.tsx`
-- `apps/web/src/features/builder/skills/SkillListEditor.tsx`
-- `apps/web/src/features/builder/languages/LanguagesEditor.tsx`
-- `apps/web/src/features/builder/custom-sections/CustomSectionsEditor.tsx`
-- `apps/web/src/features/builder/settings/SettingsEditor.tsx`
+- `src/features/builder/profile/ProfileEditor.tsx`
+- `src/features/builder/work-experience/WorkExperienceEditor.tsx`
+- `src/features/builder/education/EducationEditor.tsx`
+- `src/features/builder/projects/ProjectsEditor.tsx`
+- `src/features/builder/skills/SkillListEditor.tsx`
+- `src/features/builder/languages/LanguagesEditor.tsx`
+- `src/features/builder/custom-sections/CustomSectionsEditor.tsx`
+- `src/features/builder/settings/SettingsEditor.tsx`
 
 ### PDF Preview and Export
-- `apps/web/src/features/resume-pdf/ResumePdfDocument.tsx`
-- `apps/web/src/features/resume-pdf/DownloadPdfButton.tsx`
-- `apps/web/src/features/resume-pdf/embedCVStateAttachment.ts`
-- `apps/web/src/lib/resume-formatting.ts` (cleanText, cleanList, formatDateRange, joinNonEmpty)
-- `apps/web/src/features/builder/workbench/PdfCanvasPreview.tsx` (canvas render + dock UI)
-- `apps/web/src/features/builder/workbench/useZoomControl.ts` (zoom/fit state)
-- `apps/web/src/features/builder/workbench/useDevicePixelRatio.ts` (DPR tracking)
+- `src/features/resume-pdf/ResumePdfDocument.tsx`
+- `src/features/resume-pdf/DownloadPdfButton.tsx`
+- `src/features/resume-pdf/embedCVStateAttachment.ts`
+- `src/lib/resume-formatting.ts` (cleanText, cleanList, formatDateRange, joinNonEmpty)
+- `src/features/builder/workbench/PdfCanvasPreview.tsx` (canvas render + dock UI)
+- `src/features/builder/workbench/useZoomControl.ts` (zoom/fit state)
+- `src/features/builder/workbench/useDevicePixelRatio.ts` (DPR tracking)
 
 ### Analyzer Workbench (internal parser modules)
-- `apps/web/src/features/parser/workbench/ParserWorkbench.tsx`
-- `apps/web/src/features/parser/upload/PdfUploadPanel.tsx`
-- `apps/web/src/features/parser/upload/analysisFileSupport.ts` (PDF-only boundary)
-- `apps/web/src/lib/parser/analysisFileValidation.ts`
-- `apps/web/src/lib/parser/analysisLimits.ts`
-- `apps/web/src/lib/parser/pdfExtraction.ts`
-- `apps/web/src/features/parser/upload/ParserHeuristicAction.tsx`
-- `apps/web/src/features/parser/upload/ParserRestoreAction.tsx`
-- `apps/web/src/features/parser/diagnostics/ExtractionDiagnostics.tsx`
-- `apps/web/src/features/parser/diagnostics/TextPreview.tsx`
-- `apps/web/src/features/parser/source/SourcePdfPreview.tsx`
-- `apps/web/src/lib/parser/heuristicResumeParser.ts` (public orchestrator)
-- `apps/web/src/lib/parser/heuristic/heuristicTypes.ts`
-- `apps/web/src/lib/parser/heuristic/dateParsing.ts`
-- `apps/web/src/lib/parser/heuristic/sectionDetection.ts`
-- `apps/web/src/lib/parser/heuristic/profileExtraction.ts`
-- `apps/web/src/lib/parser/heuristic/sectionExtraction.ts`
-- `apps/web/src/lib/parser/extractCVForgeAttachment.ts`
-- `apps/web/src/features/scoring/scoreCV.ts`
-- `apps/web/src/features/scoring/scoreSignals.ts`
-- `apps/web/src/features/scoring/scoringTypes.ts`
-- `apps/web/src/features/scoring/languageSignals.ts`
-- `apps/web/src/features/scoring/visibleResumeText.ts`
+- `src/features/parser/workbench/ParserWorkbench.tsx`
+- `src/features/parser/upload/PdfUploadPanel.tsx`
+- `src/features/parser/upload/analysisFileSupport.ts` (PDF-only boundary)
+- `src/lib/parser/analysisFileValidation.ts`
+- `src/lib/parser/analysisLimits.ts`
+- `src/lib/parser/pdfExtraction.ts`
+- `src/features/parser/upload/ParserHeuristicAction.tsx`
+- `src/features/parser/upload/ParserRestoreAction.tsx`
+- `src/features/parser/diagnostics/ExtractionDiagnostics.tsx`
+- `src/features/parser/diagnostics/TextPreview.tsx`
+- `src/features/parser/source/SourcePdfPreview.tsx`
+- `src/lib/parser/heuristicResumeParser.ts` (public orchestrator)
+- `src/lib/parser/heuristic/heuristicTypes.ts`
+- `src/lib/parser/heuristic/dateParsing.ts`
+- `src/lib/parser/heuristic/sectionDetection.ts`
+- `src/lib/parser/heuristic/profileExtraction.ts`
+- `src/lib/parser/heuristic/sectionExtraction.ts`
+- `src/lib/parser/extractCVForgeAttachment.ts`
+- `src/features/scoring/scoreCV.ts`
+- `src/features/scoring/scoreSignals.ts`
+- `src/features/scoring/scoringTypes.ts`
+- `src/features/scoring/languageSignals.ts`
+- `src/features/scoring/visibleResumeText.ts`
 
 ### Import and Export
-- `apps/web/src/features/import-export/ImportModal.tsx` (orchestrator)
-- `apps/web/src/features/import-export/ImportFileDropzone.tsx`
-- `apps/web/src/features/import-export/ImportConfirmStep.tsx`
-- `apps/web/src/features/import-export/PdfHeuristicReview.tsx`
-- `apps/web/src/features/import-export/ImportReviewTable.tsx`
-- `apps/web/src/features/import-export/importCVState.ts`
+- `src/features/import-export/ImportModal.tsx` (orchestrator)
+- `src/features/import-export/ImportFileDropzone.tsx`
+- `src/features/import-export/ImportConfirmStep.tsx`
+- `src/features/import-export/PdfHeuristicReview.tsx`
+- `src/features/import-export/ImportReviewTable.tsx`
+- `src/features/import-export/importCVState.ts`
 
 ### Shared UI Primitives
-- `apps/web/src/components/shared/workbench/WorkbenchShell.tsx`
-- `apps/web/src/components/shared/workbench/WorkbenchPanel.tsx`
-- `apps/web/src/components/shared/workbench/WorkbenchHeader.tsx`
-- `apps/web/src/components/shared/workbench/WorkbenchActionGroup.tsx`
-- `apps/web/src/components/shared/workbench/PreviewCanvas.tsx`
-- `apps/web/src/components/shared/workbench/WorkbenchSectionCard.tsx`
-- `apps/web/src/components/shared/form/FormField.tsx`
-- `apps/web/src/components/shared/sections/RepeatableSectionEditor.tsx`
-- `apps/web/src/components/shared/sections/SectionItemHeader.tsx`
-- `apps/web/src/components/shared/sections/ConfirmDeleteButton.tsx`
+- `src/components/shared/workbench/WorkbenchShell.tsx`
+- `src/components/shared/workbench/WorkbenchPanel.tsx`
+- `src/components/shared/workbench/WorkbenchHeader.tsx`
+- `src/components/shared/workbench/WorkbenchActionGroup.tsx`
+- `src/components/shared/workbench/PreviewCanvas.tsx`
+- `src/components/shared/workbench/WorkbenchSectionCard.tsx`
+- `src/components/shared/form/FormField.tsx`
+- `src/components/shared/sections/RepeatableSectionEditor.tsx`
+- `src/components/shared/sections/SectionItemHeader.tsx`
+- `src/components/shared/sections/ConfirmDeleteButton.tsx`
 
 ### Branding and Atmosphere
-- `apps/web/src/components/ui/Brand.tsx`
-- `apps/web/src/components/ui/EmberBackground.tsx`
-- `apps/web/src/components/layout/SiteHeader.tsx`
-- `apps/web/src/components/layout/AppHeader.tsx`
-- `apps/web/src/components/layout/SiteFooter.tsx`
-- `apps/web/public/brand/`
-- `apps/web/src/styles/workspace.css`
+- `src/components/ui/Brand.tsx`
+- `src/components/ui/EmberBackground.tsx`
+- `src/components/layout/SiteHeader.tsx`
+- `src/components/layout/AppHeader.tsx`
+- `src/components/layout/SiteFooter.tsx`
+- `public/brand/`
+- `src/styles/workspace.css`
 
 ### SEO
-- `apps/web/src/lib/siteConfig.ts` (`NEXT_PUBLIC_SITE_URL` source of truth)
-- `apps/web/src/components/seo/StructuredData.tsx`
-- `apps/web/src/app/robots.ts`
-- `apps/web/src/app/sitemap.ts`
-- `apps/web/src/app/opengraph-image.tsx`
+- `src/lib/siteConfig.ts` (`NEXT_PUBLIC_SITE_URL` source of truth)
+- `src/components/seo/StructuredData.tsx`
+- `src/app/robots.ts`
+- `src/app/sitemap.ts`
+- `src/app/opengraph-image.tsx`
 
 ### Styles
-- `apps/web/src/styles/tokens.css`
-- `apps/web/src/styles/base.css`
-- `apps/web/src/styles/ui.css`
-- `apps/web/src/styles/site.css`
-- `apps/web/src/styles/workspace.css`
-- `apps/web/src/styles/modals.css`
+- `src/styles/tokens.css`
+- `src/styles/base.css`
+- `src/styles/ui.css`
+- `src/styles/site.css`
+- `src/styles/workspace.css`
+- `src/styles/modals.css`
 
 ### Documentation
 - `README.md`
@@ -144,10 +144,10 @@
 ### Tooling
 - `Makefile`
 - `package.json`
-- `apps/web/package.json`
-- `apps/web/playwright.config.ts`
-- `apps/web/e2e/release-smoke.spec.ts`
-- `apps/web/e2e/accessibility.spec.ts`
+- `package.json`
+- `playwright.config.ts`
+- `tests/e2e/release-smoke.spec.ts`
+- `tests/e2e/accessibility.spec.ts`
 - `Dockerfile`
 - `docker-compose.yml`
 - `.github/workflows/validation.yml`

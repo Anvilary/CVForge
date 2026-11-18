@@ -1,35 +1,64 @@
 {
   "name": "cvforge",
+  "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.5.2",
   "engines": {
     "node": ">=22.13.0 <23"
   },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:cross-browser": "playwright test --project=firefox-smoke --project=webkit-smoke",
+    "test:a11y": "playwright test tests/e2e/accessibility.spec.ts --project=chromium",
+    "test:unit": "vitest run",
+    "check:em-dash": "node tooling/check-no-em-dash.mjs",
+    "check:commits": "node tooling/check-commit-messages.mjs",
+    "audit": "pnpm audit",
+    "audit-prod": "pnpm audit --prod"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "^4.5.1",
+    "lucide-react": "0.474.0",
+    "next": "15.5.26",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.3.289",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sharp": "0.35.4",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@eslint/eslintrc": "^3",
+    "@playwright/test": "1.62.0",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.26",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "postcss": "^8.5.18",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5",
+    "vitest": "4.1.11"
+  },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "unrs-resolver"
+    ],
     "overrides": {
       "postcss": "^8.5.28",
       "sharp": "0.35.4",
       "nanoid@<3.3.18": "^3.3.18",
       "fflate@<0.8.3": "^0.8.3"
     }
-  },
-  "scripts": {
-    "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter web build",
-    "start": "pnpm --filter web start",
-    "lint": "pnpm --filter web lint",
-    "typecheck": "pnpm --filter web typecheck",
-    "test:unit": "vitest run --config apps/web/vitest.config.ts",
-    "test:e2e": "pnpm --filter web test:e2e",
-    "test:e2e:chromium": "pnpm --filter web test:e2e:chromium",
-    "test:e2e:cross-browser": "pnpm --filter web test:e2e:cross-browser",
-    "test:a11y": "pnpm --filter web test:a11y",
-    "check:em-dash": "node tools/check-no-em-dash.mjs",
-    "check:commits": "node tools/check-commit-messages.mjs",
-    "audit": "pnpm audit",
-    "audit-prod": "pnpm audit --prod"
-  },
-  "devDependencies": {
-    "vitest": "4.1.11"
   }
 }

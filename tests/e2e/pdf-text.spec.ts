@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 import { cvPayload, LONG_URL, openBuilderWithCV, previewCanvases, waitForFirstPreview } from './support/previewFixtures'
 import { downloadBuilderPdf, extractPdf, joinWrapped, type ExtractedPdf } from './support/pdfText'
-import { PAGE_PADDING_HORIZONTAL } from '../src/features/resume-pdf/resumePdfGeometry'
+import { PAGE_PADDING_HORIZONTAL } from '../../src/features/resume-pdf/resumePdfGeometry'
 
 const PDF_BOUNDARY_TOLERANCE_PT = 0.75
 

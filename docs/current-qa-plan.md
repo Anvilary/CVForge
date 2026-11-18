@@ -17,7 +17,7 @@ git diff --check
 Install managed browsers with:
 
 ```bash
-pnpm --filter web exec playwright install chromium firefox webkit
+pnpm exec playwright install chromium firefox webkit
 ```
 
 The full suite runs on Chromium; the critical subset runs on Firefox and WebKit. On

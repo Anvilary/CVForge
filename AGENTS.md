@@ -2,7 +2,7 @@
 
 ## Project Shape
 
-- CVForge is a Next.js app under `apps/web`.
+- CVForge is a single Next.js app at the repository root.
 - The product is local-first and browser-only.
 - There is currently no backend, API service, database, or auth system.
 - Use `pnpm` for package commands.

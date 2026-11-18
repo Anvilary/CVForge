@@ -69,7 +69,7 @@ CURRENT_STEP="unit tests"
 pnpm test:unit
 
 CURRENT_STEP="required Playwright browsers"
-pnpm --filter web exec playwright install chromium firefox webkit
+pnpm exec playwright install chromium firefox webkit
 
 CURRENT_STEP="Chromium and axe validation"
 pnpm test:e2e:chromium

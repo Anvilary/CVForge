@@ -3,8 +3,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { CURRENT_CV_SCHEMA_VERSION, defaultCVState, type CVState } from '../src/types/cv'
-import { lineSpacingToLineHeight } from '../src/features/resume-pdf/resumePdfLayoutHelpers'
+import { CURRENT_CV_SCHEMA_VERSION, defaultCVState, type CVState } from '../../src/types/cv'
+import { lineSpacingToLineHeight } from '../../src/features/resume-pdf/resumePdfLayoutHelpers'
 
 const exec = promisify(execFile)
 const SCRATCH_DIR =

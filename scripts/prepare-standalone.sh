@@ -2,8 +2,8 @@
 set -euo pipefail
 
 REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WEB_ROOT="${REPOSITORY_ROOT}/apps/web"
-STANDALONE_ROOT="${WEB_ROOT}/.next/standalone/apps/web"
+WEB_ROOT="${REPOSITORY_ROOT}"
+STANDALONE_ROOT="${WEB_ROOT}/.next/standalone"
 
 if [[ ! -f "${STANDALONE_ROOT}/server.js" ]]; then
   echo "Standalone server is missing. Run a production build first." >&2

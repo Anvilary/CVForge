@@ -2,8 +2,7 @@
 set -euo pipefail
 
 REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WEB_ROOT="${REPOSITORY_ROOT}/apps/web"
-SERVER_PATH="${WEB_ROOT}/.next/standalone/apps/web/server.js"
+SERVER_PATH="${REPOSITORY_ROOT}/.next/standalone/server.js"
 PID_DIR="${REPOSITORY_ROOT}/.pids"
 LOG_DIR="${REPOSITORY_ROOT}/.logs"
 PID_FILE="${PID_DIR}/preview.pid"
@@ -74,7 +73,7 @@ case "${1:-}" in
     echo "Production preview build is ready for ${SITE_URL}."
     ;;
   start)
-    if [[ ! -f "${SERVER_PATH}" || ! -d "${WEB_ROOT}/.next/standalone/apps/web/.next/static" ]]; then
+    if [[ ! -f "${SERVER_PATH}" || ! -d "${REPOSITORY_ROOT}/.next/standalone/.next/static" ]]; then
       echo "Prepared standalone output is missing. Run 'make preview-build' first." >&2
       exit 1
     fi

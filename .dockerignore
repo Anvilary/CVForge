@@ -31,9 +31,8 @@ coverage
 tsconfig.tsbuildinfo
 **/*.tsbuildinfo
 test-results
-apps/web/test-results
-apps/web/playwright-report
-apps/web/e2e
+playwright-report
+tests/e2e
 **/*.test.ts
 graphify-out
 .logs

@@ -68,7 +68,7 @@ install:
 # --- Foreground Development --------------------------------------------------
 
 dev:
-	pnpm --filter web dev --hostname $(WEB_HOST) --port $(WEB_PORT)
+	pnpm dev --hostname $(WEB_HOST) --port $(WEB_PORT)
 
 # --- Validation --------------------------------------------------------------
 
@@ -120,7 +120,7 @@ web-start:
 		exit 1; \
 	fi
 	@echo "Starting CVForge web server in background on $(WEB_URL)..."
-	@setsid sh -c 'exec pnpm --filter web dev --hostname $(WEB_HOST) --port $(WEB_PORT) > .logs/web.log 2>&1' & echo $$! > .pids/web.pid
+	@setsid sh -c 'exec pnpm dev --hostname $(WEB_HOST) --port $(WEB_PORT) > .logs/web.log 2>&1' & echo $$! > .pids/web.pid
 	@sleep 2
 	@if kill -0 $$(cat .pids/web.pid) 2>/dev/null; then \
 		echo "Web started (PID $$(cat .pids/web.pid))"; \
@@ -187,12 +187,11 @@ logs-web:
 # --- Cleanup -----------------------------------------------------------------
 
 clean:
-	rm -rf apps/web/.next
-	rm -rf apps/web/out
+	rm -rf .next
+	rm -rf out
 
 clean-deps:
 	rm -rf node_modules
-	rm -rf apps/web/node_modules
 
 # --- Docker Production Workflow ----------------------------------------------
 

@@ -4,7 +4,7 @@ const port = Number(process.env.PLAYWRIGHT_PORT ?? 4317)
 const baseURL = `http://127.0.0.1:${port}`
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_PATH
 const reuseExistingServer = process.env.PLAYWRIGHT_REUSE_SERVER === '1'
-const standaloneAppDir = '.next/standalone/apps/web'
+const standaloneAppDir = '.next/standalone'
 const standaloneCommand = [
   `rm -rf ${standaloneAppDir}/public ${standaloneAppDir}/.next/static`,
   `mkdir -p ${standaloneAppDir}/.next`,
@@ -14,7 +14,7 @@ const standaloneCommand = [
 ].join(' && ')
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './tests/e2e',
   fullyParallel: false,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,

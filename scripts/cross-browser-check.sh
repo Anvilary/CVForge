@@ -35,4 +35,4 @@ docker run --rm --ipc=host \
   --volume "${REPOSITORY_ROOT}:/work" \
   --workdir /work \
   "${PLAYWRIGHT_IMAGE}" \
-  bash -lc "corepack pnpm@10.5.2 --filter web exec playwright test --project=firefox-smoke --project=webkit-smoke"
+  bash -lc "corepack pnpm@10.5.2 exec playwright test --project=firefox-smoke --project=webkit-smoke"

@@ -106,7 +106,7 @@ data before starting fresh or rolling back an application version.
 | PDF generation | `@react-pdf/renderer` and `pdf-lib` |
 | PDF preview and extraction | `pdfjs-dist`, running in the browser |
 | Tests | Vitest, Playwright and axe |
-| Workspace | pnpm and Make |
+| Tooling | pnpm and Make |
 | Deployment | Standalone Node.js image, Docker Compose, Nginx and Cloudflare Tunnel |
 
 No application backend, account service, or database is required.
@@ -170,7 +170,7 @@ Analyzer
 ```
 
 The maintained data contract is defined by the Zod schemas in
-`apps/web/src/types/cv/`. Import validation and schema migrations protect
+`src/types/cv/`. Import validation and schema migrations protect
 the stored format, and external PDF parsing never silently replaces the
 Builder's current CV.
 

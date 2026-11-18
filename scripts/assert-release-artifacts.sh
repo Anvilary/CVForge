@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BUILD_ROOT="${REPOSITORY_ROOT}/apps/web/.next"
+BUILD_ROOT="${REPOSITORY_ROOT}/.next"
 SITE_URL="${NEXT_PUBLIC_SITE_URL:-}"
 ALLOW_INVALID="${ALLOW_INVALID_SITE_URL:-0}"
 

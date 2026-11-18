@@ -9,9 +9,9 @@ The near-term goal is a maintainable builder that can be self-hosted without a d
 ## 2. Implemented Scope
 
 The current app includes:
-- A Next.js app shell in `apps/web`.
-- A Zod CV contract in `apps/web/src/types/cv.ts`.
-- Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
+- A Next.js app shell at the repository root.
+- A Zod CV contract in `src/types/cv.ts`.
+- Reducer-based CV state in `src/context/CVContext.tsx`.
 - Browser persistence through `localStorage`.
 - A responsive workbench shell for Builder and Analyzer pages.
 - Builder sections for profile, settings, work experience, education, projects, skills, custom sections, and languages.

@@ -14,9 +14,6 @@ yarn-error.log*
 out/
 build/
 dist/
-apps/web/.next/
-apps/web/out/
-apps/web/build/
 **/*.tsbuildinfo
 next-env.d.ts
 
@@ -24,6 +21,7 @@ next-env.d.ts
 coverage/
 .playwright/
 test-results/
+playwright-report/
 reports/
 *.lcov
 

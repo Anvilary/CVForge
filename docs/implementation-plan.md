@@ -30,9 +30,9 @@ Workbench contract:
 - [x] Add automated `localStorage` persistence with safe validation.
 
 Implementation notes:
-- CV schema location: `apps/web/src/types/cv.ts`.
-- State provider location: `apps/web/src/context/CVContext.tsx`.
-- Storage helper location: `apps/web/src/lib/storage.ts`.
+- CV schema location: `src/types/cv.ts`.
+- State provider location: `src/context/CVContext.tsx`.
+- Storage helper location: `src/lib/storage.ts`.
 - Current CV storage key: `cvforge:state`.
 
 ## Phase 3: Builder Interface (Completed)

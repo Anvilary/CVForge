@@ -9,8 +9,8 @@ CVForge is a local-first, browser-only CV Builder, PDF exporter, and ATS-style C
 ## Commands
 
 **Run before suggesting done (when the active task authorizes validation):**
-- `pnpm lint` - ESLint across the monorepo
-- `pnpm typecheck` - `tsc --noEmit` across the monorepo
+- `pnpm lint` - ESLint from the repository root
+- `pnpm typecheck` - `tsc --noEmit` from the repository root
 - `pnpm build` - production Next.js build (catches type errors lint misses)
 - `make check` - runs all three above in sequence
 - `pnpm test:unit` - deterministic scoring, PDF validation, and CV data-integrity tests
@@ -28,10 +28,10 @@ CVForge is a local-first, browser-only CV Builder, PDF exporter, and ATS-style C
 - `make status` - git status + web process + Docker status in one shot
 - `rg <symbol>` - preferred over `grep` for symbol lookup across the repo
 
-## Monorepo Layout
+## Repository Layout
 
 ```
-apps/web/          Next.js app (the only app)
+Repository root    Next.js app
   src/
     app/           Next.js App Router pages (builder, analyzer, parser redirect, resume-import redirect)
     context/       Global state (CVContext)
@@ -40,7 +40,7 @@ apps/web/          Next.js app (the only app)
     lib/           Utilities (storage, cvState, exportCVState, importCVState, parser)
     components/    Shared UI primitives (workbench shell, form controls, section cards)
     styles/        Global CSS tokens and workspace styles
-  public/brand/    SVG brand assets
+  public/brand/    brand assets
 Makefile           Developer commands (see above)
 Dockerfile         Production Docker image
 ```
@@ -51,7 +51,7 @@ Dockerfile         Production Docker image
 
 - `Resume` holds profile, workExperience, education, projects, skills, languages, customSections.
 - `Settings` holds all PDF rendering controls: themeColor, fontFamily, fontSize, spacings, section order, visibility, description modes, section titles.
-- Both are defined with Zod in `apps/web/src/types/cv.ts`. This is the authoritative schema.
+- Both are defined with Zod in `src/types/cv.ts`. This is the authoritative schema.
 
 **Reducer pattern:**
 - `CVContext.tsx` provides state + dispatch.

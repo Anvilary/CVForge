@@ -6,8 +6,8 @@ import process from 'node:process'
 // em dashes (U+2014). Used by the commit-msg hook (--file) and by CI, which
 // checks every commit reachable from HEAD (or a given revision range).
 // Usage:
-//   node tools/check-commit-messages.mjs --file .git/COMMIT_EDITMSG
-//   node tools/check-commit-messages.mjs [revision-range]
+//   node tooling/check-commit-messages.mjs --file .git/COMMIT_EDITMSG
+//   node tooling/check-commit-messages.mjs [revision-range]
 const EM_DASH = String.fromCharCode(0x2014)
 const CO_AUTHOR = /^\s*co-authored-by\s*:/im
 
