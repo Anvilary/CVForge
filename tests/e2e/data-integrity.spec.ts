@@ -113,6 +113,37 @@ test('a valid saved CV loads, stays unchanged until edited, and persists edits',
   await expect.poll(() => savedProfileName(page)).toBe('Valid Owner 2')
 })
 
+test('an empty CV stays unsaved until edited and failed autosaves keep the last saved state', async ({ page }) => {
+  await page.addInitScript((storageKey) => {
+    const setItem = Storage.prototype.setItem
+    Storage.prototype.setItem = function (key, value) {
+      if (this === localStorage && key === storageKey && sessionStorage.getItem('block-autosave')) {
+        throw new DOMException('Storage quota exceeded', 'QuotaExceededError')
+      }
+      setItem.call(this, key, value)
+    }
+  }, CV_STATE_KEY)
+  await page.goto('/builder')
+  const name = page.getByLabel('Full Name')
+  await expect(name).toHaveValue('')
+  expect(await readStorage(page, CV_STATE_KEY)).toBeNull()
+
+  await name.fill('Last Saved Owner')
+  await expect.poll(() => savedProfileName(page)).toBe('Last Saved Owner')
+  const saved = await readStorage(page, CV_STATE_KEY)
+
+  await page.evaluate(() => sessionStorage.setItem('block-autosave', '1'))
+  await name.fill('Unsaved Draft Owner')
+  const alert = page.getByRole('alert').filter({ hasText: 'Browser autosave is unavailable or full' })
+  await expect(alert).toBeVisible()
+  expect(await readStorage(page, CV_STATE_KEY)).toBe(saved)
+
+  await page.evaluate(() => sessionStorage.removeItem('block-autosave'))
+  await name.fill('Saved After Recovery')
+  await expect.poll(() => savedProfileName(page)).toBe('Saved After Recovery')
+  await expect(alert).toHaveCount(0)
+})
+
 test('a second tab pauses autosave instead of overwriting the first tab', async ({ page, context }) => {
   const payload = await currentStatePayload(page, 'Shared Owner')
   await seedStorage(page, { [CV_STATE_KEY]: payload })

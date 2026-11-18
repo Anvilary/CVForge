@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Dialog, type Page } from '@playwright/test'
 import {
   PDFDocument,
   PDFNumber,
@@ -8,6 +8,9 @@ import {
   type PDFFont,
   type PDFPage,
 } from 'pdf-lib'
+import { defaultCVState } from '../../src/features/cv/model/defaults'
+import { CV_STATE_KEY, readStorage, savedProfileName, seedStorage } from './support/cvStorage'
+import { downloadBuilderPdf } from './support/pdfText'
 
 type RunPart = string | number
 
@@ -81,6 +84,48 @@ test('an import opens every section that received content', async ({ page }) => 
   await expect(page.getByLabel('Company')).toHaveValue('Acme Corp')
   await expect(page.getByLabel('School / Institution')).toHaveValue('Example University')
   await expect(page.getByLabel('Degree / Major')).toHaveValue('BSc Computer Science')
+})
+
+test('an embedded session restored in Analyzer opens Builder sections and preserves the complete CV', async ({ page }) => {
+  const original = {
+    ...defaultCVState,
+    updatedAt: '2024-06-01T12:00:00.000Z',
+    resume: {
+      ...defaultCVState.resume,
+      profile: { ...defaultCVState.resume.profile, name: 'Zoë Brontë' },
+      workExperience: [{
+        id: 'legacy', company: 'Example Co', role: 'Engineer', location: 'Porto',
+        startDate: '2020-01', endDate: '2024-06', isCurrent: false, bullets: ['Built reliable systems'],
+        link: { source: 'extension', href: 'https://example.org/work' },
+      }],
+      customSections: [{ id: 'activities', title: 'Activities', bullets: ['Mentored new developers'] }],
+    },
+    settings: { ...defaultCVState.settings, themeColor: '#124563' },
+  }
+  await seedStorage(page, { [CV_STATE_KEY]: JSON.stringify(original) })
+  await page.goto('/builder')
+  const name = page.getByLabel('Full Name')
+  await expect(name).toHaveValue(original.resume.profile.name)
+  const pdf = await downloadBuilderPdf(page)
+  await name.fill('Replacement Owner')
+  await expect.poll(() => savedProfileName(page)).toBe('Replacement Owner')
+
+  const nav = page.locator('.app-header')
+  await nav.getByRole('link', { name: 'Analyzer', exact: true }).click()
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'cvforge-session.pdf', mimeType: 'application/pdf', buffer: pdf,
+  })
+  const restore = page.getByRole('button', { name: 'Restore Session' })
+  await expect(restore).toBeVisible({ timeout: 20_000 })
+  const acceptDialog = (dialog: Dialog) => dialog.accept()
+  page.on('dialog', acceptDialog)
+  await restore.click()
+  page.off('dialog', acceptDialog)
+  await nav.getByRole('link', { name: 'Builder', exact: true }).click()
+
+  await expect(name).toHaveValue(original.resume.profile.name)
+  await expect(page.getByLabel('Company', { exact: true })).toHaveValue('Example Co')
+  await expect.poll(async () => JSON.parse((await readStorage(page, CV_STATE_KEY)) ?? 'null')).toEqual(original)
 })
 
 test('section move arrows sit side by side in one row', async ({ page }) => {

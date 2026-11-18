@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { defaultCVState } from '@/features/cv/model/defaults'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { defaultCVState, defaultSettings } from '@/features/cv/model/defaults'
 import { type CVState, type CustomSection, type Education, type Language, type Project, type WorkExperience } from '@/features/cv/model/types'
 import { cvReducer } from './cvReducer'
 import { removeSectionItem } from './cvStateUpdates'
@@ -59,6 +59,61 @@ function makeCustom(id: string, title = 'Publications'): CustomSection {
     bullets: [],
   }
 }
+
+describe('cvReducer field edits, resets, and replacement', () => {
+  const editDate = new Date('2026-10-02T12:00:00.000Z')
+  const priorDate = '2025-04-05T12:00:00.000Z'
+  let state: CVState
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(editDate)
+    state = createTestCVState()
+    state.updatedAt = priorDate
+    state.resume.profile.name = 'Prior Owner'
+    state.resume.workExperience = [makeWork('work')]
+    state.settings.documentSize = 'Letter'
+  })
+
+  afterEach(() => vi.useRealTimers())
+
+  it('updates a profile field without changing settings or section data', () => {
+    const next = cvReducer(state, { type: 'UPDATE_PROFILE_FIELD', field: 'name', value: 'New Owner' })
+    expect(next.resume.profile).toEqual({ ...state.resume.profile, name: 'New Owner' })
+    expect(next.resume.workExperience).toBe(state.resume.workExperience)
+    expect(next.settings).toBe(state.settings)
+    expect(next.updatedAt).toBe(editDate.toISOString())
+    expect(state.resume.profile.name).toBe('Prior Owner')
+  })
+
+  it('updates a setting without changing the resume', () => {
+    const next = cvReducer(state, { type: 'UPDATE_SETTINGS_FIELD', field: 'lineHeight', value: 0 })
+    expect(next.settings).toEqual({ ...state.settings, lineHeight: 0 })
+    expect(next.resume).toBe(state.resume)
+    expect(next.updatedAt).toBe(editDate.toISOString())
+  })
+
+  it('resets settings or the whole CV according to the action', () => {
+    const settingsOnly = cvReducer(state, { type: 'RESET_SETTINGS' })
+    expect(settingsOnly.settings).toEqual(defaultSettings)
+    expect(settingsOnly.resume).toBe(state.resume)
+    expect(settingsOnly.updatedAt).toBe(editDate.toISOString())
+    expect(cvReducer(state, { type: 'RESET_STATE' })).toEqual({
+      ...defaultCVState,
+      updatedAt: editDate.toISOString(),
+    })
+  })
+
+  it('preserves replacement identity and timestamps for imports and no-ops', () => {
+    const replacement = { ...defaultCVState, updatedAt: '2024-06-01T12:00:00.000Z' }
+    expect(cvReducer(state, { type: 'REPLACE_STATE', state: replacement })).toBe(replacement)
+    const noOp = cvReducer(state, {
+      type: 'MOVE_SECTION_ITEM', sectionKey: 'workExperience', id: 'work', direction: 'up',
+    })
+    expect(noOp).toBe(state)
+    expect(noOp.updatedAt).toBe(priorDate)
+  })
+})
 
 describe('cvStateUpdates: removeSectionItem', () => {
   it('removes the first item from a section', () => {
