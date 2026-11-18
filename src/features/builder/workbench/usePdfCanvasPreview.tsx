@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { type CVState } from '@/types/cv'
-import { isEmptyCV } from '@/lib/cvState'
+import { type CVState } from '@/features/cv/model/types'
+import { isEmptyCV } from '@/features/cv/model/isEmptyCV'
 import { type RenderedPage, type RenderProgress } from './pdfPreviewTypes'
 import { renderPdfPages } from './pdfCanvasRenderer'
 

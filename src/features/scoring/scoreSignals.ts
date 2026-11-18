@@ -1,4 +1,4 @@
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { hasQuantifiedImpact } from './impactMetrics'
 import { normalizedVisibleText } from '@/features/cv/visibleContent'
 

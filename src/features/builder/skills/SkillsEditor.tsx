@@ -1,6 +1,6 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 import { FeaturedSkillsEditor } from './FeaturedSkillsEditor'
 import { SkillListEditor } from './SkillListEditor'
 

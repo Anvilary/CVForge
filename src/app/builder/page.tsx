@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { BuilderWorkbench } from '@/features/builder/workbench/BuilderWorkbench'
-import { BUILDER_DESCRIPTION, BUILDER_TITLE } from '@/lib/siteConfig'
+import { BUILDER_DESCRIPTION, BUILDER_TITLE } from '@/shared/utils/siteConfig'
 
 export const metadata: Metadata = {
   title: {

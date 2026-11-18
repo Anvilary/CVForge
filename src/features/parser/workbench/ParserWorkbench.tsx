@@ -1,11 +1,11 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { AppHeader } from '@/components/layout/AppHeader'
-import { EmberBackground } from '@/components/ui/EmberBackground'
-import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
+import { AppHeader } from '@/shared/components/layout/AppHeader'
+import { EmberBackground } from '@/shared/components/ui/EmberBackground'
+import { WorkbenchShell } from '@/shared/components/workbench/WorkbenchShell'
 import { WorkbenchNotices } from '@/features/import-export/WorkbenchNotices'
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 import { ExtractionDiagnostics } from '../diagnostics/ExtractionDiagnostics'
 import { TextPreview } from '../diagnostics/TextPreview'
 import { ScorePanel } from '../score/ScorePanel'
@@ -19,8 +19,8 @@ import { BuilderSourceNotice } from './BuilderSourceNotice'
 import { type ParserAnalysisTarget } from './parserAnalysisTypes'
 import { resolveParserAnalysisTarget } from './resolveParserAnalysisTarget'
 
-import { Icon } from '@/components/ui/Icon'
-import { WorkbenchHeader } from '@/components/shared/workbench/WorkbenchHeader'
+import { Icon } from '@/shared/components/ui/Icon'
+import { WorkbenchHeader } from '@/shared/components/workbench/WorkbenchHeader'
 
 export function ParserWorkbench() {
   const { state } = useCV()

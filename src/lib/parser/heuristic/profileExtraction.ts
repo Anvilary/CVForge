@@ -1,4 +1,4 @@
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { isContactLine, isLikelyLocation, isLikelyName, normalizeUrl, preambleLines } from './sectionDetection'
 
 export function extractProfile(

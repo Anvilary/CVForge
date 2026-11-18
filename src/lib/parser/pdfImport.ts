@@ -1,4 +1,4 @@
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { type PdfExtractionResult, extractPdfText } from '@/lib/parser/pdfTextExtraction'
 import { type HeuristicResult, parseHeuristicResume } from '@/lib/parser/heuristicResumeParser'
 import { extractCVForgeAttachment } from '@/lib/parser/extractCVForgeAttachment'

@@ -1,5 +1,5 @@
 import { Document, Font, Page, View } from '@react-pdf/renderer'
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { ResumePdfCustomSections } from './ResumePdfCustomSections'
 import { ResumePdfEducationSection } from './ResumePdfEducationSection'
 import { ResumePdfHeader } from './ResumePdfHeader'

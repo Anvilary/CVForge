@@ -1,7 +1,7 @@
 import { scoreCV } from '@/features/scoring/scoreCV'
-import { isEmptyCV } from '@/lib/cvState'
+import { isEmptyCV } from '@/features/cv/model/isEmptyCV'
 import { isCvForgeGenerated } from '@/lib/parser/cvForgeDetection'
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { type ParserDocument } from '../upload/parserTypes'
 import { type ParserAnalysisTarget } from './parserAnalysisTypes'
 

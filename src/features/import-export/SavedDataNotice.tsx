@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useCV } from '@/context/CVContext'
-import { type UnreadableSavedCV } from '@/context/useCVPersistence'
-import { downloadBlob } from '@/lib/downloadBlob'
+import { useCV } from '@/features/cv/state/CVContext'
+import { type UnreadableSavedCV } from '@/features/cv/persistence/useCVPersistence'
+import { downloadBlob } from '@/shared/utils/downloadBlob'
 
 const COPY = {
   newer: {

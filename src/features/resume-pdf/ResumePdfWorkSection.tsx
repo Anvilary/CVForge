@@ -1,6 +1,6 @@
 import { View } from '@react-pdf/renderer'
-import { type CVState } from '@/types/cv'
-import { cleanText, formatDateRange, joinNonEmpty } from '@/lib/resume-formatting'
+import { type CVState } from '@/features/cv/model/types'
+import { cleanText, formatDateRange, joinNonEmpty } from '@/shared/utils/resume-formatting'
 import { ResumePdfEntry } from './ResumePdfEntry'
 import { ResumePdfSection } from './ResumePdfSection'
 import { renderDescription } from './renderDescription'

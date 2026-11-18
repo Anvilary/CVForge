@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { ParserWorkbench } from '@/features/parser/workbench/ParserWorkbench'
-import { ANALYZER_DESCRIPTION, ANALYZER_TITLE } from '@/lib/siteConfig'
+import { ANALYZER_DESCRIPTION, ANALYZER_TITLE } from '@/shared/utils/siteConfig'
 
 export const metadata: Metadata = {
   title: {

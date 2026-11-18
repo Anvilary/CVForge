@@ -1,8 +1,8 @@
 'use client'
 
-import { EmptySectionState } from '@/components/shared/sections/EmptySectionState'
-import { SectionHeader } from '@/components/shared/sections/SectionHeader'
-import { useCV } from '@/context/CVContext'
+import { EmptySectionState } from '@/features/builder/components/sections/EmptySectionState'
+import { SectionHeader } from '@/features/builder/components/sections/SectionHeader'
+import { useCV } from '@/features/cv/state/CVContext'
 import { FeaturedSkillItem } from './FeaturedSkillItem'
 
 export function FeaturedSkillsEditor() {

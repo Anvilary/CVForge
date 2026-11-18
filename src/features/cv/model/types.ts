@@ -1,0 +1,36 @@
+import { type z } from 'zod';
+import {
+  type CVStateSchema,
+  type CustomSectionSchema,
+  type DescriptionModeSchema,
+  type DocumentSizeSchema,
+  type EducationSchema,
+  type FeaturedSkillSchema,
+  type LanguageLayoutSchema,
+  type LanguageSchema,
+  type LocalePresetSchema,
+  type ProfileSchema,
+  type ProjectSchema,
+  type ResumeSchema,
+  type SectionTitlesSchema,
+  type SettingsSchema,
+  type SkillsSchema,
+  type WorkExperienceSchema,
+} from './schemas';
+
+export type Profile = z.infer<typeof ProfileSchema>;
+export type WorkExperience = z.infer<typeof WorkExperienceSchema>;
+export type Education = z.infer<typeof EducationSchema>;
+export type Project = z.infer<typeof ProjectSchema>;
+export type Language = z.infer<typeof LanguageSchema>;
+export type LanguageLayout = z.infer<typeof LanguageLayoutSchema>;
+export type FeaturedSkill = z.infer<typeof FeaturedSkillSchema>;
+export type Skills = z.infer<typeof SkillsSchema>;
+export type CustomSection = z.infer<typeof CustomSectionSchema>;
+export type Resume = z.infer<typeof ResumeSchema>;
+export type DocumentSize = z.infer<typeof DocumentSizeSchema>;
+export type LocalePreset = z.infer<typeof LocalePresetSchema>;
+export type Settings = z.infer<typeof SettingsSchema>;
+export type CVState = z.infer<typeof CVStateSchema>;
+export type DescriptionMode = z.infer<typeof DescriptionModeSchema>;
+export type SectionTitleKey = keyof z.infer<typeof SectionTitlesSchema>;

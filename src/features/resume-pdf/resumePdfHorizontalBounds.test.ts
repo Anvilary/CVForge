@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { defaultSettings } from '@/types/cv/defaults'
+import { defaultSettings } from '@/features/cv/model/defaults'
 import { createResumePdfStyles } from './resumePdfStyles'
 
 describe('PDF horizontal layout invariants', () => {

@@ -1,8 +1,8 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
-import { Icon } from '@/components/ui/Icon'
-import { type Settings } from '@/types/cv'
+import { useCV } from '@/features/cv/state/CVContext'
+import { Icon } from '@/shared/components/ui/Icon'
+import { type Settings } from '@/features/cv/model/types'
 import { SECTION_LABELS } from './settingsConstants'
 
 export function SectionManager() {

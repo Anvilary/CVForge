@@ -1,11 +1,11 @@
 'use client'
 
 import { useRef, useState, type ChangeEvent } from 'react'
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 import { analyzePdfImport, type PdfImportAnalysis } from '@/lib/parser/pdfImport'
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { importCVState } from './importCVState'
-import { announce } from '@/lib/accessibility/announce'
+import { announce } from '@/shared/utils/announce'
 import { markCVImported } from '@/features/cv/events/importEvents'
 import { type ImportModalProps, type ImportType } from './importModalTypes'
 

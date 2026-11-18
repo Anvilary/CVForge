@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, type ReactNode } from 'react'
-import { type RepeatableSectionKey } from '@/context/CVContext'
+import { type RepeatableSectionKey } from '@/features/cv/state/CVContext'
 
 type FocusVersionMap = Partial<Record<RepeatableSectionKey, number>>
 

@@ -1,9 +1,9 @@
 'use client'
 
-import { FormField } from '@/components/shared/form/FormField'
-import { TextInput } from '@/components/shared/form/TextInput'
-import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
-import { type CustomSection } from '@/types/cv'
+import { FormField } from '@/features/builder/components/form/FormField'
+import { TextInput } from '@/features/builder/components/form/TextInput'
+import { RepeatableSectionItemShell } from '@/features/builder/components/sections/RepeatableSectionItemShell'
+import { type CustomSection } from '@/features/cv/model/types'
 import { linesToBullets } from './customSectionText'
 import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
 import { DescriptionField } from '../shared/DescriptionField'

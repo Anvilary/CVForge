@@ -1,11 +1,11 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
-import { FormField } from '@/components/shared/form/FormField'
-import { TextInput } from '@/components/shared/form/TextInput'
-import { TextArea } from '@/components/shared/form/TextArea'
-import { FieldGroup } from '@/components/shared/form/FieldGroup'
-import { type Profile } from '@/types/cv'
+import { useCV } from '@/features/cv/state/CVContext'
+import { FormField } from '@/features/builder/components/form/FormField'
+import { TextInput } from '@/features/builder/components/form/TextInput'
+import { TextArea } from '@/features/builder/components/form/TextArea'
+import { FieldGroup } from '@/features/builder/components/form/FieldGroup'
+import { type Profile } from '@/features/cv/model/types'
 
 export function ProfileEditor() {
   const { state, updateProfileField } = useCV()

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { absoluteSiteUrl } from '@/lib/siteConfig'
+import { absoluteSiteUrl } from '@/shared/utils/siteConfig'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

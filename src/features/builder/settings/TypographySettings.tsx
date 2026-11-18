@@ -1,7 +1,7 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
-import { NumberInput } from '@/components/shared/form/NumberInput'
+import { useCV } from '@/features/cv/state/CVContext'
+import { NumberInput } from '@/features/builder/components/form/NumberInput'
 import {
   lineHeightToLineSpacing,
   lineSpacingToLineHeight,

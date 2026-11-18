@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { isCvForgeGenerated } from '@/lib/parser/cvForgeDetection'
-import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
+import { WorkbenchSectionCard } from '@/shared/components/workbench/WorkbenchSectionCard'
 import { type ParserDocument } from '../upload/parserTypes'
 
 export function ExtractionDiagnostics({ document }: { document: ParserDocument | null }) {

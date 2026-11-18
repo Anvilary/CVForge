@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 
 // After an import replaces the CV, the Builder opens every section that
 // received content instead of leaving them collapsed.

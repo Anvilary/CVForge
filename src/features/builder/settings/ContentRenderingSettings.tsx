@@ -1,7 +1,7 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
-import { type DescriptionMode, type LanguageLayout } from '@/types/cv'
+import { useCV } from '@/features/cv/state/CVContext'
+import { type DescriptionMode, type LanguageLayout } from '@/features/cv/model/types'
 
 const CONTENT_SECTIONS = [
   { key: 'workExperience' as const, label: 'Work' },

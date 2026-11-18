@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  defaultCVState,
-  defaultSettings,
-  parseCVState,
-  type CVState,
-} from '@/types/cv'
+import { defaultCVState, defaultSettings } from '@/features/cv/model/defaults'
+import { parseCVState } from '@/features/cv/model/parse'
+import { type CVState } from '@/features/cv/model/types'
 import {
   lineHeightToLineSpacing,
   lineSpacingToLineHeight,
@@ -16,7 +13,7 @@ import {
 } from '@/features/resume-pdf/resumePdfLayoutHelpers'
 import { createResumePdfStyles } from '@/features/resume-pdf/resumePdfStyles'
 import { importCVState } from '@/features/import-export/importCVState'
-import { storage } from '@/lib/storage'
+import { storage } from '@/features/cv/persistence/storage'
 
 describe('Typography and spacing freedom', () => {
   beforeEach(() => {

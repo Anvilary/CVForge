@@ -1,4 +1,4 @@
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { normalizedVisibleText } from '@/features/cv/visibleContent'
 
 // Characters outside Windows-1252 (WinAnsi) Latin-1 that the standard PDF

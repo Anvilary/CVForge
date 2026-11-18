@@ -1,8 +1,8 @@
 import { type ReactNode } from 'react'
-import { Icon, type IconName } from '@/components/ui/Icon'
-import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
-import { EditableSectionTitle } from '@/components/shared/workbench/EditableSectionTitle'
-import { type SectionTitleKey } from '@/types/cv'
+import { Icon, type IconName } from '@/shared/components/ui/Icon'
+import { WorkbenchSectionCard } from '@/shared/components/workbench/WorkbenchSectionCard'
+import { EditableSectionTitle } from '@/features/builder/workbench/EditableSectionTitle'
+import { type SectionTitleKey } from '@/features/cv/model/types'
 import { SectionReorderControls } from './SectionReorderControls'
 import { type SectionConfig } from './builderSectionConfig'
 

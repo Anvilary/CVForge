@@ -1,5 +1,5 @@
-import { useCV } from '@/context/CVContext'
-import { type Settings, type DescriptionMode } from '@/types/cv'
+import { useCV } from '@/features/cv/state/CVContext'
+import { type Settings, type DescriptionMode } from '@/features/cv/model/types'
 
 type DescriptionSection = keyof Settings['descriptionMode']
 

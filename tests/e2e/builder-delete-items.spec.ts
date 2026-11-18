@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test'
 import { CV_STATE_KEY, readStorage, seedStorage } from './support/cvStorage'
 import { downloadBuilderPdf, extractPdf, joinWrapped } from './support/pdfText'
 import { openBuilderWithCV, waitForFirstPreview } from './support/previewFixtures'
-import { defaultCVState, type CVState } from '../../src/types/cv'
+import { defaultCVState } from '../../src/features/cv/model/defaults'
+import { type CVState } from '../../src/features/cv/model/types'
 
 function createPopulatedCVState(): CVState {
   const state: CVState = JSON.parse(JSON.stringify(defaultCVState))

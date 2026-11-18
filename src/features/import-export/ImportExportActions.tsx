@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useCV } from '@/context/CVContext'
-import { Icon } from '@/components/ui/Icon'
-import { WorkbenchActionGroup } from '@/components/shared/workbench/WorkbenchActionGroup'
+import { useCV } from '@/features/cv/state/CVContext'
+import { Icon } from '@/shared/components/ui/Icon'
+import { WorkbenchActionGroup } from '@/features/import-export/WorkbenchActionGroup'
 import { exportCVState } from './exportCVState'
 import { ImportModal } from './ImportModal'
 

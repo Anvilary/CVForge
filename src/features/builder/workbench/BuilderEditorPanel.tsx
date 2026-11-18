@@ -1,7 +1,7 @@
 import { BuilderSectionList } from './BuilderSectionList'
 import { useImportVersion } from '@/features/cv/events/importEvents'
 import { ImportExportActions } from '@/features/import-export/ImportExportActions'
-import { WorkbenchHeader } from '@/components/shared/workbench/WorkbenchHeader'
+import { WorkbenchHeader } from '@/shared/components/workbench/WorkbenchHeader'
 
 export function BuilderEditorPanel() {
   const importVersion = useImportVersion()

@@ -1,10 +1,10 @@
 'use client'
 
-import { FormField } from '@/components/shared/form/FormField'
-import { TextInput } from '@/components/shared/form/TextInput'
-import { FieldGroup } from '@/components/shared/form/FieldGroup'
-import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
-import { type Language } from '@/types/cv'
+import { FormField } from '@/features/builder/components/form/FormField'
+import { TextInput } from '@/features/builder/components/form/TextInput'
+import { FieldGroup } from '@/features/builder/components/form/FieldGroup'
+import { RepeatableSectionItemShell } from '@/features/builder/components/sections/RepeatableSectionItemShell'
+import { type Language } from '@/features/cv/model/types'
 import { useRepeatableItemUpdate } from '../shared/useRepeatableItemUpdate'
 
 interface LanguageItemProps {

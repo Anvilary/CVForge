@@ -1,4 +1,4 @@
-import { type DescriptionMode } from '@/types/cv'
+import { type DescriptionMode } from '@/features/cv/model/types'
 import { ResumePdfBullets, ResumePdfParagraph } from './ResumePdfSection'
 import { type createResumePdfStyles } from './resumePdfStyles'
 

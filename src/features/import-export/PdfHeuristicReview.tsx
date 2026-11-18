@@ -1,7 +1,7 @@
 'use client'
 
 import { type HeuristicResult } from '@/lib/parser/heuristicResumeParser'
-import { Icon } from '@/components/ui/Icon'
+import { Icon } from '@/shared/components/ui/Icon'
 import { ImportReviewTable } from './ImportReviewTable'
 
 interface PdfHeuristicReviewProps {

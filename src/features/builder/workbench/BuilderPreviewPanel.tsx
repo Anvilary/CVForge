@@ -3,15 +3,15 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { type CVState } from '@/types/cv'
-import { isEmptyCV } from '@/lib/cvState'
+import { type CVState } from '@/features/cv/model/types'
+import { isEmptyCV } from '@/features/cv/model/isEmptyCV'
 import { unsupportedCharactersInCV } from '@/features/resume-pdf/pdfCharacterSupport'
-import { Icon } from '@/components/ui/Icon'
-import { PreviewCanvas } from '@/components/shared/workbench/PreviewCanvas'
+import { Icon } from '@/shared/components/ui/Icon'
+import { PreviewCanvas } from '@/shared/components/workbench/PreviewCanvas'
 import { PdfCanvasPreview } from './PdfCanvasPreview'
 import { usePdfCanvasPreview } from './usePdfCanvasPreview'
 import { PreviewLoadingState } from './PreviewLoadingState'
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 
 const DownloadPdfButton = dynamic(
   () => import('@/features/resume-pdf/DownloadPdfButton').then((m) => m.DownloadPdfButton),

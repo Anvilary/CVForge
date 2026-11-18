@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 
 export function ResetSettingsControl() {
   const { resetSettings } = useCV()

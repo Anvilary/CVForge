@@ -1,8 +1,8 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 import { useAddFocusVersion } from '@/features/builder/context/BuilderAddFocusContext'
-import { RepeatableSectionEditor } from '@/components/shared/sections/RepeatableSectionEditor'
+import { RepeatableSectionEditor } from '@/features/builder/components/sections/RepeatableSectionEditor'
 import { LanguageItem } from './LanguageItem'
 
 export function LanguagesEditor() {

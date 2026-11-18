@@ -1,4 +1,4 @@
-import type { Settings } from '@/types/cv'
+import type { Settings } from '@/features/cv/model/types'
 
 export type AdvancedLayoutSettingKey = keyof Pick<
   Settings,

@@ -1,5 +1,5 @@
-import { useCV, type RepeatableSectionKey } from '@/context/CVContext'
-import { type SectionTitleKey } from '@/types/cv'
+import { useCV, type RepeatableSectionKey } from '@/features/cv/state/CVContext'
+import { type SectionTitleKey } from '@/features/cv/model/types'
 
 type Params = {
   openSection: (id: string) => void

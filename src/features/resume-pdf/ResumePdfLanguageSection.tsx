@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text, View } from '@react-pdf/renderer'
-import { type CVState, type Language } from '@/types/cv'
-import { cleanText } from '@/lib/resume-formatting'
+import { type CVState, type Language } from '@/features/cv/model/types'
+import { cleanText } from '@/shared/utils/resume-formatting'
 import { ResumePdfSection } from './ResumePdfSection'
 import { type createResumePdfStyles } from './resumePdfStyles'
 

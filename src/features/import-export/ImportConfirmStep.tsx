@@ -1,7 +1,7 @@
 'use client'
 
 import { type ReactNode } from 'react'
-import { Icon, type IconName } from '@/components/ui/Icon'
+import { Icon, type IconName } from '@/shared/components/ui/Icon'
 
 interface ImportConfirmStepProps {
   icon: IconName

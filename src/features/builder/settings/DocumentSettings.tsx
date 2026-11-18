@@ -1,12 +1,12 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
-import { SelectInput } from '@/components/shared/form/SelectInput'
-import { FieldLabel } from '@/components/shared/form/FieldLabel'
+import { useCV } from '@/features/cv/state/CVContext'
+import { SelectInput } from '@/features/builder/components/form/SelectInput'
+import { FieldLabel } from '@/features/builder/components/form/FieldLabel'
 import { ThemeColorPicker } from './ThemeColorPicker'
 import { FontFamilyPicker } from './FontFamilyPicker'
 import { SettingControl } from './SettingControl'
-import { type DocumentSize } from '@/types/cv'
+import { type DocumentSize } from '@/features/cv/model/types'
 
 export function DocumentSettings() {
   const { state, updateSettingsField } = useCV()

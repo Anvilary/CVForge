@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, type ChangeEvent } from 'react'
-import { Icon } from '@/components/ui/Icon'
+import { Icon } from '@/shared/components/ui/Icon'
 import {
   ANALYSIS_FILE_ACCEPT,
   MAX_ANALYSIS_FILE_MEGABYTES,

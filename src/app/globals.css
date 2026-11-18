@@ -4,18 +4,18 @@
 
 /* ============================================================
    CVForge Design System - entry point
-   CSS is split by concern into src/styles/*.css
+   CSS is split by concern into src/shared/styles/*.css
    Import order matters for cascade - do not reorder.
    ============================================================ */
 
-@import '../styles/fonts.css';
-@import '../styles/tokens.css';
-@import '../styles/base.css';
-@import '../styles/ui.css';
-@import '../styles/atmosphere.css';
-@import '../styles/site.css';
-@import '../styles/workspace.css';
-@import '../styles/modals.css';
+@import '../shared/styles/fonts.css';
+@import '../shared/styles/tokens.css';
+@import '../shared/styles/base.css';
+@import '../shared/styles/ui.css';
+@import '../shared/styles/atmosphere.css';
+@import '../shared/styles/site.css';
+@import '../shared/styles/workspace.css';
+@import '../shared/styles/modals.css';
 
 @layer base {
   :root {

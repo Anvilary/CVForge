@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/Icon'
+import { Icon } from '@/shared/components/ui/Icon'
 import { type RenderProgress } from './pdfPreviewTypes'
 import { progressPct, stageLabel } from './previewProgress'
 

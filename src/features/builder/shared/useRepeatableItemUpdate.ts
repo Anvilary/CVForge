@@ -1,7 +1,7 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
-import { type RepeatableSectionKey } from '@/context/cvActions'
+import { useCV } from '@/features/cv/state/CVContext'
+import { type RepeatableSectionKey } from '@/features/cv/state/cvActions'
 
 export function useRepeatableItemUpdate<TField extends string>(sectionKey: RepeatableSectionKey, itemId: string) {
   const { updateSectionItem } = useCV()

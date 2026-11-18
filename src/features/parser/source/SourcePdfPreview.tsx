@@ -1,5 +1,5 @@
-import { Icon } from '@/components/ui/Icon'
-import { PreviewCanvas } from '@/components/shared/workbench/PreviewCanvas'
+import { Icon } from '@/shared/components/ui/Icon'
+import { PreviewCanvas } from '@/shared/components/workbench/PreviewCanvas'
 import { type ParserDocument } from '../upload/parserTypes'
 
 export function SourcePdfPreview({ document }: { document: ParserDocument | null }) {

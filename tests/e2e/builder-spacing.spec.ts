@@ -3,7 +3,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { CURRENT_CV_SCHEMA_VERSION, defaultCVState, type CVState } from '../../src/types/cv'
+import { CURRENT_CV_SCHEMA_VERSION } from '../../src/features/cv/model/version'
+import { defaultCVState } from '../../src/features/cv/model/defaults'
+import { type CVState } from '../../src/features/cv/model/types'
 import { lineSpacingToLineHeight } from '../../src/features/resume-pdf/resumePdfLayoutHelpers'
 
 const exec = promisify(execFile)

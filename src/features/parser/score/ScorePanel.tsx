@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
+import { WorkbenchSectionCard } from '@/shared/components/workbench/WorkbenchSectionCard'
 import { type ScoreIssue, type ScoreResult } from '@/features/scoring/scoringTypes'
 
 export interface ScorePanelTarget {

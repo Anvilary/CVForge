@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { defaultCVState, type CVState } from '@/types/cv'
+import { defaultCVState } from '@/features/cv/model/defaults'
+import { type CVState } from '@/features/cv/model/types'
 import { analyzeExtractionEvidence, type PdfPageEvidence } from '@/lib/parser/extractionDiagnostics'
 import { scoreCV } from './scoreCV'
 import { normalizedVisibleText } from '@/features/cv/visibleContent'

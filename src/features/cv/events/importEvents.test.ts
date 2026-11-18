@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest'
-import { defaultCVState, type CVState } from '@/types/cv'
+import { defaultCVState } from '@/features/cv/model/defaults'
+import { type CVState } from '@/features/cv/model/types'
 import { clearImportedSections, markCVImported, peekImportedSections } from './importEvents'
 
 afterEach(() => {

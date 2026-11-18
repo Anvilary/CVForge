@@ -1,6 +1,6 @@
-import { type CVState } from '@/types/cv'
-import { announce } from '@/lib/accessibility/announce'
-import { downloadBlob } from '@/lib/downloadBlob'
+import { type CVState } from '@/features/cv/model/types'
+import { announce } from '@/shared/utils/announce'
+import { downloadBlob } from '@/shared/utils/downloadBlob'
 
 export function exportCVState(state: CVState) {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })

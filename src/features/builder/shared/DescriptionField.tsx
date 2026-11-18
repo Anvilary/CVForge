@@ -1,8 +1,8 @@
 'use client'
 
-import { MultilineListField } from '@/components/shared/form/MultilineListField'
-import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
-import { type DescriptionMode } from '@/types/cv'
+import { MultilineListField } from '@/features/builder/components/form/MultilineListField'
+import { DescriptionFormatToggle } from '@/features/builder/components/form/DescriptionFormatToggle'
+import { type DescriptionMode } from '@/features/cv/model/types'
 
 interface DescriptionFieldProps {
   label: string

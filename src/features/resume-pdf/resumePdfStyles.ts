@@ -1,5 +1,5 @@
 import { StyleSheet } from '@react-pdf/renderer'
-import { type Settings } from '@/types/cv'
+import { type Settings } from '@/features/cv/model/types'
 import { PAGE_PADDING_HORIZONTAL, PAGE_PADDING_VERTICAL } from './resumePdfGeometry'
 import { resolveDateFont, resolvePdfFont } from './resumePdfFontHelpers'
 import {

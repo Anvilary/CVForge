@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import { Homepage } from '@/components/home/Homepage'
-import { HOME_DESCRIPTION, HOME_TITLE } from '@/lib/siteConfig'
+import { Homepage } from '@/features/home/Homepage'
+import { HOME_DESCRIPTION, HOME_TITLE } from '@/shared/utils/siteConfig'
 
 export const metadata: Metadata = {
   title: {

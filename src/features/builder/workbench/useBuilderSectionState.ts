@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { type RepeatableSectionKey } from '@/context/CVContext'
+import { type RepeatableSectionKey } from '@/features/cv/state/CVContext'
 import { clearImportedSections, peekImportedSections } from '@/features/cv/events/importEvents'
 
 export function useBuilderSectionState() {

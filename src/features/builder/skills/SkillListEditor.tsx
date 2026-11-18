@@ -1,5 +1,5 @@
-import { FormField } from '@/components/shared/form/FormField'
-import { TextArea } from '@/components/shared/form/TextArea'
+import { FormField } from '@/features/builder/components/form/FormField'
+import { TextArea } from '@/features/builder/components/form/TextArea'
 import { linesToSkills } from './skillsText'
 
 interface SkillListEditorProps {

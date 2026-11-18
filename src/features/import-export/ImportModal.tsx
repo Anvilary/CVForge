@@ -2,13 +2,13 @@
 
 import { type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { Icon } from '@/components/ui/Icon'
+import { Icon } from '@/shared/components/ui/Icon'
 import { ImportFileDropzone } from './ImportFileDropzone'
 import { ImportConfirmStep } from './ImportConfirmStep'
 import { PdfHeuristicReview } from './PdfHeuristicReview'
 import { type ImportModalProps } from './importModalTypes'
 import { useImportModalFlow } from './useImportModalFlow'
-import { useDialogFocus } from '@/hooks/useDialogFocus'
+import { useDialogFocus } from '@/shared/hooks/useDialogFocus'
 
 export function ImportModal({
   isOpen,

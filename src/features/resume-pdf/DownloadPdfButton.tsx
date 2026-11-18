@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { pdf } from '@react-pdf/renderer'
-import { Icon } from '@/components/ui/Icon'
-import { type CVState } from '@/types/cv'
+import { Icon } from '@/shared/components/ui/Icon'
+import { type CVState } from '@/features/cv/model/types'
 import { ResumePdfDocument } from './ResumePdfDocument'
 import { resumePdfFileName } from './resumePdfFileName'
 import { embedCVStateAttachment } from './embedCVStateAttachment'
-import { announce } from '@/lib/accessibility/announce'
-import { downloadBlob } from '@/lib/downloadBlob'
+import { announce } from '@/shared/utils/announce'
+import { downloadBlob } from '@/shared/utils/downloadBlob'
 
 export function DownloadPdfButton({ state }: { state: CVState }) {
   const [isGenerating, setIsGenerating] = useState(false)

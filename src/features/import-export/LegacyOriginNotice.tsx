@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useCV } from '@/context/CVContext'
-import { isEmptyCV } from '@/lib/cvState'
-import { LEGACY_HOSTNAMES, siteConfig } from '@/lib/siteConfig'
+import { useCV } from '@/features/cv/state/CVContext'
+import { isEmptyCV } from '@/features/cv/model/isEmptyCV'
+import { LEGACY_HOSTNAMES, siteConfig } from '@/shared/utils/siteConfig'
 import { exportCVState } from './exportCVState'
 
 // Browser storage is scoped to the origin, so a CV saved at a previous

@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 import { markCVImported } from '@/features/cv/events/importEvents'
-import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
-import { type CVState } from '@/types/cv'
+import { WorkbenchSectionCard } from '@/shared/components/workbench/WorkbenchSectionCard'
+import { type CVState } from '@/features/cv/model/types'
 
 export function ParserRestoreAction({ embeddedState }: { embeddedState: CVState }) {
   const { replaceState } = useCV()

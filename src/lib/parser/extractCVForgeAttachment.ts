@@ -1,6 +1,7 @@
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from 'pdfjs-dist'
-import { type CVState, parseCVState } from '@/types/cv'
-import { migrateCVState } from '@/lib/cvMigrations'
+import { type CVState } from '@/features/cv/model/types'
+import { parseCVState } from '@/features/cv/model/parse'
+import { migrateCVState } from '@/features/cv/persistence/cvMigrations'
 
 export const CVFORGE_ATTACHMENT_NAME = 'cvforge-state.json'
 

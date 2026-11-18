@@ -1,8 +1,6 @@
-import {
-  type CVState,
-  defaultCVState,
-  parseCVState,
-} from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
+import { defaultCVState } from '@/features/cv/model/defaults'
+import { parseCVState } from '@/features/cv/model/parse'
 import { type SectionKey, type DetectedSection, type ParserStats } from './heuristic/heuristicTypes'
 import { detectSections, normalizeLines, uniqueValues } from './heuristic/sectionDetection'
 import { extractProfile, findUnheadedSummary } from './heuristic/profileExtraction'

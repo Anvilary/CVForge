@@ -1,5 +1,5 @@
-import { type CVState } from '@/types/cv'
-import { cleanList, cleanText, formatDateRange } from '@/lib/resume-formatting'
+import { type CVState } from '@/features/cv/model/types'
+import { cleanList, cleanText, formatDateRange } from '@/shared/utils/resume-formatting'
 
 export function hasWorkContent(item: CVState['resume']['workExperience'][number], bulletsVisible: boolean) {
   return Boolean(

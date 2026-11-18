@@ -1,4 +1,4 @@
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 
 export async function embedCVStateAttachment(pdfBlob: Blob, state: CVState): Promise<Blob> {
   const { PDFDocument } = await import('pdf-lib')

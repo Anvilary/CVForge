@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { preload } from 'react-dom'
-import { CVProvider } from '@/context/CVContext'
-import { LiveAnnouncements } from '@/components/accessibility/LiveAnnouncements'
-import { siteConfig } from '@/lib/siteConfig'
+import { CVProvider } from '@/features/cv/state/CVContext'
+import { LiveAnnouncements } from '@/shared/components/accessibility/LiveAnnouncements'
+import { siteConfig } from '@/shared/utils/siteConfig'
 import './globals.css'
 
 export const metadata: Metadata = {

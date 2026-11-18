@@ -1,10 +1,10 @@
 'use client'
 
-import { AppHeader } from '@/components/layout/AppHeader'
-import { EmberBackground } from '@/components/ui/EmberBackground'
-import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
+import { AppHeader } from '@/shared/components/layout/AppHeader'
+import { EmberBackground } from '@/shared/components/ui/EmberBackground'
+import { WorkbenchShell } from '@/shared/components/workbench/WorkbenchShell'
 import { WorkbenchNotices } from '@/features/import-export/WorkbenchNotices'
-import { useCV } from '@/context/CVContext'
+import { useCV } from '@/features/cv/state/CVContext'
 import { BuilderEditorPanel } from './BuilderEditorPanel'
 import { BuilderPreviewPanel } from './BuilderPreviewPanel'
 

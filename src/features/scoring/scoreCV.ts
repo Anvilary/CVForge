@@ -1,4 +1,4 @@
-import { type CVState } from '@/types/cv'
+import { type CVState } from '@/features/cv/model/types'
 import { type PdfExtractionResult } from '@/lib/parser/pdfTextExtraction'
 import { analyzeExtractionEvidence, type PdfPageEvidence } from '@/lib/parser/extractionDiagnostics'
 import { binaryIssue, createIssue, measuredIssue } from './scoreIssues'

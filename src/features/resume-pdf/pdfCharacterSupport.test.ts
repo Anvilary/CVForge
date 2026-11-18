@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { defaultCVState, type CVState } from '@/types/cv'
+import { defaultCVState } from '@/features/cv/model/defaults'
+import { type CVState } from '@/features/cv/model/types'
 import { findUnsupportedPdfCharacters, unsupportedCharactersInCV } from './pdfCharacterSupport'
 
 describe('PDF character support', () => {

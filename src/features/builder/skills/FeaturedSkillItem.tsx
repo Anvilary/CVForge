@@ -1,8 +1,8 @@
 'use client'
 
-import { TextInput } from '@/components/shared/form/TextInput'
-import { Icon } from '@/components/ui/Icon'
-import { type FeaturedSkill } from '@/types/cv'
+import { TextInput } from '@/features/builder/components/form/TextInput'
+import { Icon } from '@/shared/components/ui/Icon'
+import { type FeaturedSkill } from '@/features/cv/model/types'
 
 interface FeaturedSkillItemProps {
   index: number
