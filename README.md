@@ -83,7 +83,7 @@ sync, automatic cross-device transfer, or hosted copy of your CV.
 
 | Format | Purpose | Important boundary |
 | --- | --- | --- |
-| JSON | Full-fidelity backup and validated import | Recommended for reliable recovery and device migration |
+| JSON | Full-fidelity backup and validated import | Imports up to 5 MiB (5,242,880 bytes) |
 | CVForge PDF | Printable export with an optional embedded CV session | Session restore works only when the attachment is present |
 | External PDF | Local extraction, analysis, and reviewed draft import | Parsing is heuristic and may miss or misidentify fields |
 

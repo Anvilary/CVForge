@@ -232,9 +232,7 @@ describe('Typography and spacing freedom', () => {
       expect(restored!.settings.sectionSpacing).toBe(0)
       expect(restored!.settings.profileSpacing).toBe(0)
 
-      const imported = await importCVState({
-        text: async () => JSON.stringify(customState),
-      })
+      const imported = await importCVState(new File([JSON.stringify(customState)], 'backup.json'))
       expect(imported.settings.lineHeight).toBe(0.7)
       expect(lineHeightToLineSpacing(imported.settings.lineHeight)).toBe(0)
       expect(imported.settings.sectionSpacing).toBe(0)

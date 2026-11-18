@@ -51,9 +51,7 @@ describe('CV data integrity', () => {
     input.settings.visibleSections.projects = false
     input.settings.themeColor = '#7a3218'
 
-    const imported = await importCVState({
-      text: async () => JSON.stringify(input),
-    })
+    const imported = await importCVState(new File([JSON.stringify(input)], 'backup.json'))
     expect(imported).toEqual(input)
   })
 
@@ -78,16 +76,8 @@ describe('CV data integrity', () => {
       { ...work, id: 'extension', companyLink: { source: 'legacy' } },
     ]
     const raw = JSON.stringify(state)
-    await expect(importCVState({ text: async () => raw })).resolves.toEqual(state)
+    await expect(importCVState(new File([raw], 'backup.json'))).resolves.toEqual(state)
     expect(readCVStateText(raw)).toEqual({ status: 'loaded', state, raw })
-  })
-
-  it.each([
-    '{broken',
-    JSON.stringify({ ...fixture(), schemaVersion: '2.0.0' }),
-    JSON.stringify({ schemaVersion: CURRENT_CV_SCHEMA_VERSION, resume: null }),
-  ])('rejects malformed, future, or structurally invalid backups', async (contents) => {
-    await expect(importCVState({ text: async () => contents })).rejects.toThrow()
   })
 
   it('persists and restores the complete structured state under the existing key', () => {

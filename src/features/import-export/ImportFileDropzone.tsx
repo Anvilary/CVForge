@@ -1,4 +1,5 @@
 import { Icon } from '@/shared/components/ui/Icon'
+import { MAX_JSON_IMPORT_MIB } from './importCVState'
 
 interface ImportFileDropzoneProps {
   onFileSelect: () => void
@@ -19,7 +20,9 @@ export function ImportFileDropzone({ onFileSelect, error }: ImportFileDropzonePr
           <Icon name="upload" size={16} className="text-ink-3 group-hover:text-ember transition-colors" />
         </div>
         <h3 id="import-file-title" className="text-sm font-medium text-ink">Choose File</h3>
-        <p id="import-file-description" className="text-[11px] text-ink-3 mt-1">Select a .json backup or .pdf resume.</p>
+        <p id="import-file-description" className="text-[11px] text-ink-3 mt-1">
+          Select a JSON backup up to {MAX_JSON_IMPORT_MIB} MiB or a PDF resume.
+        </p>
       </button>
 
       <div className="p-4 rounded-lg bg-bg-2 border border-border-faint">
