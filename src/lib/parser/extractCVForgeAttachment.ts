@@ -1,6 +1,7 @@
 import type { PDFDocumentProxy } from 'pdfjs-dist'
 import { type CVState } from '@/features/cv/model/types'
 import { parseCVState } from '@/features/cv/model/parse'
+import { MAX_SESSION_ATTACHMENT_BYTES } from './analysisLimits'
 import { isNewerSchemaVersion, migrateCVState } from '@/features/cv/persistence/cvMigrations'
 
 export const CVFORGE_ATTACHMENT_NAME = 'cvforge-state.json'
@@ -25,6 +26,7 @@ export async function extractCVForgeAttachment(
     return { status: 'failed' }
   }
   if (!content) return { status: 'absent' }
+  if (content.byteLength > MAX_SESSION_ATTACHMENT_BYTES) return { status: 'malformed' }
 
   let input: unknown
   try {

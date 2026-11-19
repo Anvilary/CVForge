@@ -40,6 +40,8 @@ describe('phantom space repair for older CVForge PDFs', () => {
 
   it('only enables the repair for react-pdf or CVForge documents', () => {
     expect(isReactPdfProducer({ Creator: 'react-pdf', Producer: 'CVForge' })).toBe(true)
+    // Downloaded files: pdf-lib rewrote Producer, Creator is still CVForge.
+    expect(isReactPdfProducer({ Creator: 'CVForge', Producer: 'pdf-lib (https://github.com/Hopding/pdf-lib)' })).toBe(true)
     expect(isReactPdfProducer({ Producer: 'Microsoft Word' })).toBe(false)
     expect(isReactPdfProducer(undefined)).toBe(false)
   })

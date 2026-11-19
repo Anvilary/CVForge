@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { defaultCVState } from '@/features/cv/model/defaults'
 import { type CVState } from '@/features/cv/model/types'
-import { findUnsupportedPdfCharacters, unsupportedCharactersInCV } from './pdfCharacterSupport'
+import { findUnsupportedPdfCharacters, MAX_REPORTED_CHARACTERS, unsupportedCharactersInCV } from './pdfCharacterSupport'
 
 describe('PDF character support', () => {
   it('accepts ASCII, Western European letters, and typographic punctuation', () => {
@@ -27,5 +27,13 @@ describe('PDF character support', () => {
     state.resume.projects = [{ id: 'p', name: '東', link: '', startDate: '', endDate: '', bullets: [] }]
     state.settings.visibleSections.projects = false
     expect(unsupportedCharactersInCV(state)).toEqual([])
+  })
+})
+
+describe('unsupported character list length', () => {
+  it('collects one more than it reports so the notice can say the list is incomplete', () => {
+    const many = 'ŁŻłćřőűășțğşΑΒΓΔΕ'
+    expect(findUnsupportedPdfCharacters(many)).toHaveLength(MAX_REPORTED_CHARACTERS + 1)
+    expect(findUnsupportedPdfCharacters('ŁŻ')).toEqual(['Ł', 'Ż'])
   })
 })

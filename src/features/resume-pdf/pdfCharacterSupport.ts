@@ -9,7 +9,7 @@ const WIN_ANSI_EXTRAS = new Set([
   0x2013, 0x2014, 0x02dc, 0x2122, 0x0161, 0x203a, 0x0153, 0x017e, 0x0178,
 ])
 
-const MAX_REPORTED_CHARACTERS = 12
+export const MAX_REPORTED_CHARACTERS = 12
 
 export function isPdfEncodable(character: string): boolean {
   const codePoint = character.codePointAt(0) ?? 0
@@ -20,12 +20,13 @@ export function isPdfEncodable(character: string): boolean {
 }
 
 // Unique characters, in order of first appearance, that the exported PDF
-// cannot show with its standard fonts.
+// cannot show with its standard fonts. One more than MAX_REPORTED_CHARACTERS is
+// collected so the notice can say the list is not complete.
 export function findUnsupportedPdfCharacters(text: string): string[] {
   const found = new Set<string>()
   for (const character of text) {
     if (!isPdfEncodable(character)) found.add(character)
-    if (found.size >= MAX_REPORTED_CHARACTERS) break
+    if (found.size > MAX_REPORTED_CHARACTERS) break
   }
   return Array.from(found)
 }

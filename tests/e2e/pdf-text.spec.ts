@@ -257,3 +257,24 @@ test('a long unbroken Skills token wraps inside the printable Letter bounds', as
   expect(joinWrapped(pdf.lines)).toContain(token)
   expectInsidePrintableBounds(pdf)
 })
+
+test('section headings and skill keywords export as intact text from the real download', async ({ page }) => {
+  const payload = JSON.parse(cvPayload())
+  payload.resume.skills = {
+    technical: ['TypeScript', 'React', 'PostgreSQL', 'Docker', 'Terraform', 'GitHub Actions', 'CI/CD', 'REST/GraphQL'],
+    soft: ['Communication'],
+  }
+  await openBuilderWithCV(page, JSON.stringify(payload))
+  await waitForFirstPreview(page)
+
+  const pdf = await extractPdf(await downloadBuilderPdf(page))
+  // Strict: no hyphen stripping and no joining of split letters.
+  expect(pdf.lines).toContain('WORK EXPERIENCE')
+  expect(pdf.lines).toContain('SKILLS')
+  expect(pdf.lines.filter((line) => /^(?:\p{Lu} ){3,}\p{Lu}$/u.test(line.trim()))).toEqual([])
+  expect(pdf.lines.filter((line) => /[\p{L}\p{N}/]-$/u.test(line.trim()))).toEqual([])
+  const text = pdf.lines.join(' ')
+  for (const keyword of ['TypeScript', 'React', 'PostgreSQL', 'Docker', 'Terraform', 'GitHub Actions', 'CI/CD', 'REST/GraphQL']) {
+    expect(text).toContain(keyword)
+  }
+})

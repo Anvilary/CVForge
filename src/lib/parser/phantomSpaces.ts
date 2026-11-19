@@ -19,7 +19,8 @@ const PHANTOM_PULL_BACK_RATIO = 0.6
 export function isReactPdfProducer(info: unknown) {
   if (!info || typeof info !== 'object') return false
   const { Creator, Producer } = info as { Creator?: unknown, Producer?: unknown }
-  return /react-pdf/i.test(String(Creator ?? '')) || /react-pdf|cvforge/i.test(String(Producer ?? ''))
+  // Downloads are re-saved by pdf-lib, which replaces Producer, so Creator is the reliable marker.
+  return /react-pdf|cvforge/i.test(String(Creator ?? '')) || /react-pdf|cvforge/i.test(String(Producer ?? ''))
 }
 
 export function findPhantomJoins(runs: GlyphRunItem[][]): PhantomJoin[] {

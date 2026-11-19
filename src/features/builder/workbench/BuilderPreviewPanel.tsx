@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { type CVState } from '@/features/cv/model/types'
 import { isEmptyCV } from '@/features/cv/model/isEmptyCV'
-import { unsupportedCharactersInCV } from '@/features/resume-pdf/pdfCharacterSupport'
+import { MAX_REPORTED_CHARACTERS, unsupportedCharactersInCV } from '@/features/resume-pdf/pdfCharacterSupport'
 import { Icon } from '@/shared/components/ui/Icon'
 import { PreviewCanvas } from '@/shared/components/workbench/PreviewCanvas'
 import { PdfCanvasPreview } from './PdfCanvasPreview'
@@ -82,7 +82,8 @@ function PdfCharacterNotice({ state }: { state: CVState }) {
   return (
     <div className="pdf-character-notice" role="status" aria-live="polite">
       <strong>Some characters cannot be shown in the PDF:</strong>{' '}
-      <span className="pdf-character-list" lang="und">{unsupported.join(' ')}</span>
+      <span className="pdf-character-list" lang="und">{unsupported.slice(0, MAX_REPORTED_CHARACTERS).join(' ')}</span>
+      {unsupported.length > MAX_REPORTED_CHARACTERS && <span> and more</span>}
       <span className="block">
         The PDF uses standard fonts that support Western European languages only. These
         characters appear incorrectly in the preview and the downloaded file.

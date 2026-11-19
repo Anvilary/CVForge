@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { defaultCVState } from '@/features/cv/model/defaults'
+import { MAX_SESSION_ATTACHMENT_BYTES } from './analysisLimits'
 import { CVFORGE_ATTACHMENT_NAME, extractCVForgeAttachment } from './extractCVForgeAttachment'
 
 const bytes = (text: string) => new TextEncoder().encode(text)
@@ -33,6 +34,11 @@ describe('CVForge attachment extraction (PDF.js 6 Map API)', () => {
       status: 'restored', state: { ...contents, schemaVersion },
     })
     expect(pdf.getAttachmentContent).toHaveBeenCalledWith('alternate-key')
+  })
+
+  it('rejects a session larger than the import ceiling without parsing it', async () => {
+    const oversized = new Uint8Array(MAX_SESSION_ATTACHMENT_BYTES + 1).fill(0x20)
+    expect(await extractCVForgeAttachment(withAttachment(oversized))).toEqual({ status: 'malformed' })
   })
 
   it('reports absence only when no CVForge attachment exists', async () => {

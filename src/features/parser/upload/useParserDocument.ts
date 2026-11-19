@@ -6,6 +6,9 @@ import { validateAnalysisFile } from './analysisFileSupport'
 import { type ParserDocument } from './parserTypes'
 import { isCurrentAnalysisRequest } from './analysisRequestGuard'
 
+// The inline alert carries the reason; repeating it here made screen readers say it twice.
+const ANALYSIS_FAILED_ANNOUNCEMENT = 'Analysis failed. See the message on the page.'
+
 export function useParserDocument() {
   const [document, setDocument] = useState<ParserDocument | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -44,7 +47,7 @@ export function useParserDocument() {
       if (!isCurrentAnalysisRequest(generation, generationRef.current, controller.signal)) return
       if (validationError) {
         setDocument({ fileName: file.name, objectUrl, error: validationError })
-        setAnnouncement(`Analysis failed. ${validationError}`)
+        setAnnouncement(ANALYSIS_FAILED_ANNOUNCEMENT)
         return
       }
 
@@ -60,7 +63,7 @@ export function useParserDocument() {
         setAnnouncement(`Analysis completed for ${file.name}.`)
       } else {
         setDocument({ fileName: file.name, objectUrl, error: result.error })
-        setAnnouncement(`Analysis failed. ${result.error}`)
+        setAnnouncement(ANALYSIS_FAILED_ANNOUNCEMENT)
       }
     } catch (error) {
       if (!isCurrentAnalysisRequest(generation, generationRef.current, controller.signal)) return
@@ -68,7 +71,7 @@ export function useParserDocument() {
         ? error.message
         : 'CVForge could not analyze this PDF.'
       setDocument({ fileName: file.name, objectUrl, error: message })
-      setAnnouncement(`Analysis failed. ${message}`)
+      setAnnouncement(ANALYSIS_FAILED_ANNOUNCEMENT)
     } finally {
       if (generation === generationRef.current) {
         controllerRef.current = null
