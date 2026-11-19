@@ -1,18 +1,22 @@
-type Hyphenate = (word: string) => string[]
+// react-pdf draws a real hyphen glyph at every break it makes inside a word, and
+// that glyph is part of the text layer ("Dock-" / "er"). Keywords and link text
+// therefore stay whole. Only a token that cannot fit on one line is split, so a
+// false hyphen can only appear when the alternative is text running off the page.
+//
+// A line holds at least about 60 characters at the largest supported font size
+// (12 pt Courier, 7.2 pt per character, in a 470 pt column), so any token up to
+// this length always fits on a line of its own.
+const MAX_UNBROKEN_LENGTH = 56
+const PIECE_LENGTH = 28
+// A hyphen is not a break point: the glyph react-pdf adds would double it.
+const LINK_SEPARATORS = '/?&=#._'
 
-// Longest run of characters the PDF layout may keep unbroken. A longer run
-// (a URL segment, a hash, a long compound) could otherwise overflow the page.
-const MAX_UNBROKEN_LENGTH = 18
-const LINK_SEPARATORS = '/?&=#._-'
-const LINK_LIKE = /[/@]|:\/\/|^www\./i
-
-// react-pdf passes its built-in English hyphenation as the second argument.
-// The stored text is never changed; this only offers extra break points.
-export function hyphenateForPdf(word: string, builtin?: Hyphenate): string[] {
-  const parts = LINK_LIKE.test(word)
-    ? splitAfterSeparators(word)
-    : (builtin ? builtin(word) : [word])
-  return parts.flatMap(splitLongPart).filter((part) => part.length > 0)
+// The built-in English patterns are deliberately ignored: they hyphenate
+// keywords ("Ter-raform") and mishyphenate other languages. The stored text is
+// never changed; this only offers break points when a line cannot hold a token.
+export function hyphenateForPdf(word: string): string[] {
+  if (word.length <= MAX_UNBROKEN_LENGTH) return [word]
+  return splitAfterSeparators(word).flatMap(splitLongPart).filter((part) => part.length > 0)
 }
 
 function splitAfterSeparators(word: string): string[] {
@@ -30,10 +34,10 @@ function splitAfterSeparators(word: string): string[] {
 }
 
 function splitLongPart(part: string): string[] {
-  if (part.length <= MAX_UNBROKEN_LENGTH) return [part]
+  if (part.length <= PIECE_LENGTH) return [part]
   const pieces: string[] = []
-  for (let start = 0; start < part.length; start += MAX_UNBROKEN_LENGTH) {
-    pieces.push(part.slice(start, start + MAX_UNBROKEN_LENGTH))
+  for (let start = 0; start < part.length; start += PIECE_LENGTH) {
+    pieces.push(part.slice(start, start + PIECE_LENGTH))
   }
   return pieces
 }

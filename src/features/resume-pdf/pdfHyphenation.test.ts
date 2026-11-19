@@ -1,29 +1,46 @@
 import { describe, expect, it } from 'vitest'
 import { hyphenateForPdf } from './pdfHyphenation'
 
-const builtin = (word: string) => (word === 'reliability' ? ['re', 'li', 'a', 'bil', 'i', 'ty'] : [word])
-
 describe('PDF hyphenation', () => {
-  it('keeps ordinary words on the built-in hyphenation', () => {
-    expect(hyphenateForPdf('reliability', builtin)).toEqual(['re', 'li', 'a', 'bil', 'i', 'ty'])
-    expect(hyphenateForPdf('CV', builtin)).toEqual(['CV'])
+  it.each([
+    'reliability',
+    'Docker',
+    'Terraform',
+    'TypeScript',
+    'PostgreSQL',
+    'Kubernetes',
+    'FastAPI',
+    'Next.js',
+    'REST/GraphQL',
+    '(REST/GraphQL).',
+    'CI/CD',
+    'high-throughput',
+    'alex.morgan@example.org',
+    'https://example.org/platform/reliability/2026-report',
+  ])('never offers a break inside %s', (word) => {
+    expect(hyphenateForPdf(word)).toEqual([word])
   })
 
-  it('breaks links after separators instead of inside words', () => {
-    const url = 'https://example.org/projects/report?version=complete&section=appendix'
-    const parts = hyphenateForPdf(url, builtin)
+  it('does not hyphenate Portuguese words with English patterns', () => {
+    expect(hyphenateForPdf('distribuídos')).toEqual(['distribuídos'])
+    expect(hyphenateForPdf('contínua,')).toEqual(['contínua,'])
+  })
+
+  it('breaks an oversized link after separators, never after a hyphen', () => {
+    const url = 'https://example.org/portfolio/projects/distributed-systems/observability/final-report-2026?version=complete&section=technical-appendices'
+    const parts = hyphenateForPdf(url)
     expect(parts.join('')).toBe(url)
-    expect(parts).toContain('projects/')
-    expect(parts.some((part) => part.startsWith('sion'))).toBe(false)
+    expect(parts.length).toBeGreaterThan(1)
+    expect(parts.slice(0, -1).some((part) => part.endsWith('-'))).toBe(false)
   })
 
   it.each([
     'https://example.org/' + 'A1b2C3d4E5f6G7h8'.repeat(9),
     'x'.repeat(200),
-    'alex.morgan.with.a.very.long.address@example-organization.org',
-  ])('never leaves a run longer than 18 characters and keeps the text intact', (token) => {
-    const parts = hyphenateForPdf(token, builtin)
+    'alex.morgan.with.a.very.long.address.that.keeps.going@example-organization-name.org',
+  ])('splits an oversized token into short runs and keeps the text intact', (token) => {
+    const parts = hyphenateForPdf(token)
     expect(parts.join('')).toBe(token)
-    expect(Math.max(...parts.map((part) => part.length))).toBeLessThanOrEqual(18)
+    expect(Math.max(...parts.map((part) => part.length))).toBeLessThanOrEqual(28)
   })
 })

@@ -148,7 +148,8 @@ export function createResumePdfStyles(settings: Settings) {
       fontSize: headingSize,
       color: '#111418',
       fontWeight: 600,
-      letterSpacing: 1.3,
+      // No letterSpacing: tracking is written as a gap between every glyph, which
+      // text extractors read as spaces ("E X P E R I E N C E").
       textTransform: 'uppercase',
     },
     sectionRule: {
