@@ -116,3 +116,14 @@ describe('character coverage', () => {
     expect(lines).toContain(sample)
   })
 })
+
+describe('bullets across page breaks', () => {
+  it.each(['Helvetica', 'Times New Roman', 'Courier New'] as const)('never strands a bullet marker or splits a bullet from its text (%s)', async (font) => {
+    for (const size of ['A4', 'Letter'] as const) {
+      const state = buildFixtureState({ font, size, jobs: 14, extraBullets: ['Co-authored the internal API style guide: pagination, idempotency-keys, error-model, and deprecation-policy.'] })
+      const { lines } = await extractPdfjsText(await renderResumePdf(state))
+      expect(lines.filter((line) => line === '\u2022'), `${size} ${font}`).toEqual([])
+      expect(lines.filter((line) => line.startsWith('\u2022')).every((line) => line.length > 3)).toBe(true)
+    }
+  })
+})

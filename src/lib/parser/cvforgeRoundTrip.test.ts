@@ -78,3 +78,15 @@ describe.each(MATRIX)('CVForge export parsed without its session ($font, $langua
     expect(draft.customSections[0].bullets).toEqual(content.custom.bullets)
   })
 })
+
+describe('a multi-page CVForge export parsed without its session', () => {
+  it.each([
+    { font: 'Helvetica', size: 'A4' },
+    { font: 'Courier New', size: 'Letter' },
+  ] as const)('keeps every position and bullet across page breaks ($font, $size)', async ({ font, size }) => {
+    const state = buildFixtureState({ font, size, jobs: 12 })
+    const draft = (await roundTrip(state)).draft.resume
+    expect(draft.workExperience.map(({ role, company, startDate, bullets }) => ({ role, company, startDate, bullets })))
+      .toEqual(state.resume.workExperience.map(({ role, company, startDate, bullets }) => ({ role, company, startDate, bullets })))
+  })
+})

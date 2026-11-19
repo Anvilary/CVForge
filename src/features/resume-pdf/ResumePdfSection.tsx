@@ -39,7 +39,7 @@ export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets:
   return (
     <View style={styles.bulletList}>
       {visibleBullets.map((bullet) => (
-        <View key={bullet} style={styles.bulletRow}>
+        <View key={bullet} style={styles.bulletRow} wrap={false}>
           <Text style={styles.bulletMarker}>{BULLET_GLYPH}</Text>
           <Text style={styles.bulletText} wrap>{bullet}</Text>
         </View>
