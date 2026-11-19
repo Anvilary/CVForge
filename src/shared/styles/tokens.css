@@ -66,8 +66,8 @@
   --font-display: var(--font-lexend, 'Lexend'), serif;
   --font-mono: var(--font-jetbrains-mono, 'JetBrains Mono'), ui-monospace, Menlo, monospace;
 
-  --container: 1120px;
-  --header-h: 76px;
+  --container: 1280px;
+  --header-h: 98px;
 
   /* Layer contract: page content < sticky chrome < modal dialogs. */
   --z-header: 50;

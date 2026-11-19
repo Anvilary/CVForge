@@ -58,15 +58,16 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: ['/opengraph-image'],
   },
-  // Static dark-UI favicons - the white Anvilary mark reads on dark browser chrome.
+  // Official CVForge v1.0 browser icons.
   icons: {
     icon: [
-      { url: '/brand/anvilary-logo-mark-square-32-white.png', sizes: '32x32', type: 'image/png' },
-      { url: '/brand/anvilary-logo-mark-square-16-white.png', sizes: '16x16', type: 'image/png' },
-      { url: '/brand/anvilary-logo-mark-square-48-white.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/brand/cvforge-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/brand/cvforge-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/brand/cvforge-48.png', sizes: '48x48', type: 'image/png' },
     ],
     apple: [
-      { url: '/brand/anvilary-logo-mark-square-180.png', sizes: '180x180', type: 'image/png' },
+      { url: '/brand/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
   manifest: '/site.webmanifest',

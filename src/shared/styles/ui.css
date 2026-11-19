@@ -91,16 +91,23 @@
 
 /* --- Brand ------------------------------------------------------------------ */
 .brand {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-weight: 600; font-size: 17px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 18px;
   letter-spacing: -0.015em;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: 1;
 }
 .brand-logo {
-  width: 24px;
-  height: 28px;
+  width: 26px;
+  height: 30px;
   display: inline-grid;
   place-items: center;
   flex: 0 0 auto;
+  line-height: 0;
 }
 .brand-logo img {
   grid-area: 1 / 1;
@@ -108,4 +115,39 @@
   height: 100%;
   object-fit: contain;
   display: block;
+}
+
+/* Two-tone brand wordmark: dark orange CV + off-white Forge */
+.brand-name {
+  display: inline-flex;
+  align-items: baseline;
+  line-height: 1;
+}
+.brand-cv {
+  color: var(--ember);
+}
+.brand-forge {
+  color: var(--ink);
+}
+
+/* Prominent brand variant (homepage header) */
+.brand.brand-lg {
+  gap: 14px;
+  font-size: 24.5px;
+  letter-spacing: -0.025em;
+}
+.brand.brand-lg .brand-logo {
+  width: 54px;
+  height: 60px;
+}
+
+/* Compact brand variant (workbench header) */
+.brand.brand-compact {
+  gap: 10px;
+  font-size: 16px;
+  letter-spacing: -0.015em;
+}
+.brand.brand-compact .brand-logo {
+  width: 30px;
+  height: 34px;
 }

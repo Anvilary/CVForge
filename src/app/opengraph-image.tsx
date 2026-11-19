@@ -1,12 +1,15 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { ImageResponse } from 'next/og'
 
 export const alt = 'CVForge: build and analyze your CV locally'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-const logoDataUri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADPUlEQVR4nNWWS2hdVRSGv517bfOohQhW1FqhUREUnwM76KRSkApFUVEQqYgPEAdGC504EnQoONEqOBBEFHHWOolWRAQFoSqI4MAUCoKkWhC1tnrv/Ryc/5Cdm6SYNk11w2Hfux57rf9fa69z4P+81I7aOV/By1K/1zS4ep9695omoY6oRb3e+XVVZCNrkUAn+1tqXx2o+2vduQzeop9ST6q9JPG7uvlMWFgpZaWUIjANrAc6QAEmgKeiOzdlqNBfpv6a2r+tfpoyzKmTsVn9hlS72V9M8L56pXpP1Yx7a9vVDF7yTKo/BfEH0Y2rs0loVh1bdRYq9HsrtDuqeVDL99Q+qxG8RT+uHgn6L9qOz36Reiy6rzKiV6cZK/SPVigfbHWV/qVKf2dkZz8XgrCrfhuEP6ijFQMd52fDidh8HN+zY6FCd2+Fbt8wujaQ+m5sBuptSezMWahq/HkO/UW9OLoN6hb1cnUism25DarvDSe60uCdJHB7hf7V6CbUS21eQlvVTeq66NrBdFK9OmcsW4pFijh0acbuANgX1QB4PYE61dPNPhq/V2jG83rg6ZzRTR+trCfUJ4JG9Z1K3jKwKc8l6mil/zo+f6q7ThejWzmNlFIG6v3ATmALcAfQi92E+khY6wFjwHiYOQGcSr2NDGAdcEA9CMwB75dSZtpYw2jrD43DLlx9V74GQ/8/VK9o47Rxy1AS7esW9S5gD3ATsDUmvSDsAp8Bx4F+9DdGXypmvwe+BN4spRxaqgSLXhihcQBcABwEjuaQ7cBDMfsG+ASYjN2PwAPA5iS4HzgMbItsd+Qson6JBNrhM13RNxVZO2gOqR+pz6kvqDN5VF+O7XWV/5P12fVacC1SG2P4WJg4AMzG5Gj2HvAzsIGmEedorh3AkezfATM543GbK+hpEwBGSil9YBdwbZxfK6Wo3go8DJwCbgGOARfSzIC/gJuzT6tT6aU3csYNwM5SSt/lJqOZ2+p29beKvh02E+/fdrvq3+pGdXclO24zqhfcguGadIBrgOeDtANsBP4AnqXp+JbKwvxHaXs7GKJ5DHgmfqPAFE1DLyrFeVvLXcNa3k62Fb3VSim9pc5Kj/131j/SCxjIAydBxQAAAABJRU5ErkJggg=='
+export default async function OpenGraphImage() {
+  const logoBuffer = await readFile(join(process.cwd(), 'public/brand/cvforge-logo.png'))
+  const logoDataUri = `data:image/png;base64,${logoBuffer.toString('base64')}`
 
-export default function OpenGraphImage() {
   return new ImageResponse(
     (
       <div

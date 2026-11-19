@@ -84,7 +84,7 @@ async function fetchWithRetry(path, options) {
 }
 
 (async () => {
-  const brandAsset = '/brand/anvilary-logo-mark-square-180.png'
+  const brandAsset = '/brand/apple-touch-icon.png'
   const ok = [
     '/', '/builder', '/analyzer', '/health', '/robots.txt', '/sitemap.xml',
     '/site.webmanifest', '/opengraph-image', brandAsset,

@@ -9,12 +9,12 @@
   "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
-      "src": "/brand/anvilary-logo-mark-square-192-white.png",
+      "src": "/brand/cvforge-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/brand/anvilary-logo-mark-square-512-white.png",
+      "src": "/brand/cvforge-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

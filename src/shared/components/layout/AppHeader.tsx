@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { Brand } from '@/shared/components/ui/Brand'
 
 interface AppHeaderProps {
   title?: string
@@ -15,17 +15,7 @@ export function AppHeader({
 
   return (
     <header className="app-header">
-      <Link href="/" className="brand-mini" aria-label="CVForge home">
-        <span className="brand-logo" aria-hidden="true">
-          <Image
-            src="/brand/anvilary-logo-mark-tight-white.png"
-            alt=""
-            width={24}
-            height={28}
-          />
-        </span>
-        <span>CVForge</span>
-      </Link>
+      <Brand href="/" size="compact" className="brand-mini" />
 
       <div className="crumbs">
         <span>CVForge</span>
