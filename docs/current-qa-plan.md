@@ -16,6 +16,12 @@ pnpm test:e2e:cross-browser
 git diff --check
 ```
 
+The unit tier includes the PDF text gates: `pdfTextIntegrity.test.ts` (pdf.js),
+`cvforgeRoundTrip.test.ts` (export to parsed draft without the embedded session) and
+`pdfIndependentExtractors.test.ts` (Poppler and Ghostscript). The last one skips when
+those binaries are missing; `make release-check` sets `REQUIRE_INDEPENDENT_EXTRACTORS=1`
+so the release host must have `pdftotext` and `gs`.
+
 Run these commands from the repository root. Playwright serves the standalone
 artifact in `.next/standalone` and runs the suites in `tests/e2e`. The full Chromium
 suite includes axe checks. Firefox and WebKit run the critical subset. On

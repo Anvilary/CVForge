@@ -65,8 +65,8 @@ NEXT_PUBLIC_SITE_URL="${SITE_URL}" \
 CURRENT_STEP="production dependency audit"
 pnpm audit-prod
 
-CURRENT_STEP="unit tests"
-pnpm test:unit
+CURRENT_STEP="unit tests (including the Poppler and Ghostscript PDF text checks)"
+REQUIRE_INDEPENDENT_EXTRACTORS=1 pnpm test:unit
 
 CURRENT_STEP="required Playwright browsers"
 pnpm exec playwright install chromium firefox webkit
