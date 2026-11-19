@@ -109,3 +109,30 @@ test('Import review dialog has no serious or critical axe violations', async ({ 
   )
   await expectNoSeriousViolations(page)
 })
+
+const SETTING_SPINBUTTONS = [
+  'Base Size', 'Name Size', 'Heading', 'Line Spacing (0 = tight)', 'Section Spacing', 'Profile Spacing',
+  'Top Bar', 'Contact Gap', 'Summary Gap', 'Title/Meta Gap', 'Desc. Gap', 'Work', 'Education', 'Projects', 'Line Height',
+]
+
+async function expectSettingsAccessible(page: Page) {
+  const card = page.locator('.group').filter({ has: page.getByText('Builder Settings', { exact: true }) })
+  await card.getByRole('button', { name: 'Expand section' }).click()
+  await expect(page.getByRole('combobox', { name: 'Page Size' })).toBeVisible()
+  for (const name of SETTING_SPINBUTTONS) {
+    await expect(page.getByRole('spinbutton', { name }).first(), name).toBeVisible()
+  }
+  await page.getByRole('spinbutton', { name: 'Base Size' }).focus()
+  await expect(page.getByRole('spinbutton', { name: 'Base Size' })).toBeFocused()
+  await expectNoSeriousViolations(page)
+  const headingOrder = await new AxeBuilder({ page }).withRules(['heading-order', 'label', 'select-name']).analyze()
+  expect(headingOrder.violations.map((violation) => violation.id)).toEqual([])
+}
+
+test('expanded Settings controls have accessible names and no axe violations on desktop and mobile', async ({ page }) => {
+  await page.goto('/builder')
+  await expectSettingsAccessible(page)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await expect(page.getByRole('combobox', { name: 'Page Size' })).toBeVisible()
+  await expectNoSeriousViolations(page)
+})

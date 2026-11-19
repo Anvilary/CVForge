@@ -62,7 +62,7 @@ export function WorkbenchSectionCard({
             <Icon name={icon} size={13} />
           </div>
           <div className="flex flex-col min-w-0">
-            <div
+            <h2
               className={`flex items-center gap-8 truncate text-[14px] font-medium tracking-tight transition-colors ${
                 isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
               } ${!isVisible ? 'text-ink-4' : ''}`}
@@ -73,7 +73,7 @@ export function WorkbenchSectionCard({
                   Hidden from PDF
                 </span>
               )}
-            </div>
+            </h2>
             {status && (
               <span className="text-[9px] font-mono text-ink-4 uppercase tracking-[0.06em] truncate">
                 {status}
