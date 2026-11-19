@@ -112,3 +112,38 @@ describe('summary and skills', () => {
     expect(parse('SKILLS\nDocker\nKubernetes\nTerraform\n').skills.technical).toEqual(['Docker', 'Kubernetes', 'Terraform'])
   })
 })
+
+describe('review regressions', () => {
+  it.each([
+    ['Engenheiro de Software | Jan 2020 - Presente', 'Presente', 'Engenheiro de Software'],
+    ['Jan 2020 \u2013 Atualmente', 'Atualmente', ''],
+    ['Software Engineer, Chicago 2019 - 2021', '2019 - 2021', 'Software Engineer, Chicago'],
+  ])('keeps the whole range for %s', (line, rawTail, remainder) => {
+    const range = extractDateRange(line)
+    expect(range?.raw.endsWith(rawTail)).toBe(true)
+    expect(line.replace(range?.raw ?? '', '').replace(/[|,\s]+$/, '').trim()).toBe(remainder)
+  })
+
+  it('keeps separate comma skill groups and bulleted groups apart', () => {
+    expect(parse('SKILLS\nPython, JavaScript, TypeScript\nReact, Node.js, Express\n').skills.technical)
+      .toEqual(['Python', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'Express'])
+    expect(parse('SKILLS\n\u2022 Python, Go\n\u2022 Docker, Kubernetes\n').skills.technical)
+      .toEqual(['Python', 'Go', 'Docker', 'Kubernetes'])
+  })
+})
+
+describe('contact review regressions', () => {
+  it('finds a phone in a contact block below the first heading', () => {
+    expect(parse('Alex Morgan\nSUMMARY\nEngineer who builds reliable tools for product teams every day.\nEXPERIENCE\nEngineer at Acme\nCONTACT\n+351 912 345 678 | alex@example.org\n').profile.phone).toBe('+351 912 345 678')
+  })
+
+  it('does not read a postal code or a metric as a phone number', () => {
+    expect(parse(header('Rua Augusta 123 1100-053 Lisboa')).profile.phone).toBe('')
+    expect(parse('Alex Morgan\nHandled 250 000 000 events every month with a small team of engineers\nEXPERIENCE\nEngineer at Acme\n').profile.phone).toBe('')
+  })
+
+  it('accepts capitalised domains and rejects handles and technology names', () => {
+    expect(parse('Alex Morgan\nalex@example.org AlexMorgan.dev\nEXPERIENCE\nEngineer at Acme\n').profile.website).toBe('https://AlexMorgan.dev')
+    expect(parse('Alex Morgan\nalex@example.org john.doe socket.js asp.nett\nEXPERIENCE\nEngineer at Acme\n').profile.website).toBe('')
+  })
+})

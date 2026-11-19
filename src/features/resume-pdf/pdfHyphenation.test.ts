@@ -16,7 +16,7 @@ describe('PDF hyphenation', () => {
     'CI/CD',
     'high-throughput',
     'alex.morgan@example.org',
-    'https://example.org/platform/reliability/2026-report',
+    'https://example.org/team/reliability-2026',
   ])('never offers a break inside %s', (word) => {
     expect(hyphenateForPdf(word)).toEqual([word])
   })

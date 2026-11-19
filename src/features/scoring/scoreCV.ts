@@ -290,9 +290,10 @@ function describeHeadingCheck(
   selectedLanguage: string,
 ) {
   if (headingScore.found) {
-    return headingScore.recognized
-      ? `Readable core headings were found in the extracted text: ${headingScore.found.join(', ')}.`
-      : `Only ${headingScore.found.length} of the 3 core headings (Experience, Education, Skills) were found as readable headings in the extracted text${headingScore.found.length ? `: ${headingScore.found.join(', ')}` : ''}.`
+    if (headingScore.fallback) return 'No English or Portuguese section headings were found in the extracted text, so their vocabulary was not judged.'
+    if (headingScore.recognized) return `Readable core headings were found in the extracted text: ${headingScore.found.join(', ')}.`
+    const cause = headingScore.letterSpaced ? ' Some headings are split into spaced letters.' : ''
+    return `Only ${headingScore.found.length} of the 3 core headings (Experience, Education, Skills) were recognized as headings in the extracted text${headingScore.found.length ? `: ${headingScore.found.join(', ')}` : ''}.${cause}`
   }
   if (!headingScore.recognized) return 'One or more core section headings may be difficult to recognize.'
   return headingScore.fallback

@@ -1,5 +1,6 @@
 import { type CVState } from '@/features/cv/model/types'
-import { coreHeadingsFound } from '@/lib/parser/heuristic/sectionDetection'
+import { countLetterSpacedLines } from '@/lib/parser/extractionDiagnostics'
+import { readableCoreHeadings } from '@/lib/parser/heuristic/sectionDetection'
 
 export type AnalyzerLanguage = 'en' | 'pt-PT' | 'neutral'
 
@@ -86,14 +87,17 @@ const MIN_CORE_HEADINGS = 2
 
 // For an uploaded PDF the headings that matter are the ones in the extracted
 // text, not the titles of the draft built from it (those are CVForge's defaults).
+// Headings are judged only when there is evidence to judge: letter-spaced
+// headings fail, one recognized heading needs a second, and a document with no
+// English or Portuguese heading at all is left unjudged like any other language,
+// because its vocabulary is unknown rather than wrong.
 export function recognizableSectionHeadings(state: CVState, language: AnalyzerLanguage, extractedText?: string) {
-  if (extractedText?.trim() && language !== 'neutral') {
-    const found = coreHeadingsFound(extractedText, { allowLetterSpacing: false })
-    return {
-      recognized: found.length >= MIN_CORE_HEADINGS,
-      fallback: false,
-      found: found.map((key) => CORE_HEADING_LABELS[key as keyof typeof CORE_HEADING_LABELS]),
-    }
+  if (extractedText?.trim()) {
+    const found = readableCoreHeadings(extractedText).map((key) => CORE_HEADING_LABELS[key])
+    const letterSpaced = countLetterSpacedLines(extractedText) > 0
+    if (found.length >= MIN_CORE_HEADINGS) return { recognized: true, fallback: false, found, letterSpaced }
+    if (letterSpaced || found.length > 0) return { recognized: false, fallback: false, found, letterSpaced }
+    return { recognized: true, fallback: true, found, letterSpaced }
   }
 
   if (language === 'neutral') {

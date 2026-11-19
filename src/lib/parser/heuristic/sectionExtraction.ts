@@ -80,27 +80,34 @@ export function buildProjectEntries(content: string, stats: ParserStats) {
 
 // In a comma-separated list, a line that stops without a separator was wrapped
 // mid-list, so the next line continues its last skill ("GitHub" / "Actions").
-// One-skill-per-line lists contain no separators and are left alone.
+// Only a full-width line, or a continuation that starts in lower case, is joined:
+// two short lines are two groups, and bulleted groups stay apart.
 const LIST_SEPARATOR = /[,;|\u2022]/
 const ENDS_WITH_SEPARATOR = /[,;|\u2022]$/
 const CATEGORY_LABEL_START = /^[\p{L}][\p{L} &/-]{0,30}:/u
+// A wrapped line can end well short of the margin when the next word is long
+// (Courier wraps "GitHub" / "Actions" at 55 characters), so the floor is low.
+const WRAPPED_SKILL_LINE_MIN_LENGTH = 45
 
-function joinWrappedSkillLines(lines: string[]) {
-  const joined: string[] = []
+function joinWrappedSkillLines(lines: EntryLine[]) {
+  const joined: EntryLine[] = []
   for (const line of lines) {
     const previous = joined[joined.length - 1]
     const continues = previous !== undefined
-      && LIST_SEPARATOR.test(previous)
-      && !ENDS_WITH_SEPARATOR.test(previous)
-      && !CATEGORY_LABEL_START.test(line)
-    if (continues) joined[joined.length - 1] = `${previous} ${line}`
+      && !previous.bullet
+      && !line.bullet
+      && LIST_SEPARATOR.test(previous.text)
+      && !ENDS_WITH_SEPARATOR.test(previous.text)
+      && !CATEGORY_LABEL_START.test(line.text)
+      && (previous.text.length >= WRAPPED_SKILL_LINE_MIN_LENGTH || /^\p{Ll}/u.test(line.text))
+    if (continues) joined[joined.length - 1] = { ...previous, text: `${previous.text} ${line.text}` }
     else joined.push(line)
   }
-  return joined
+  return joined.map((line) => line.text)
 }
 
 export function extractSkills(content: string) {
-  const lines = joinWrappedSkillLines(entryLines(content).map((line) => line.text))
+  const lines = joinWrappedSkillLines(entryLines(content))
   return uniqueValues(lines
     .flatMap(splitOutsideParentheses)
     .map(stripCategoryLabel)

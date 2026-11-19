@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { isCvForgeGenerated } from '@/lib/parser/cvForgeDetection'
-import { coreHeadingsFound } from '@/lib/parser/heuristic/sectionDetection'
+import { readableCoreHeadings } from '@/lib/parser/heuristic/sectionDetection'
 import { WorkbenchSectionCard } from '@/shared/components/workbench/WorkbenchSectionCard'
 import { type ParserDocument } from '../upload/parserTypes'
 
@@ -14,7 +14,7 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
   const isForge = extraction ? isCvForgeGenerated(extraction.metadata) : false
   const signals = extraction?.diagnostics.signals ?? []
   const passedChecks = signals.filter((signal) => signal.status === 'pass').length
-  const headings = extraction ? coreHeadingsFound(extraction.text, { allowLetterSpacing: false }) : []
+  const headings = extraction ? readableCoreHeadings(extraction.text) : []
   const hasSelectableText = Boolean(extraction?.text.trim())
 
   return (

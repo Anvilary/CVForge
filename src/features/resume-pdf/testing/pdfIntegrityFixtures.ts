@@ -76,6 +76,9 @@ export interface FixtureOptions {
   jobs?: number
   summary?: string
   extraBullets?: string[]
+  fontSize?: number
+  extraSkills?: string[]
+  projectName?: string
 }
 
 export function fixtureContent(language: FixtureLanguage) {
@@ -102,14 +105,15 @@ export function buildFixtureState(options: FixtureOptions = {}): CVState {
       profile: { ...content.profile, summary: options.summary ?? content.summary },
       workExperience,
       education: content.education.map((item, index) => ({ id: `education-${index}`, ...item })),
-      projects: [{ id: 'project-0', startDate: 'Mar 2022', endDate: 'Jan 2023', ...content.project }],
-      skills: { featured: [], featuredWithRating: [], technical: content.technicalSkills, soft: content.softSkills },
+      projects: [{ id: 'project-0', startDate: 'Mar 2022', endDate: 'Jan 2023', ...content.project, name: options.projectName ?? content.project.name }],
+      skills: { featured: [], featuredWithRating: [], technical: [...content.technicalSkills, ...(options.extraSkills ?? [])], soft: content.softSkills },
       languages: content.languages.map((item, index) => ({ id: `language-${index}`, ...item })),
       customSections: [{ id: 'custom-0', ...content.custom }],
     },
     settings: {
       documentSize: size,
       fontFamily: font,
+      ...(options.fontSize ? { fontSize: options.fontSize } : {}),
       visibleSections: { workExperience: true, education: true, projects: true, skills: true, languages: true, customSections: true },
       bulletVisibility: {},
       sectionTitles: content.titles,

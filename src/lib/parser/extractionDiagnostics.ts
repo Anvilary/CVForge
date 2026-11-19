@@ -174,7 +174,7 @@ export function analyzeExtractionEvidence(pages: PdfPageEvidence[]): PdfExtracti
 // heading, not initials or a list of acronyms.
 const LETTER_SPACED_LINE = /^(?:\p{L}{1,3} ){3,}\p{L}{1,3}$/u
 
-function countLetterSpacedLines(text: string) {
+export function countLetterSpacedLines(text: string) {
   return text.split('\n').filter((line) => {
     const trimmed = line.trim()
     if (!LETTER_SPACED_LINE.test(trimmed)) return false

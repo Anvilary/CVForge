@@ -84,11 +84,11 @@ describe('pathological tokens', () => {
   const identifier = 'A1b2C3d4E5f6G7h8'.repeat(9)
 
   it('keeps long but line-sized tokens whole and everything inside the page', async () => {
-    const mid = 'https://example.org/team/platform/reliability/2026-report'
-    const state = buildFixtureState({ summary: `Portfolio ${mid} and mail alex.morgan.with.a.long.address@example-organization.org today.` })
+    const mid = 'https://example.org/team/reliability-2026'
+    const state = buildFixtureState({ summary: `Portfolio ${mid} and mail alex.morgan.long@example-organization.org today.` })
     const { lines, maxRight, pageWidth } = await extractPdfjsText(await renderResumePdf(state))
     expect(squash(lines)).toContain(mid)
-    expect(squash(lines)).toContain('alex.morgan.with.a.long.address@example-organization.org')
+    expect(squash(lines)).toContain('alex.morgan.long@example-organization.org')
     expect(maxRight).toBeLessThanOrEqual(pageWidth - PAGE_PADDING_HORIZONTAL + BOUNDS_TOLERANCE_PT)
   })
 
@@ -106,6 +106,19 @@ describe('pathological tokens', () => {
     const state = buildFixtureState({ extraBullets: ['Built a well-documented, high-throughput, event-driven pipeline.'] })
     const { lines } = await extractPdfjsText(await renderResumePdf(state))
     expect(squash(lines)).toContain('well-documented, high-throughput, event-driven pipeline.')
+  })
+})
+
+describe('widest unbroken tokens in the narrowest columns', () => {
+  it('keeps a 41-character skill and project name whole and inside the margins at the largest Courier size', async () => {
+    const skill = 'Infrastructure-as-code-orchestration-tool'
+    const project = 'Distributed-observability-pipeline-engine'
+    expect(skill).toHaveLength(41)
+    const state = buildFixtureState({ font: 'Courier New', size: 'A4', fontSize: 14, extraSkills: [skill], projectName: project })
+    const { lines, maxRight, pageWidth } = await extractPdfjsText(await renderResumePdf(state))
+    expect(squash(lines)).toContain(skill)
+    expect(squash(lines)).toContain(project)
+    expect(maxRight).toBeLessThanOrEqual(pageWidth - PAGE_PADDING_HORIZONTAL + COURIER_BOUNDS_TOLERANCE_PT)
   })
 })
 

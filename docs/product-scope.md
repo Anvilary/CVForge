@@ -91,7 +91,10 @@ changes v2 in these material ways:
   for empty pages, repeated page edges, excessive fragments, letter-spaced words such as
   "E X P E R I E N C E", suspicious reading order, replacement characters, symbol noise,
   and very large page counts. The letter-spaced signal adds points inside Parseability only;
-  dimension weights are unchanged.
+  dimension weights are unchanged, so method v3 keeps its version, but identical input can now
+  score differently from earlier v3 builds. Scores are never stored. The heading check judges
+  uploaded PDFs by English and Portuguese heading vocabulary in the extracted text and leaves
+  a document with no such heading unjudged, like any other language.
 - English and Portuguese (Portugal) have explicit section-heading and action-language
   dictionaries. Structured CV state uses an explicit supported language when one is
   available; otherwise heading/content evidence selects English or PT-PT; ambiguous and

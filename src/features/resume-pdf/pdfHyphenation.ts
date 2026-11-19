@@ -3,10 +3,11 @@
 // therefore stay whole. Only a token that cannot fit on one line is split, so a
 // false hyphen can only appear when the alternative is text running off the page.
 //
-// A line holds at least about 60 characters at the largest supported font size
-// (12 pt Courier, 7.2 pt per character, in a 470 pt column), so any token up to
-// this length always fits on a line of its own.
-const MAX_UNBROKEN_LENGTH = 56
+// The narrowest column text can sit in is the entry title beside its dates
+// (about 310 pt at the narrowest page) and the skill values (375 pt). At the
+// largest supported size (12 pt Courier, 7.2 pt per character) 42 characters
+// are 302 pt, so any token up to this length fits a line of its own.
+const MAX_UNBROKEN_LENGTH = 42
 const PIECE_LENGTH = 28
 // A hyphen is not a break point: the glyph react-pdf adds would double it.
 const LINK_SEPARATORS = '/?&=#._'

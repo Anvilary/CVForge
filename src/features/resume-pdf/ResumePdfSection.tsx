@@ -7,6 +7,9 @@ import { type PdfStyles } from './types'
 // leaves no trace in the text layer). WinAnsi includes it, so core fonts render it.
 const BULLET_GLYPH = '\u2022'
 // A marker the user typed by hand would otherwise print twice.
+// A bullet row stays on one page (a split would strand its marker), unless the
+// bullet is long enough that it could be taller than a page.
+const MAX_UNSPLIT_BULLET_LENGTH = 600
 const LEADING_MARKER = /^[\u2022*-]\s+/
 
 interface ResumePdfSectionProps {
@@ -38,8 +41,8 @@ export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets:
 
   return (
     <View style={styles.bulletList}>
-      {visibleBullets.map((bullet) => (
-        <View key={bullet} style={styles.bulletRow} wrap={false}>
+      {visibleBullets.map((bullet, index) => (
+        <View key={`${index}-${bullet}`} style={styles.bulletRow} wrap={bullet.length > MAX_UNSPLIT_BULLET_LENGTH}>
           <Text style={styles.bulletMarker}>{BULLET_GLYPH}</Text>
           <Text style={styles.bulletText} wrap>{bullet}</Text>
         </View>

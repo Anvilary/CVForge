@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { detectSections, sectionForHeading } from './sectionDetection'
+import { detectSections, readableCoreHeadings, sectionForHeading } from './sectionDetection'
 
 describe('section heading recognition', () => {
   it.each([
@@ -39,5 +39,17 @@ describe('section heading recognition', () => {
   it('splits a document on letter-spaced headings', () => {
     const sections = detectSections('Alex\nE X P E R I E N C E\nEngineer at Acme\nS K I L L S\nTypeScript, Docker')
     expect(sections.map((section) => section.key)).toEqual(['experience', 'skills'])
+  })
+})
+
+describe('readable core headings (strict, for scoring)', () => {
+  it('accepts common variants of the core headings in English and Portuguese', () => {
+    expect(readableCoreHeadings('Key Skills\nRelevant Experience\nEducation & Certifications')).toEqual(['experience', 'education', 'skills'])
+    expect(readableCoreHeadings('Experiência Profissional\nFormação Académica\nCompetências')).toEqual(['experience', 'education', 'skills'])
+  })
+
+  it('does not credit letter-spaced headings, sentences or lines with digits', () => {
+    expect(readableCoreHeadings('E X P E R I E N C E\nE D U C AT I O N')).toEqual([])
+    expect(readableCoreHeadings('I have five years of experience in design.\nExperience: 5 years')).toEqual([])
   })
 })

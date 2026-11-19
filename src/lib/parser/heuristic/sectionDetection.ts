@@ -54,18 +54,30 @@ export function sectionForHeading(line: string, options: { allowLetterSpacing?: 
   return SPACE_TOLERANT_DEFINITIONS.find(({ pattern }) => pattern.test(text))?.section ?? null
 }
 
-const CORE_HEADING_KEYS: SectionKey[] = ['experience', 'education', 'skills']
+type CoreHeading = 'experience' | 'education' | 'skills'
+const CORE_HEADING_KEYS: CoreHeading[] = ['experience', 'education', 'skills']
 
-// The core headings a rule-based extractor can read in this text. Scoring passes
-// allowLetterSpacing: false, because a strict extractor does not recover
-// "E X P E R I E N C E" the way CVForge's import review does.
-export function coreHeadingsFound(text: string, options: { allowLetterSpacing?: boolean } = {}) {
-  const found = new Set<SectionKey>()
-  for (const line of text.split('\n')) {
-    const key = sectionForHeading(line.trim().replace(/\s+/g, ' '), options)?.key
-    if (key && CORE_HEADING_KEYS.includes(key)) found.add(key)
-  }
-  return CORE_HEADING_KEYS.filter((key) => found.has(key))
+// What a rule-based extractor can read as a core heading: a short line that is
+// plainly a title and names the section in English or Portuguese ("Key Skills",
+// "Education & Certifications"). Letter-spaced lines never match, which is the
+// point: scoring does not credit what CVForge's import review can recover.
+const HEADING_VOCABULARY: Record<CoreHeading, RegExp> = {
+  experience: /\b(experience|employment|work history|experi[e\u00ea]ncia|historial profissional)\b/i,
+  education: /\b(education|academic|qualifications?|training|forma[c\u00e7][a\u00e3]o|educa[c\u00e7][a\u00e3]o|qualifica[c\u00e7][o\u00f5]es)\b/i,
+  skills: /\b(skills?|competenc(?:ies|y)|expertise|technologies|compet[e\u00ea]ncias|aptid[o\u00f5]es|tecnologias|conhecimentos)\b/i,
+}
+const MAX_HEADING_WORDS = 5
+
+function looksLikeHeading(line: string) {
+  return line.length <= MAX_HEADING_LENGTH
+    && line.split(' ').length <= MAX_HEADING_WORDS
+    && !/[.!?;,]$/.test(line)
+    && !/\d/.test(line)
+}
+
+export function readableCoreHeadings(text: string): CoreHeading[] {
+  const lines = text.split('\n').map((line) => line.trim().replace(/\s+/g, ' ').replace(/:$/, '')).filter(looksLikeHeading)
+  return CORE_HEADING_KEYS.filter((key) => lines.some((line) => HEADING_VOCABULARY[key].test(line)))
 }
 
 // Section content keeps the original lines, including bullet markers, so

@@ -233,8 +233,17 @@ describe('PDF headings are judged from the extracted text', () => {
   it('fails the heading check and the parseability signal for letter-spaced headings, even though the draft titles are CVForge defaults', () => {
     const headings = pdfIssue(tracked, 'section-headings')
     expect(headings?.status).not.toBe('pass')
-    expect(headings?.detected).toContain('found as readable headings')
+    expect(headings?.detected).toContain('recognized as headings')
     expect(pdfIssue(tracked, 'extraction-letter-spaced-text')?.status).toBe('fail')
+  })
+
+  it('judges headings by vocabulary in the text, and leaves a document with no recognizable heading unjudged', () => {
+    const variants = ['Key Skills', 'Relevant Experience', 'Education & Certifications', 'Alex', '- built things'].join('\n')
+    expect(pdfIssue(variants, 'section-headings')?.status).toBe('pass')
+    const german = ['Max Mustermann', 'Berufserfahrung', 'Ausbildung', 'Kenntnisse', 'Software Entwickler bei Acme'].join('\n')
+    const issue = pdfIssue(german, 'section-headings')
+    expect(issue?.status).toBe('pass')
+    expect(issue?.detected).toContain('not judged')
   })
 
   it('still judges a Builder CV by its configured section titles', () => {
