@@ -21,7 +21,7 @@ export function SiteFooter() {
           <Link href="/builder">Builder</Link>
           <Link href="/analyzer">Analyzer</Link>
           <a
-            href="https://github.com/alteixeira20/CVForge"
+            href="https://github.com/Anvilary/CVForge"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -25,7 +25,7 @@ export const siteConfig = {
   applicationName: 'CVForge CV Builder and Analyzer',
   organizationName: 'Anvilary Labs',
   familyUrl: 'https://anvilary.tools',
-  repositoryUrl: 'https://github.com/alteixeira20/CVForge',
+  repositoryUrl: 'https://github.com/Anvilary/CVForge',
   url: siteUrl,
   title: HOME_TITLE,
   description: HOME_DESCRIPTION,

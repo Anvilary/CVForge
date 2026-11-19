@@ -120,7 +120,7 @@ Reference toolchain:
 - Docker and Docker Compose for container and complete release validation
 
 ```bash
-git clone https://github.com/alteixeira20/CVForge.git
+git clone https://github.com/Anvilary/CVForge.git
 cd CVForge
 corepack enable
 corepack prepare pnpm@10.5.2 --activate

@@ -34,7 +34,7 @@ ENV NEXT_PUBLIC_RELEASE_ID=$RELEASE_ID
 
 LABEL org.opencontainers.image.title="CVForge" \
       org.opencontainers.image.description="Local-first CV Builder and ATS-style Analyzer" \
-      org.opencontainers.image.source="https://github.com/alteixeira20/CVForge" \
+      org.opencontainers.image.source="https://github.com/Anvilary/CVForge" \
       org.opencontainers.image.version=$RELEASE_ID
 
 # Create non-root user

@@ -23,7 +23,7 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
   return (
     <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
       <div className="site-header-inner">
-        <Brand href="/" />
+        <Brand href="/" size="large" />
 
         <nav aria-label="Main navigation">
           <Link
@@ -42,11 +42,9 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
           </Link>
         </nav>
 
-        <span className="spacer" />
-
         <div className="actions">
           <a
-            href="https://github.com/alteixeira20/CVForge"
+            href="https://github.com/Anvilary/CVForge"
             target="_blank"
             rel="noopener noreferrer"
             className="btn sm github-star"

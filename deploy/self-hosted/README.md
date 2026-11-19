@@ -32,7 +32,7 @@ make preview-stop
    `/opt/src/CVForge`, which the current container's compose file builds from):
 
    ```bash
-   git clone git@github.com:alteixeira20/CVForge.git /opt/stacks/cvforge-rc/src   # first time
+   git clone git@github.com:Anvilary/CVForge.git /opt/stacks/cvforge-rc/src   # first time
    cd /opt/stacks/cvforge-rc/src && git fetch && git checkout --detach <approved-sha>
    RELEASE="$(git rev-parse --short=12 HEAD)"
    docker build \
