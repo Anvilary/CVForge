@@ -42,6 +42,11 @@ describe('websites', () => {
     expect(parse(text).profile.website).toBe('https://alexmorgan.dev')
   })
 
+  it('reads a website from a long separated contact line', () => {
+    const text = 'Jane Doe\nLisbon, Portugal | +351 912 345 678 | jane@doe.dev | linkedin.com/in/janedoe | janedoe.dev\nEXPERIENCE\nDesigner at Acme\n'
+    expect(parse(text).profile.website).toBe('https://janedoe.dev')
+  })
+
   it('does not mistake technology names for a website', () => {
     const text = 'Alex Morgan\nalex@example.org\nBackend engineer: Node.js, ASP.NET\nEXPERIENCE\nEngineer at Acme\n'
     expect(parse(text).profile.website).toBe('')

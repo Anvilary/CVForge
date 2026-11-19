@@ -78,3 +78,6 @@ compose.override.yml
 !scripts/
 !scripts/**/*.sh
 _codex_reports/
+
+# Browser automation output
+.playwright-mcp/

@@ -78,10 +78,16 @@ function findWebsite(text: string, lines: string[]) {
   const explicit = headerLines.join('\n').match(/https?:\/\/(?!.*(?:linkedin|github))[^\s)]+/i)?.[0]
   if (explicit) return explicit
   const bare = headerLines
-    .filter((line) => line.split(' ').length <= MAX_CONTACT_LINE_TOKENS)
+    .filter(isContactBlockLine)
     .flatMap((line) => line.split(' '))
     .find(isBareWebsite)
   return bare ? normalizeUrl(bare) : ''
+}
+
+// A short line, or a longer one that carries an email address or separators
+// ("Lisbon | +351 912 345 678 | jane@doe.dev | janedoe.dev").
+function isContactBlockLine(line: string) {
+  return line.split(' ').length <= MAX_CONTACT_LINE_TOKENS || line.includes('@') || /[|\u2022\u00b7]/.test(line)
 }
 
 function isBareWebsite(token: string) {

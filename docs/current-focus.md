@@ -29,6 +29,12 @@ Implemented release work:
 - Full Chromium plus critical Firefox/WebKit projects.
 - CSP and response headers, app/global error boundaries, a not-found experience, and a
   minimal `/health` endpoint.
+- PDF text integrity: tracking-free section headings, whole-word wrapping (no false hyphens), real bullet glyphs, and
+  bullet rows kept on one page. Gates: pdf.js (`pdfTextIntegrity.test.ts`), the export-to-draft round trip without the
+  embedded session (`cvforgeRoundTrip.test.ts`), and Poppler and Ghostscript (`pdfIndependentExtractors.test.ts`,
+  required by `make release-check`).
+- Analyzer feedback separates text-extraction checks, readable core headings and parser draft confidence; PDF headings are
+  judged from the extracted text, and letter-spaced text lowers Parseability.
 - Safe release, Docker, local production-preview, artifact-assertion, and CI workflows.
 - Security-only dependency patches for Next.js, PostCSS, and Sharp, with explicit standalone tracing for Sharp's glibc and musl libvips runtimes.
 - A non-root standalone Docker build whose routes, manifest, brand assets, and image optimizer have been exercised locally.
