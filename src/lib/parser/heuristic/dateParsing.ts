@@ -1,8 +1,13 @@
 import { type DateRange } from './heuristicTypes'
 
+const ENGLISH_MONTHS = 'Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?'
+const PORTUGUESE_MONTHS = 'Jan(?:eiro)?|Fev(?:ereiro)?|Mar(?:[c\u00e7]o)?|Abr(?:il)?|Mai(?:o)?|Jun(?:ho)?|Jul(?:ho)?|Ago(?:sto)?|Set(?:embro)?|Out(?:ubro)?|Nov(?:embro)?|Dez(?:embro)?'
+const PRESENT_WORDS = 'Present|Current|Now|Presente|Atual|Atualidade|Atualmente|Actualidade'
+const RANGE_SEPARATOR = String.raw`(?:-|\u2013|\u2014|to|until|at[\u00e9e])`
+
 export function extractDateRange(line: string): DateRange | null {
-  const datePart = String.raw`(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+\d{4}|\d{1,2}\/\d{4}|\d{4}\/\d{1,2}|\d{4}|Present|Current|Now`
-  const range = new RegExp(`(${datePart})\\s*(?:-|to)\\s*(${datePart})`, 'i').exec(line)
+  const datePart = String.raw`(?:(?:${ENGLISH_MONTHS}|${PORTUGUESE_MONTHS})\.?\s+(?:de\s+)?\d{4}|\d{1,2}\/\d{4}|\d{4}\/\d{1,2}|\d{4}-(?:0[1-9]|1[0-2])|\d{4}|${PRESENT_WORDS})`
+  const range = new RegExp(`(${datePart})\\s*${RANGE_SEPARATOR}\\s*(${datePart})`, 'i').exec(line)
   if (range) return toDateRange(range[1], range[2], range[0])
 
   const single = new RegExp(`\\b(${datePart})\\b`, 'i').exec(line)
@@ -21,7 +26,7 @@ function toDateRange(start: string, end: string, raw: string): DateRange {
 }
 
 function normalizePresent(value: string) {
-  return /^(present|current|now)$/i.test(value.trim()) ? 'Present' : value.trim()
+  return new RegExp(`^(${PRESENT_WORDS})$`, 'i').test(value.trim()) ? 'Present' : value.trim()
 }
 
 export function isOnlyDateLine(line: string, dateRaw?: string) {

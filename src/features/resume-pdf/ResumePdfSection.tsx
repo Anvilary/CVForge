@@ -3,6 +3,12 @@ import { type ReactNode } from 'react'
 import { cleanList, cleanText } from '@/shared/utils/resume-formatting'
 import { type PdfStyles } from './types'
 
+// A real text glyph, so list structure survives text extraction (a drawn shape
+// leaves no trace in the text layer). WinAnsi includes it, so core fonts render it.
+const BULLET_GLYPH = '\u2022'
+// A marker the user typed by hand would otherwise print twice.
+const LEADING_MARKER = /^[\u2022*-]\s+/
+
 interface ResumePdfSectionProps {
   title: string
   styles: PdfStyles
@@ -26,7 +32,7 @@ export function ResumePdfSection({ title, styles, children }: ResumePdfSectionPr
 
 export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets: string[]; styles: PdfStyles; visible?: boolean }) {
   if (!visible) return null
-  const visibleBullets = cleanList(bullets)
+  const visibleBullets = cleanList(bullets).map((bullet) => bullet.replace(LEADING_MARKER, '')).filter(Boolean)
 
   if (visibleBullets.length === 0) return null
 
@@ -34,7 +40,7 @@ export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets:
     <View style={styles.bulletList}>
       {visibleBullets.map((bullet) => (
         <View key={bullet} style={styles.bulletRow}>
-          <View style={styles.bulletMarker} />
+          <Text style={styles.bulletMarker}>{BULLET_GLYPH}</Text>
           <Text style={styles.bulletText} wrap>{bullet}</Text>
         </View>
       ))}

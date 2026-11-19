@@ -31,7 +31,8 @@ export function createResumePdfStyles(settings: Settings) {
   const projectEntryGap = settings.projectEntryGap ?? 8
   const languageLineHeight = compact(settings.languageLineHeight ?? lineHeight, 0, MIN_PDF_LINE_HEIGHT, MAX_PDF_LINE_HEIGHT)
   const bulletRowMarginBottom = scaleBulletRowMargin(lineHeight)
-  const bulletMarkerMarginTop = Math.max(3, Math.min(6, Math.round(bodySize * lineHeight * 0.35)))
+  // Wide enough for the bullet glyph in every core font (Courier is 0.6 em).
+  const bulletMarkerWidth = Math.ceil(bodySize * 0.6)
 
   return StyleSheet.create({
     page: {
@@ -224,15 +225,15 @@ export function createResumePdfStyles(settings: Settings) {
       maxWidth: '100%',
       minWidth: 0,
       flexDirection: 'row',
-      gap: 6,
+      gap: 4,
       marginBottom: bulletRowMarginBottom,
     },
     bulletMarker: {
-      width: 4,
-      height: 1,
-      backgroundColor: '#6B7280',
-      marginTop: bulletMarkerMarginTop,
+      width: bulletMarkerWidth,
       flexShrink: 0,
+      fontSize: bodySize,
+      color: '#6B7280',
+      lineHeight,
     },
     bulletText: {
       width: 0,

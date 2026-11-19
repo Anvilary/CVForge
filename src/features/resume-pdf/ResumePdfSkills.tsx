@@ -19,10 +19,10 @@ export function ResumePdfSkills({ skills, styles, title = 'Skills' }: { skills: 
     <ResumePdfSection title={title} styles={styles}>
       <View>
         {technical.length > 0 && (
-          <SkillRow label="Technical Skills" values={technical} styles={styles} isLast={soft.length === 0} />
+          <SkillRow label="Technical Skills:" values={technical} styles={styles} isLast={soft.length === 0} />
         )}
         {soft.length > 0 && (
-          <SkillRow label="Ways of Working" values={soft} styles={styles} isLast />
+          <SkillRow label="Ways of Working:" values={soft} styles={styles} isLast />
         )}
       </View>
     </ResumePdfSection>

@@ -1,5 +1,5 @@
-import { createElement } from 'react'
-import { renderToBuffer } from '@react-pdf/renderer'
+import { createElement, type ReactElement } from 'react'
+import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs'
 import { type CVState } from '@/features/cv/model/types'
 import { ResumePdfDocument } from '../ResumePdfDocument'
@@ -8,7 +8,7 @@ import { ResumePdfDocument } from '../ResumePdfDocument'
 // download step attaches it afterwards), so every check here is independent of
 // CVForge's own metadata.
 export async function renderResumePdf(state: CVState): Promise<Uint8Array> {
-  return new Uint8Array(await renderToBuffer(createElement(ResumePdfDocument, { state })))
+  return new Uint8Array(await renderToBuffer(createElement(ResumePdfDocument, { state }) as unknown as ReactElement<DocumentProps>))
 }
 
 export interface PdfjsText {

@@ -135,7 +135,7 @@ describe('Typography and spacing freedom', () => {
       expect(styles.bulletRow.marginBottom).toBe(0)
     })
 
-    it('adjusts bullet marker offset at compressed lineHeight to maintain alignment', () => {
+    it('keeps the bullet glyph on the first text line at compressed lineHeight', () => {
       const tightStyles = createResumePdfStyles({
         ...defaultSettings,
         lineHeight: 0.7,
@@ -145,8 +145,12 @@ describe('Typography and spacing freedom', () => {
         lineHeight: 1.5,
       })
 
-      expect(tightStyles.bulletMarker.marginTop).toBe(3)
-      expect(defaultStyles.bulletMarker.marginTop).toBe(6)
+      // The marker is text set in the same size and line height as the bullet text,
+      // so the two share a baseline at any line spacing.
+      for (const styles of [tightStyles, defaultStyles]) {
+        expect(styles.bulletMarker.lineHeight).toBe(styles.bulletText.lineHeight)
+        expect(styles.bulletMarker.fontSize).toBe(styles.bulletText.fontSize)
+      }
     })
   })
 
@@ -204,7 +208,7 @@ describe('Typography and spacing freedom', () => {
       expect(styles.entryTitle.lineHeight).toBe(1.3)
       expect(styles.entrySubtitle.lineHeight).toBe(1.35)
       expect(styles.bulletRow.marginBottom).toBe(1.0)
-      expect(styles.bulletMarker.marginTop).toBe(6)
+      expect(styles.bulletMarker.lineHeight).toBe(styles.bulletText.lineHeight)
     })
   })
 

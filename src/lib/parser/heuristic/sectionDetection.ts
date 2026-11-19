@@ -32,10 +32,25 @@ export function preambleLines(text: string) {
   return firstHeading === -1 ? [] : lines.slice(0, firstHeading)
 }
 
+// PDFs exported by older CVForge versions (and other tools) track their headings,
+// so extractors return "E X P E R I E N C E", or "E D U C AT I O N" where kerned
+// pairs stay joined. Word gaps are indistinguishable from letter gaps, so such a
+// line is matched with its spaces optional.
+const MAX_HEADING_LENGTH = 40
+const LETTER_SPACED_HEADING = /^(?:\p{Lu}{1,3} ){3,}\p{Lu}{1,3}$/u
+const SPACE_TOLERANT_DEFINITIONS = SECTION_DEFINITIONS.map((section) => ({
+  section,
+  pattern: new RegExp(section.pattern.source.replaceAll(' ', '\\s*'), 'iu'),
+}))
+
 export function sectionForHeading(line: string) {
   const normalized = line.replace(/:$/, '').trim()
-  if (normalized.length > 40) return null
-  return SECTION_DEFINITIONS.find((section) => section.pattern.test(normalized)) ?? null
+  const spaced = LETTER_SPACED_HEADING.test(normalized)
+  const text = spaced ? normalized.replaceAll(' ', '') : normalized
+  if (text.length > MAX_HEADING_LENGTH) return null
+  const exact = SECTION_DEFINITIONS.find((section) => section.pattern.test(normalized))
+  if (exact || !spaced) return exact ?? null
+  return SPACE_TOLERANT_DEFINITIONS.find(({ pattern }) => pattern.test(text))?.section ?? null
 }
 
 // Section content keeps the original lines, including bullet markers, so

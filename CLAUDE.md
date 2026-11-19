@@ -91,7 +91,10 @@ When adding a settings field, update `SettingsSchema` and `defaultSettings` in
 **ATS constraints that must be preserved on every PDF change:**
 - All text (names, dates, bullets, skills, languages) must remain real `<Text>` / `<Link>` nodes.
 - No sidebars, tables, hidden text, text-as-image, skill meters, or icon-only meaning.
-- Decorative elements (bullet markers, section tick, rule) use `<View>` - never replace text content.
+- Bullet markers are real `•` text glyphs so list structure survives text extraction; the section tick and rule are decorative `<View>` shapes that never replace text content.
+- No `letterSpacing` on any text above a hair of tracking: extractors read tracked glyph gaps as spaces ("E X P E R I E N C E"). Keep it at 0.05 em or less.
+- `hyphenateForPdf` keeps words whole; react-pdf draws a real hyphen glyph at every break it makes, so only a token too wide for a line may be split.
+- `pdfTextIntegrity.test.ts` (headings, keywords, hyphens, bounds) and `cvforgeRoundTrip.test.ts` (export to parsed draft, no embedded session) protect these rules.
 
 ## Feature Module Conventions
 

@@ -78,8 +78,29 @@ export function buildProjectEntries(content: string, stats: ParserStats) {
   }).filter((item) => item.name || item.link || item.startDate || item.endDate || item.bullets.length)
 }
 
+// In a comma-separated list, a line that stops without a separator was wrapped
+// mid-list, so the next line continues its last skill ("GitHub" / "Actions").
+// One-skill-per-line lists contain no separators and are left alone.
+const LIST_SEPARATOR = /[,;|\u2022]/
+const ENDS_WITH_SEPARATOR = /[,;|\u2022]$/
+const CATEGORY_LABEL_START = /^[\p{L}][\p{L} &/-]{0,30}:/u
+
+function joinWrappedSkillLines(lines: string[]) {
+  const joined: string[] = []
+  for (const line of lines) {
+    const previous = joined[joined.length - 1]
+    const continues = previous !== undefined
+      && LIST_SEPARATOR.test(previous)
+      && !ENDS_WITH_SEPARATOR.test(previous)
+      && !CATEGORY_LABEL_START.test(line)
+    if (continues) joined[joined.length - 1] = `${previous} ${line}`
+    else joined.push(line)
+  }
+  return joined
+}
+
 export function extractSkills(content: string) {
-  const lines = entryLines(content).map((line) => line.text)
+  const lines = joinWrappedSkillLines(entryLines(content).map((line) => line.text))
   return uniqueValues(lines
     .flatMap(splitOutsideParentheses)
     .map(stripCategoryLabel)
@@ -121,18 +142,22 @@ function maxSkillLength(skill: string) {
 
 export function buildLanguageEntries(content: string) {
   return uniqueValues(content
-    .split(/[,|;\n•]+/)
+    .split(/[,|;\n\u2022\u00b7]+/)
     .map((language) => language.trim())
     .filter((language) => language.length > 1 && language.length < 50)
     .filter((language) => !sectionForHeading(language)))
     .map((language, index) => {
-      const match = /^(.+?)\s*[-:]\s*(.+)$/.exec(language)
-      return {
-        id: `heuristic-language-${index + 1}`,
-        name: (match?.[1] ?? language).trim(),
-        proficiency: (match?.[2] ?? '').trim(),
-      }
+      const { name, proficiency } = splitLanguageLevel(language)
+      return { id: `heuristic-language-${index + 1}`, name, proficiency }
     })
+}
+
+// "English (Fluent)" (CVForge), "English - Fluent", "English: Fluent", or just "English".
+function splitLanguageLevel(language: string) {
+  const parenthesized = /^(.+?)\s*\((.+)\)$/.exec(language)
+  const separated = /^(.+?)\s*[-:\u2013\u2014]\s*(.+)$/.exec(language)
+  const match = parenthesized ?? separated
+  return { name: (match?.[1] ?? language).trim(), proficiency: (match?.[2] ?? '').trim() }
 }
 
 export function buildCustomSections(sections: DetectedSection[], stats: ParserStats) {
@@ -186,19 +211,26 @@ function readEntry(chunk: EntryLine[]): ParsedEntry {
   }
 }
 
-// Splits "Role at Company", "Role - Company", or "Role | Company" on one line;
+// Splits "Role at Company", "Role - Company", "Role | Company", or CVForge's own
+// "Role \u00b7 Company" on one line;
 // otherwise picks between two header lines by keywords, and finally treats the
 // dated line as the role (or degree) and the other as the organization.
 function assignTitleAndOrganization(titles: string[], datedTitle: string, isTitleLike: (line: string) => boolean) {
   const [first = '', second = ''] = titles
   const combined = splitRoleCompany(first)
-  if (combined && !second) return { role: combined.role, company: combined.company }
+  if (combined && !second) return orderByTitleLikeness(combined, isTitleLike)
   if (!second) return { role: first, company: '' }
   if (isTitleLike(first) !== isTitleLike(second)) {
     return isTitleLike(first) ? { role: first, company: second } : { role: second, company: first }
   }
   if (datedTitle === second) return { role: second, company: first }
   return { role: first, company: second }
+}
+
+// "Company - Role" is as common as "Role - Company"; keywords decide when only one side is title-like.
+function orderByTitleLikeness(parts: { role: string, company: string }, isTitleLike: (line: string) => boolean) {
+  if (isTitleLike(parts.company) && !isTitleLike(parts.role)) return { role: parts.company, company: parts.role }
+  return parts
 }
 
 const ROLE_WORDS = /\b(engineer|developer|programmer|architect|manager|director|lead|head|chef|cook|consultant|consulting|analyst|designer|intern|internship|trainee|apprentice|assistant|associate|specialist|officer|administrator|technician|coordinator|scientist|researcher|teacher|lecturer|tutor|founder|co-founder|owner|freelancer?|contractor|accountant|nurse|writer|editor|president|supervisor|representative|operator|agent|volunteer|cto|ceo|cfo|coo|vp)\b/i
@@ -216,7 +248,7 @@ function splitRoleCompany(line: string) {
   const atMatch = /^(.+?)\s+at\s+(.+)$/i.exec(line)
   if (atMatch) return { role: atMatch[1].trim(), company: atMatch[2].trim() }
 
-  const separatorMatch = /^(.+?)\s+[|\u2013\u2014-]\s+(.+)$/.exec(line)
+  const separatorMatch = /^(.+?)\s+[|\u00b7\u2013\u2014-]\s+(.+)$/.exec(line)
   if (separatorMatch) return { role: separatorMatch[1].trim(), company: separatorMatch[2].trim() }
 
   return null

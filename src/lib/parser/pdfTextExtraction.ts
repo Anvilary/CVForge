@@ -81,14 +81,9 @@ async function phantomJoins(page: PDFPageProxy, ops: PdfOps) {
 
 export function pageEvidence(items: unknown[]): PdfPageEvidence {
   const positioned = items.map(readTextItem).filter((item): item is TextItem => Boolean(item?.text))
-  const lineGroups = new Map<number, TextItem[]>()
-  positioned.forEach((item) => {
-    const lineKey = Math.round(item.y / 3) * 3
-    lineGroups.set(lineKey, [...(lineGroups.get(lineKey) ?? []), item])
-  })
-  const orderedLines = [...lineGroups.entries()]
-    .sort(([left], [right]) => right - left)
-    .map(([, lineItems]) => lineItems
+  const lineGroups = groupIntoLines(positioned)
+  const orderedLines = lineGroups
+    .map((lineItems) => lineItems
       .sort((left, right) => left.x - right.x)
       .map((item) => item.text)
       .join(' ')
@@ -98,7 +93,7 @@ export function pageEvidence(items: unknown[]): PdfPageEvidence {
   const fragmentedLineRatio = orderedLines.length
     ? orderedLines.filter((line) => line.length < 20).length / orderedLines.length
     : 0
-  const lineStarts = [...lineGroups.values()]
+  const lineStarts = lineGroups
     .map((lineItems) => Math.min(...lineItems.map((item) => item.x)))
   const lowBand = lineStarts.filter((x) => x < 220).length
   const highBand = lineStarts.filter((x) => x >= 220).length
@@ -111,6 +106,25 @@ export function pageEvidence(items: unknown[]): PdfPageEvidence {
     fragmentedLineRatio,
     possibleColumnOrder: (lowBand >= 3 && highBand >= 3) || upwardJumps >= 4,
   }
+}
+
+// Items belong to one line when their baselines are within a few points. Fixed
+// buckets would split a label and its value whenever a small baseline offset
+// straddles a bucket edge (mixed font sizes, superscripts).
+const LINE_BASELINE_TOLERANCE_PT = 3
+
+function groupIntoLines(items: TextItem[]): TextItem[][] {
+  const lines: TextItem[][] = []
+  let lineY = Number.NaN
+  for (const item of [...items].sort((left, right) => right.y - left.y)) {
+    if (lines.length === 0 || lineY - item.y > LINE_BASELINE_TOLERANCE_PT) {
+      lines.push([item])
+      lineY = item.y
+    } else {
+      lines[lines.length - 1].push(item)
+    }
+  }
+  return lines
 }
 
 function readTextItem(item: unknown): TextItem | null {
