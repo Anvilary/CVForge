@@ -32,6 +32,7 @@ export function analyzeExtractionEvidence(pages: PdfPageEvidence[]): PdfExtracti
   const repeatedEdgeCount = repeatedPageEdges(pages)
   const fragmentedPages = pages.filter((page) => page.lineCount >= 12 && page.fragmentedLineRatio > 0.55).length
   const columnOrderPages = pages.filter((page) => page.possibleColumnOrder).length
+  const letterSpacedLines = countLetterSpacedLines(text)
   const replacementCount = (text.match(/\uFFFD/g) ?? []).length
   const nonWhitespace = text.match(/\S/g)?.length ?? 0
   const noiseCount = (text.match(/[^\p{L}\p{N}\s.,;:!?%€$£@/()&+_'’"“”\-\u2013\u2014]/gu) ?? []).length
@@ -105,6 +106,19 @@ export function analyzeExtractionEvidence(pages: PdfPageEvidence[]): PdfExtracti
         3,
       ),
       signal(
+        'letter-spaced-text',
+        letterSpacedLines === 0 ? 'pass' : letterSpacedLines === 1 ? 'warn' : 'fail',
+        'high',
+        'Letter-spaced text',
+        letterSpacedLines === 0
+          ? 'No words split into spaced single letters were detected.'
+          : `${letterSpacedLines} extracted line${letterSpacedLines === 1 ? '' : 's'} read as spaced single letters (for example "E X P E R I E N C E").`,
+        'Section headings and keywords split into single letters are not found by rule-based extractors or keyword search.',
+        'Remove wide letter spacing from headings in the source document and export the PDF again.',
+        letterSpacedLines === 0 ? 4 : letterSpacedLines === 1 ? 2 : 0,
+        4,
+      ),
+      signal(
         'reading-order',
         columnOrderPages === 0 ? 'pass' : 'warn',
         'medium',
@@ -154,6 +168,18 @@ export function analyzeExtractionEvidence(pages: PdfPageEvidence[]): PdfExtracti
       ),
     ],
   }
+}
+
+// Four or more short tokens, at least three of them single letters: a tracked
+// heading, not initials or a list of acronyms.
+const LETTER_SPACED_LINE = /^(?:\p{L}{1,3} ){3,}\p{L}{1,3}$/u
+
+function countLetterSpacedLines(text: string) {
+  return text.split('\n').filter((line) => {
+    const trimmed = line.trim()
+    if (!LETTER_SPACED_LINE.test(trimmed)) return false
+    return trimmed.split(' ').filter((token) => token.length === 1).length >= 3
+  }).length
 }
 
 function repeatedPageEdges(pages: PdfPageEvidence[]) {

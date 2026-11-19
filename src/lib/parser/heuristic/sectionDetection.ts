@@ -43,14 +43,29 @@ const SPACE_TOLERANT_DEFINITIONS = SECTION_DEFINITIONS.map((section) => ({
   pattern: new RegExp(section.pattern.source.replaceAll(' ', '\\s*'), 'iu'),
 }))
 
-export function sectionForHeading(line: string) {
+export function sectionForHeading(line: string, options: { allowLetterSpacing?: boolean } = {}) {
+  const { allowLetterSpacing = true } = options
   const normalized = line.replace(/:$/, '').trim()
   const spaced = LETTER_SPACED_HEADING.test(normalized)
   const text = spaced ? normalized.replaceAll(' ', '') : normalized
   if (text.length > MAX_HEADING_LENGTH) return null
   const exact = SECTION_DEFINITIONS.find((section) => section.pattern.test(normalized))
-  if (exact || !spaced) return exact ?? null
+  if (exact || !spaced || !allowLetterSpacing) return exact ?? null
   return SPACE_TOLERANT_DEFINITIONS.find(({ pattern }) => pattern.test(text))?.section ?? null
+}
+
+const CORE_HEADING_KEYS: SectionKey[] = ['experience', 'education', 'skills']
+
+// The core headings a rule-based extractor can read in this text. Scoring passes
+// allowLetterSpacing: false, because a strict extractor does not recover
+// "E X P E R I E N C E" the way CVForge's import review does.
+export function coreHeadingsFound(text: string, options: { allowLetterSpacing?: boolean } = {}) {
+  const found = new Set<SectionKey>()
+  for (const line of text.split('\n')) {
+    const key = sectionForHeading(line.trim().replace(/\s+/g, ' '), options)?.key
+    if (key && CORE_HEADING_KEYS.includes(key)) found.add(key)
+  }
+  return CORE_HEADING_KEYS.filter((key) => found.has(key))
 }
 
 // Section content keeps the original lines, including bullet markers, so

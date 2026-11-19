@@ -51,3 +51,17 @@ function page(
 function signal(result: ReturnType<typeof analyzeExtractionEvidence>, id: string) {
   return result.signals.find((item) => item.id === id)?.status
 }
+
+describe('letter-spaced text signal', () => {
+  it('fails when headings were split into single letters', () => {
+    const diagnostics = analyzeExtractionEvidence([
+      page('Alex Morgan\nE X P E R I E N C E\nEngineer at Acme\nE D U C AT I O N\nBSc Computing\nS K I L L S\nTypeScript'),
+    ])
+    expect(signal(diagnostics, 'letter-spaced-text')).toBe('fail')
+  })
+
+  it('warns for a single spaced line and passes ordinary text, initials and acronyms', () => {
+    expect(signal(analyzeExtractionEvidence([page('Alex Morgan\nS K I L L S\nTypeScript')]), 'letter-spaced-text')).toBe('warn')
+    expect(signal(analyzeExtractionEvidence([page('J. R. R. Tolkien\nAWS GCP IBM SAP\nA B C\nEXPERIENCE\nEngineer')]), 'letter-spaced-text')).toBe('pass')
+  })
+})

@@ -1,4 +1,5 @@
 import { type CVState } from '@/features/cv/model/types'
+import { coreHeadingsFound } from '@/lib/parser/heuristic/sectionDetection'
 
 export type AnalyzerLanguage = 'en' | 'pt-PT' | 'neutral'
 
@@ -80,7 +81,21 @@ export function actionLanguagePoints(state: CVState, language: AnalyzerLanguage)
   }
 }
 
-export function recognizableSectionHeadings(state: CVState, language: AnalyzerLanguage) {
+const CORE_HEADING_LABELS = { experience: 'Experience', education: 'Education', skills: 'Skills' } as const
+const MIN_CORE_HEADINGS = 2
+
+// For an uploaded PDF the headings that matter are the ones in the extracted
+// text, not the titles of the draft built from it (those are CVForge's defaults).
+export function recognizableSectionHeadings(state: CVState, language: AnalyzerLanguage, extractedText?: string) {
+  if (extractedText?.trim() && language !== 'neutral') {
+    const found = coreHeadingsFound(extractedText, { allowLetterSpacing: false })
+    return {
+      recognized: found.length >= MIN_CORE_HEADINGS,
+      fallback: false,
+      found: found.map((key) => CORE_HEADING_LABELS[key as keyof typeof CORE_HEADING_LABELS]),
+    }
+  }
+
   if (language === 'neutral') {
     const allPresent = [
       state.settings.sectionTitles.workExperience,

@@ -60,7 +60,7 @@ Planned but not implemented (Pinned Future Slices):
 - Builder preview and PDF export use the same document model and are designed to remain visually aligned.
 - Session restoration from PDF works only for CVForge-generated files when an embedded session attachment is present.
 - External PDF draft import is heuristic and may create incomplete or inaccurate fields.
-- Extraction confidence is separate from CV quality analysis.
+- The Extraction Analysis panel reports three separate things: text extraction checks passed, core headings (Experience, Education, Skills) readable in the extracted text, and, when a draft was parsed, the parser's draft confidence. None of them is a CV quality score, and a CVForge-generated PDF receives no special confidence value.
 - Data is saved only in the current browser's `localStorage`.
 - Persisted state is migrated to the current schema version before validation; states saved by a newer build are rejected rather than silently loaded.
 - Current Builder CV analysis in Analyzer uses in-browser state only and does not upload CV data.
@@ -81,14 +81,17 @@ changes v2 in these material ways:
   16%, Clarity 16%, and ATS-style compatibility 10%.
 - Structured Builder results omit Parseability and weight Completeness 23%, Impact 23%,
   Structure 20%, Clarity 20%, and ATS-style compatibility 14%.
+- For an uploaded PDF the section-heading check reads the headings in the extracted text (strictly, without CVForge's letter-spacing recovery), not the titles of the draft built from it.
 - Builder length and density use normalized visible CV text rather than serialized JSON.
 - Quantified impact requires contextual measurable-outcome evidence such as percentage,
   currency, time/latency reduction, scale, throughput, audience, financial, quality, or
   delivery-frequency language. A bare year, version, tier, protocol, or model number
   receives no impact credit.
 - PDF Parseability includes selectable-text coverage and density plus warning signals
-  for empty pages, repeated page edges, excessive fragments, suspicious reading order,
-  replacement characters, symbol noise, and very large page counts.
+  for empty pages, repeated page edges, excessive fragments, letter-spaced words such as
+  "E X P E R I E N C E", suspicious reading order, replacement characters, symbol noise,
+  and very large page counts. The letter-spaced signal adds points inside Parseability only;
+  dimension weights are unchanged.
 - English and Portuguese (Portugal) have explicit section-heading and action-language
   dictionaries. Structured CV state uses an explicit supported language when one is
   available; otherwise heading/content evidence selects English or PT-PT; ambiguous and

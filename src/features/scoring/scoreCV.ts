@@ -74,7 +74,7 @@ function buildIssues(
   const actionScore = actionLanguagePoints(state, language)
   const metricsScore = metricPoints(state)
   const compactScore = compactnessPoints(state)
-  const headingScore = recognizableSectionHeadings(state, language)
+  const headingScore = recognizableSectionHeadings(state, language, includeExtraction ? extractedText : undefined)
   const selectedLanguage = languageLabel(language)
 
   const issues = [
@@ -260,11 +260,7 @@ function buildIssues(
     binaryIssue({
       id: 'section-headings',
       label: 'Recognizable section headings',
-      detected: headingScore.recognized
-        ? headingScore.fallback
-          ? 'Core section titles are present; language-neutral fallback did not judge their vocabulary.'
-          : `Core sections use headings recognized for ${selectedLanguage}.`
-        : 'One or more core section headings may be difficult to recognize.',
+      detected: describeHeadingCheck(headingScore, selectedLanguage),
       why: 'Conventional headings help readers and rule-based extractors identify content.',
       suggestion: language === 'pt-PT'
         ? 'Use títulos claros como Experiência Profissional, Formação Académica, Projetos e Competências.'
@@ -287,6 +283,21 @@ function buildIssues(
   }
 
   return issues
+}
+
+function describeHeadingCheck(
+  headingScore: ReturnType<typeof recognizableSectionHeadings>,
+  selectedLanguage: string,
+) {
+  if (headingScore.found) {
+    return headingScore.recognized
+      ? `Readable core headings were found in the extracted text: ${headingScore.found.join(', ')}.`
+      : `Only ${headingScore.found.length} of the 3 core headings (Experience, Education, Skills) were found as readable headings in the extracted text${headingScore.found.length ? `: ${headingScore.found.join(', ')}` : ''}.`
+  }
+  if (!headingScore.recognized) return 'One or more core section headings may be difficult to recognize.'
+  return headingScore.fallback
+    ? 'Core section titles are present; language-neutral fallback did not judge their vocabulary.'
+    : `Core sections use headings recognized for ${selectedLanguage}.`
 }
 
 const DIMENSION_DETAILS: Record<ScoreDimensionId, { label: string; summary: string }> = {
@@ -312,7 +323,7 @@ const DIMENSION_DETAILS: Record<ScoreDimensionId, { label: string; summary: stri
   },
   parseability: {
     label: 'Parseability',
-    summary: 'Whether the uploaded PDF exposes enough selectable text for local extraction.',
+    summary: 'Whether text extraction returns enough readable, intact text in a sensible order. It does not predict how any ATS reads the document.',
   },
 }
 

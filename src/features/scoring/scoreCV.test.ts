@@ -212,3 +212,33 @@ function workEntry(bullet: string) {
     bullets: [bullet],
   }
 }
+
+describe('PDF headings are judged from the extracted text', () => {
+  const readable = ['Alex Morgan', 'alex@example.com', 'EXPERIENCE', 'Engineer at Acme Jan 2020 - Present', 'EDUCATION', 'BSc Computing', 'SKILLS', 'TypeScript, Docker'].join('\n')
+  const tracked = readable
+    .replace('EXPERIENCE', 'E X P E R I E N C E')
+    .replace('EDUCATION', 'E D U C AT I O N')
+    .replace('SKILLS', 'S K I L L S')
+
+  function pdfIssue(text: string, id: string) {
+    const result = scoreCV(freshState(), text, { includeExtraction: true, language: 'en' })
+    return result.issues.find((issue) => issue.id === id)
+  }
+
+  it('passes the heading check when the core headings are readable', () => {
+    expect(pdfIssue(readable, 'section-headings')?.status).toBe('pass')
+    expect(pdfIssue(readable, 'extraction-letter-spaced-text')?.status).toBe('pass')
+  })
+
+  it('fails the heading check and the parseability signal for letter-spaced headings, even though the draft titles are CVForge defaults', () => {
+    const headings = pdfIssue(tracked, 'section-headings')
+    expect(headings?.status).not.toBe('pass')
+    expect(headings?.detected).toContain('found as readable headings')
+    expect(pdfIssue(tracked, 'extraction-letter-spaced-text')?.status).toBe('fail')
+  })
+
+  it('still judges a Builder CV by its configured section titles', () => {
+    const result = scoreCV(freshState(), '', { language: 'en' })
+    expect(result.issues.find((issue) => issue.id === 'section-headings')?.status).toBe('pass')
+  })
+})
