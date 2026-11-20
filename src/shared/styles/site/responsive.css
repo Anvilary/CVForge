@@ -1,8 +1,7 @@
 /* --- Responsive ------------------------------------------------------------- */
 @media (max-width: 580px) {
-  .hero { padding: 24px 0 12px; gap: 14px; }
-  .preview-wrap { margin-top: 20px; }
-  .section { padding: 52px 0 32px; }
+  .hero { padding: clamp(24px, 4vh, 40px) 0; gap: 14px; }
+  .section { padding: 48px 0 28px; }
   .site-footer { padding: 20px 20px; margin-top: 16px; }
   .site-footer .row { flex-direction: column; align-items: flex-start; gap: 14px; }
   .site-footer .dot { display: none; }

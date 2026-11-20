@@ -94,6 +94,8 @@ test('hero trust facts are visible before scrolling on desktop acceptance viewpo
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 1280, height: 800 },
+    { width: 1280, height: 720 },
+    { width: 1024, height: 768 },
   ]) {
     await page.setViewportSize(viewport)
     await page.goto('/')
@@ -103,7 +105,11 @@ test('hero trust facts are visible before scrolling on desktop acceptance viewpo
     expect(box).not.toBeNull()
     expect(box!.y).toBeGreaterThanOrEqual(0)
     expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height)
-    await expect(page.locator('.preview-bar')).toBeVisible()
+
+    const nextSection = page.locator('#how')
+    const nextBox = await nextSection.boundingBox()
+    expect(nextBox).not.toBeNull()
+    expect(nextBox!.y).toBeGreaterThanOrEqual(viewport.height)
   }
 })
 
@@ -142,17 +148,16 @@ test('prominent button interaction moves the complete surface and respects reduc
   await expect(reducedButton).toHaveCSS('transform', 'none')
 })
 
-test('homepage preview communicates a complete fictional CV and practical Analyzer signals', async ({ page }) => {
+test('homepage hero leads directly into the three step cards without the removed preview', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  await expect(page.getByText('Maya Chen', { exact: true })).toBeVisible()
-  await expect(page.getByText('Northstar Works', { exact: false })).toBeVisible()
-  await expect(page.getByText('Juniper Studio', { exact: false })).toBeVisible()
-  await expect(page.getByText('Open Metrics Toolkit', { exact: true })).toBeVisible()
-  await expect(page.getByText('Extraction quality', { exact: true })).toBeVisible()
-  await expect(page.getByText('Structure completeness', { exact: true })).toBeVisible()
-  await expect(page.getByText('Improve first', { exact: true })).toBeVisible()
-  await expect(page.getByText('Diagnostics are practical signals, not hiring guarantees.')).toHaveCount(0)
+  await expect(page.locator('.hero h1')).toBeVisible()
+  await expect(page.locator('.hero .ctas .btn.primary')).toBeVisible()
+  await expect(page.locator('.step-card')).toHaveCount(3)
+  await expect(page.getByText('Build your CV locally.')).toBeVisible()
+  await expect(page.getByText('Export PDF or JSON.')).toBeVisible()
+  await expect(page.getByText('Analyze or restore locally.')).toBeVisible()
+  await expect(page.locator('.preview-bar')).toHaveCount(0)
 })
 
 test('entry dialog fits compact and short viewports with reachable controls', async ({ page }) => {

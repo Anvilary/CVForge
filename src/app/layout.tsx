@@ -58,13 +58,13 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: ['/opengraph-image'],
   },
-  // Official CVForge v1.0 browser icons.
+  // Official Anvilary Tools v2.1 browser icons.
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/brand/cvforge-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/brand/cvforge-16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/brand/cvforge-48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/brand/anvilary-tools-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/brand/anvilary-tools-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/brand/anvilary-tools-48.png', sizes: '48x48', type: 'image/png' },
     ],
     apple: [
       { url: '/brand/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },

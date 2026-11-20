@@ -1,21 +1,29 @@
+import Image from 'next/image'
 import Link from 'next/link'
-import { Brand } from '@/shared/components/ui/Brand'
 
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="row">
-        <Brand />
-        <span className="footer-family" aria-label="Anvilary Labs, Anvilary Tools, CVForge">
-          <span>Anvilary Labs</span>
-          <span aria-hidden="true">→</span>
-          <a href="https://anvilary.tools" target="_blank" rel="noopener noreferrer">
-            Anvilary Tools
-          </a>
-          <span aria-hidden="true">→</span>
-          <strong>CVForge</strong>
-        </span>
+      <div className="row footer-main">
+        <a
+          href="https://anvilary.tools"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-brand"
+        >
+          <span className="footer-brand-logo" aria-hidden="true">
+            <Image
+              src="/brand/anvilary-tools-logo.png"
+              alt=""
+              width={40}
+              height={40}
+            />
+          </span>
+          <span className="footer-brand-name">Anvilary Tools</span>
+        </a>
+
         <span className="flex-1" />
+
         <nav className="footer-links" aria-label="Footer navigation">
           <Link href="/">Home</Link>
           <Link href="/builder">Builder</Link>
@@ -29,6 +37,7 @@ export function SiteFooter() {
           </a>
         </nav>
       </div>
+
       <div className="row sub">
         <span>
           CV data stays in this browser. Export JSON for the most reliable backup.

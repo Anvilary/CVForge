@@ -18,8 +18,6 @@ export function AppHeader({
       <Brand href="/" size="compact" className="brand-mini" />
 
       <div className="crumbs">
-        <span>CVForge</span>
-        <span className="sep">/</span>
         <span className="active" title={title}>{title}</span>
       </div>
 

@@ -117,23 +117,29 @@
   display: block;
 }
 
-/* Two-tone brand wordmark: dark orange CV + off-white Forge */
+/* Two-tone brand wordmark: dark orange subtle gradient CV + off-white Forge */
 .brand-name {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   line-height: 1;
 }
 .brand-cv {
   color: var(--ember);
+  background: linear-gradient(180deg, #e07c48 0%, #b8582a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 .brand-forge {
   color: var(--ink);
+  display: inline-block;
 }
 
 /* Prominent brand variant (homepage header) */
 .brand.brand-lg {
   gap: 14px;
-  font-size: 24.5px;
+  font-size: 27.5px;
   letter-spacing: -0.025em;
 }
 .brand.brand-lg .brand-logo {
@@ -143,11 +149,11 @@
 
 /* Compact brand variant (workbench header) */
 .brand.brand-compact {
-  gap: 10px;
-  font-size: 16px;
-  letter-spacing: -0.015em;
+  gap: 12px;
+  font-size: 21px;
+  letter-spacing: -0.02em;
 }
 .brand.brand-compact .brand-logo {
-  width: 30px;
-  height: 34px;
+  width: 39px;
+  height: 44px;
 }

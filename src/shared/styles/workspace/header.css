@@ -3,10 +3,11 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 14px 32px;
+  padding: 16px 32px;
   border-bottom: 1px solid var(--border);
   background: color-mix(in oklab, var(--bg) 90%, transparent);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -15,25 +16,29 @@
   flex: 0 0 auto;
 }
 .app-header .crumbs {
-  display: flex; align-items: center; gap: 10px;
+  display: flex;
+  align-items: center;
   min-width: 0;
   margin-left: 4px;
-  padding-left: 16px;
+  padding-left: 18px;
   border-left: 1px solid var(--border);
-  color: var(--ink-3);
-  font-size: 14px;
+  color: var(--ink-2);
+  font-size: 14.5px;
+  line-height: 1;
 }
 .app-header .crumbs .active {
   min-width: 0;
+  max-width: 320px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--ink);
+  color: var(--ink-2);
   font-weight: 500;
 }
-.app-header .crumbs .sep { color: var(--ink-4); }
 .app-header .badge {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   flex: 0 0 auto;
   padding: 4px 10px;
   background: var(--bg-2);
@@ -44,12 +49,22 @@
   font-family: var(--font-mono);
 }
 .app-header .badge .dot {
-  width: 7px; height: 7px; border-radius: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
   background: var(--ember);
   box-shadow: 0 0 8px var(--ember);
 }
-.app-header .spacer { flex: 1; min-width: 0; }
-.app-header .actions { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.app-header .spacer {
+  flex: 1;
+  min-width: 0;
+}
+.app-header .actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
 .app-header .app-mode-link {
   position: relative;
   color: var(--ink-2);
@@ -83,18 +98,33 @@
   border-color: rgba(217,116,66,0.30);
   color: var(--ember);
 }
-.app-header .badge.synced .dot { background: var(--ember); box-shadow: 0 0 8px var(--ember); }
+.app-header .badge.synced .dot {
+  background: var(--ember);
+  box-shadow: 0 0 8px var(--ember);
+}
 
 @media (max-width: 900px) {
   .app-header {
     gap: 12px;
     padding: 14px 20px;
   }
-  .app-header .badge { display: none; }
+  .app-header .brand.brand-compact {
+    gap: 10px;
+    font-size: 19px;
+  }
+  .app-header .brand.brand-compact .brand-logo {
+    width: 34px;
+    height: 38px;
+  }
+  .app-header .badge {
+    display: none;
+  }
 }
 
 @media (max-width: 720px) {
-  .app-header .crumbs { display: none; }
+  .app-header .crumbs {
+    display: none;
+  }
   .app-header .actions .btn.sm {
     height: 40px;
     padding: 0 10px;
@@ -107,7 +137,17 @@
     gap: 10px;
     padding: 12px 14px;
   }
-  .app-header .brand-mini span:not(.brand-logo) { display: none; }
-  .app-header .actions { gap: 4px; }
-  .app-header .actions .btn.sm { padding: 0 9px; }
+  .app-header .brand-mini .brand-name {
+    display: none;
+  }
+  .app-header .brand.brand-compact .brand-logo {
+    width: 30px;
+    height: 34px;
+  }
+  .app-header .actions {
+    gap: 4px;
+  }
+  .app-header .actions .btn.sm {
+    padding: 0 9px;
+  }
 }

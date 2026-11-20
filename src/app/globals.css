@@ -19,7 +19,6 @@
 
 @layer base {
   :root {
-    --header-h: 98px;
     --container: 1280px;
     --radius-lg: 14px;
     --radius-xl: 20px;

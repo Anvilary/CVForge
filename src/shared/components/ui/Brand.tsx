@@ -13,11 +13,12 @@ export function Brand({ href, className = 'brand', size = 'default' }: BrandProp
     size === 'large'
       ? { width: 54, height: 60 }
       : size === 'compact'
-        ? { width: 30, height: 34 }
+        ? { width: 39, height: 44 }
         : { width: 25, height: 28 }
 
   const rootClass = [
-    className,
+    'brand',
+    className && className !== 'brand' ? className : '',
     size === 'large' ? 'brand-lg' : size === 'compact' ? 'brand-compact' : '',
   ]
     .filter(Boolean)

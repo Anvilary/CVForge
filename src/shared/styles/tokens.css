@@ -67,7 +67,7 @@
   --font-mono: var(--font-jetbrains-mono, 'JetBrains Mono'), ui-monospace, Menlo, monospace;
 
   --container: 1280px;
-  --header-h: 98px;
+  --header-h: 91px;
 
   /* Layer contract: page content < sticky chrome < modal dialogs. */
   --z-header: 50;

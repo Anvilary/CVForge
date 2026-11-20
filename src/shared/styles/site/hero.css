@@ -1,9 +1,14 @@
 /* --- Hero ------------------------------------------------------------------- */
 .hero {
-  padding: clamp(14px, 2.2vh, 28px) 0 24px;
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
   display: grid;
-  gap: clamp(10px, 1.3vh, 16px);
+  align-content: center;
+  justify-items: center;
+  gap: clamp(16px, 2.5vh, 28px);
+  padding: clamp(32px, 5vh, 64px) 0;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .hero h1 {
@@ -31,21 +36,30 @@
   text-wrap: pretty;
 }
 .hero .ctas {
-  display: inline-flex; gap: 12px;
+  display: inline-flex;
+  gap: 12px;
   margin: 0 auto;
   flex-wrap: wrap;
   justify-content: center;
 }
-/* Product facts - kept above the preview so the first viewport is complete. */
+/* Product facts - highlights below actions */
 .hero .meta-row {
-  display: flex; gap: 8px 20px;
+  display: flex;
+  gap: 8px 20px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 2px;
+  margin-top: 4px;
   font-family: var(--font-mono);
   font-size: 12.5px;
   letter-spacing: 0.03em;
   color: var(--ink-3);
 }
-.hero .meta-row span { display: inline-flex; align-items: center; gap: 6px; }
-.hero .meta-row svg { color: var(--ember); opacity: 0.85; }
+.hero .meta-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero .meta-row svg {
+  color: var(--ember);
+  opacity: 0.85;
+}
