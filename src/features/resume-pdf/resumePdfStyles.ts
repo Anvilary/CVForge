@@ -195,6 +195,11 @@ export function createResumePdfStyles(settings: Settings) {
       fontWeight: 400,
       color: '#3D4250',
     },
+    entryOrgLink: {
+      fontWeight: 400,
+      color: settings.themeColor,
+      textDecoration: 'none',
+    },
     entryDates: {
       maxWidth: '35%',
       minWidth: 0,

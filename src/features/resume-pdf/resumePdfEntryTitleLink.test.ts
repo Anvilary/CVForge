@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { defaultSettings } from '@/features/cv/model/defaults'
 import { createResumePdfStyles } from './resumePdfStyles'
 
-describe('PDF entry title link styles', () => {
+describe('PDF entry title and organization link styles', () => {
   it('provides an entryTitleLink style with no underline and the theme color', () => {
     const settings = { ...defaultSettings, themeColor: '#1a2b3c' }
     const styles = createResumePdfStyles(settings)
@@ -14,11 +14,24 @@ describe('PDF entry title link styles', () => {
     })
   })
 
-  it('entryTitleLink color tracks the theme color setting', () => {
+  it('provides an entryOrgLink style with no underline, theme color, and regular weight', () => {
+    const settings = { ...defaultSettings, themeColor: '#1a2b3c' }
+    const styles = createResumePdfStyles(settings)
+
+    expect(styles.entryOrgLink).toMatchObject({
+      color: '#1a2b3c',
+      textDecoration: 'none',
+      fontWeight: 400,
+    })
+  })
+
+  it('entryTitleLink and entryOrgLink colors track the theme color setting', () => {
     const redStyles = createResumePdfStyles({ ...defaultSettings, themeColor: '#ff0000' })
     const blueStyles = createResumePdfStyles({ ...defaultSettings, themeColor: '#0000ff' })
 
     expect(redStyles.entryTitleLink).toMatchObject({ color: '#ff0000' })
     expect(blueStyles.entryTitleLink).toMatchObject({ color: '#0000ff' })
+    expect(redStyles.entryOrgLink).toMatchObject({ color: '#ff0000' })
+    expect(blueStyles.entryOrgLink).toMatchObject({ color: '#0000ff' })
   })
 })

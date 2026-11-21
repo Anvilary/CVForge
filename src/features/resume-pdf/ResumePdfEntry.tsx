@@ -7,12 +7,21 @@ interface ResumePdfEntryProps {
   title?: string
   titleLink?: unknown
   organization?: string
+  organizationLink?: unknown
   subtitle?: string
   dates?: string
   styles: PdfStyles
 }
 
-export function ResumePdfEntry({ title, titleLink, organization, subtitle, dates, styles }: ResumePdfEntryProps) {
+export function ResumePdfEntry({
+  title,
+  titleLink,
+  organization,
+  organizationLink,
+  subtitle,
+  dates,
+  styles,
+}: ResumePdfEntryProps) {
   const cleanTitle = cleanText(title)
   const cleanOrganization = cleanText(organization)
   const cleanSubtitle = cleanText(subtitle)
@@ -20,7 +29,8 @@ export function ResumePdfEntry({ title, titleLink, organization, subtitle, dates
 
   if (!cleanTitle && !cleanOrganization && !cleanSubtitle && !cleanDates) return null
 
-  const resolvedLink = resolveEntryLink(titleLink)
+  const resolvedTitleLink = resolveEntryLink(titleLink)
+  const resolvedOrganizationLink = resolveEntryLink(organizationLink)
 
   return (
     <View style={styles.entry} wrap={false}>
@@ -28,8 +38,9 @@ export function ResumePdfEntry({ title, titleLink, organization, subtitle, dates
         <View style={styles.entryRow}>
           <EntryTitle
             title={cleanTitle}
-            titleLink={resolvedLink}
+            titleLink={resolvedTitleLink}
             organization={cleanOrganization}
+            organizationLink={resolvedOrganizationLink}
             styles={styles}
           />
           {cleanDates && <Text style={styles.entryDates}>{cleanDates}</Text>}
@@ -44,17 +55,22 @@ interface EntryTitleProps {
   title: string
   titleLink: string | null
   organization: string
+  organizationLink: string | null
   styles: PdfStyles
 }
 
-function EntryTitle({ title, titleLink, organization, styles }: EntryTitleProps) {
+function EntryTitle({ title, titleLink, organization, organizationLink, styles }: EntryTitleProps) {
   if (!title && !organization) return <Text />
 
   return (
     <Text style={styles.entryTitle}>
-      {titleLink ? <Link src={titleLink} style={styles.entryTitleLink}>{title || organization}</Link> : title}
+      {title ? (titleLink ? <Link src={titleLink} style={styles.entryTitleLink}>{title}</Link> : title) : null}
       {title && organization ? <Text style={styles.entryOrg}> · </Text> : null}
-      {organization && (title || !titleLink) ? <Text style={styles.entryOrg}>{organization}</Text> : null}
+      {organization ? (
+        organizationLink
+          ? <Link src={organizationLink} style={styles.entryOrgLink}>{organization}</Link>
+          : <Text style={styles.entryOrg}>{organization}</Text>
+      ) : null}
     </Text>
   )
 }
