@@ -19,13 +19,21 @@ Recently completed achievements:
 - **ATS Remediation & Text Integrity**: Section headings, real bullet glyphs, whole-word wrapping, and Poppler/Ghostscript independent extraction validation.
 - **Branding & Layout**: Official CVForge v1.0 mark, Anvilary parent brand footer, and responsive sticky header.
 
-## 2. Immediate Next Steps
+## 2. Release & Production Deployment Status
 
-- Conduct the final owner visual review of the demonstration video, official banner, and updated documentation.
-- Execute the manual QA plan across target hardware using `docs/current-qa-plan.md`.
-- Review release candidates against `docs/deployment.md`. Note: Deployment remains a manual owner action; no automated push or deployment occurs.
+- **Published Commit**: `a8bc2fe17b5240cf6948f9f889a45eb0f657722e` on `Anvilary/CVForge:main`.
+- **GitHub Actions CI**: Run ID `44916567306` passed all lint, typecheck, unit, artifact, accessibility, and Playwright suites.
+- **Production Deployment**: Deployed to `hosting-bay` container `cvforge-rc` (`cvforge:a8bc2fe17b52`) on Docker network `edge`.
+- **Production Origin**: `https://cvforge.anvilary.tools` active with verified security headers (CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy).
+- **Endpoint Verification**: All routes (`/`, `/builder`, `/analyzer`, `/health`, `/robots.txt`, `/sitemap.xml`, `/site.webmanifest`) and redirects (`/parser` -> 308 `/analyzer`, `/resume-import` -> 307 `/builder`) verified healthy and operational.
 
-## 3. Product Constraints
+## 3. Immediate Next Steps
+
+- Conduct continuous operational monitoring of `https://cvforge.anvilary.tools` on `hosting-bay`.
+- Preserve legacy container isolation and data safety.
+- Review future roadmap features against the local-first, browser-only product principles.
+
+## 4. Product Constraints
 
 - Preserve the local-first, browser-only operating model. No backend database, user accounts, or server-side CV storage.
 - Preserve the Zod schema data contract, reducer behavior, and backwards-compatible migration pipeline.
