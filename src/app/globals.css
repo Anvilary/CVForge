@@ -19,7 +19,7 @@
 
 @layer base {
   :root {
-    --container: 1280px;
+    --container: 1200px;
     --radius-lg: 14px;
     --radius-xl: 20px;
   }

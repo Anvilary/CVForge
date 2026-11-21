@@ -93,67 +93,85 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  font-size: 16px;
   font-weight: 600;
-  font-size: 18px;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
   color: var(--ink);
   text-decoration: none;
-  line-height: 1;
+  white-space: nowrap;
 }
 .brand-logo {
-  width: 26px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   display: inline-grid;
   place-items: center;
   flex: 0 0 auto;
-  line-height: 0;
 }
 .brand-logo img {
-  grid-area: 1 / 1;
   width: 100%;
   height: 100%;
-  object-fit: contain;
   display: block;
+  object-fit: contain;
 }
-
-/* Two-tone brand wordmark: dark orange subtle gradient CV + off-white Forge */
-.brand-name {
+.brand-text {
   display: inline-flex;
-  align-items: center;
-  line-height: 1;
+  align-items: baseline;
+  white-space: nowrap;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
 }
-.brand-cv {
-  color: var(--ember);
-  background: linear-gradient(180deg, #e07c48 0%, #b8582a 100%);
-  -webkit-background-clip: text;
+.brand-name {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  background: linear-gradient(180deg, #f5f5f2 0%, #deded9 100%);
   background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   -webkit-text-fill-color: transparent;
-  display: inline-block;
+}
+.brand-suffix {
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  background: linear-gradient(135deg, #d4773d 0%, #bc5b2b 50%, #a64a23 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+/* CVForge product wordmark: CV with orange styling, Forge with white */
+.brand-cv {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  background: linear-gradient(135deg, #d4773d 0%, #bc5b2b 50%, #a64a23 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 .brand-forge {
-  color: var(--ink);
-  display: inline-block;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  background: linear-gradient(180deg, #f5f5f2 0%, #deded9 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
-
-/* Prominent brand variant (homepage header) */
-.brand.brand-lg {
+.brand-lg {
   gap: 14px;
-  font-size: 27.5px;
-  letter-spacing: -0.025em;
+  font-size: 28px;
+  line-height: 1.15;
 }
-.brand.brand-lg .brand-logo {
-  width: 54px;
-  height: 60px;
+.brand-lg .brand-logo {
+  width: 80px;
+  height: 80px;
 }
-
-/* Compact brand variant (workbench header) */
-.brand.brand-compact {
-  gap: 12px;
-  font-size: 21px;
-  letter-spacing: -0.02em;
+.brand-compact {
+  gap: 10px;
+  font-size: 19px;
+  line-height: 1.15;
 }
-.brand.brand-compact .brand-logo {
-  width: 39px;
-  height: 44px;
+.brand-compact .brand-logo {
+  width: 34px;
+  height: 34px;
 }

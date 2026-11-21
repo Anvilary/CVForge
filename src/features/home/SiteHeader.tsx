@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Brand } from '@/shared/components/ui/Brand'
@@ -12,7 +12,34 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
   const pathname = usePathname()
+
+  useLayoutEffect(() => {
+    const header = headerRef.current
+    if (!header) return
+
+    const updateHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        '--site-header-height',
+        `${header.getBoundingClientRect().height}px`,
+      )
+    }
+
+    updateHeaderHeight()
+    const observer =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(updateHeaderHeight)
+    observer?.observe(header)
+    window.addEventListener('resize', updateHeaderHeight)
+
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', updateHeaderHeight)
+      document.documentElement.style.removeProperty('--site-header-height')
+    }
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -21,9 +48,11 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
   }, [])
 
   return (
-    <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
+    <header ref={headerRef} className={`site-header ${scrolled ? 'scrolled' : ''}`}>
       <div className="site-header-inner">
-        <Brand href="/" size="large" />
+        <Brand href="/" size="lg" />
+
+        <span className="spacer" />
 
         <nav aria-label="Main navigation">
           <Link
@@ -31,14 +60,14 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
             className={`nav-link ${pathname === '/builder' ? 'active' : ''}`}
             aria-current={pathname === '/builder' ? 'page' : undefined}
           >
-            Builder
+            <span className="nav-label">Builder</span>
           </Link>
           <Link
             href="/analyzer"
             className={`nav-link ${pathname === '/analyzer' ? 'active' : ''}`}
             aria-current={pathname === '/analyzer' ? 'page' : undefined}
           >
-            Analyzer
+            <span className="nav-label">Analyzer</span>
           </Link>
         </nav>
 

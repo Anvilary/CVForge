@@ -1,16 +1,17 @@
 /* --- Design tokens - shared Anvilary design language ------------------------
-   Aligned with the Anvilary-Website token set (dark-only forge palette).
+   Aligned with the Anvilary Tools Main Website token set (dark forge palette).
    Copied and adapted, not imported - CVForge builds independently. */
 
 :root {
   color-scheme: dark;
 
-  /* Dark forge palette - shared with Anvilary Tools */
+  /* Dark theme - primary forge palette shared with Anvilary Tools */
   --bg: #0e0e10;
   --bg-2: #141417;
   --bg-3: #1a1a1e;
   --bg-inset: #0a0a0c;
   --panel: #16161a;
+  --card-surface: color-mix(in srgb, var(--panel) 58%, transparent);
   --border: #25252b;
   --border-strong: #2f2f36;
   --border-faint: #1d1d22;
@@ -22,9 +23,7 @@
   --ember-2: #b8582a;
   --molten: #ec8a4a;
   --molten-dim: rgba(236, 138, 74, 0.16);
-  --copper: #c97553;
   --lava-glow: rgba(217, 116, 66, 0.16);
-  --lava-glow-2: rgba(245, 133, 63, 0.30);
   --sage: #3d9e6b;
   --sage-dim: rgba(61, 158, 107, 0.16);
 
@@ -36,13 +35,12 @@
   --accent-border-strong: rgba(217, 116, 66, 0.56);
   --accent-shadow: rgba(127, 50, 20, 0.28);
 
-  /* Surface hierarchy - translucency via color-mix so content stays opaque.
-     page bg < translucent landing card < app panel < dense editor < overlay */
+  /* Surface hierarchy - translucency via color-mix so content stays opaque */
   --surface-translucent: color-mix(in srgb, var(--panel) 58%, transparent);
   --surface-dense: color-mix(in srgb, var(--panel) 92%, transparent);
   --surface-overlay: var(--panel);
 
-  /* Forge ambience - reflected heat, not literal flame */
+  /* Hero forge ambience - reflected heat, not literal flame */
   --forge-glow-1: rgba(236, 138, 74, 0.13);
   --forge-glow-2: rgba(168, 44, 26, 0.12);
   --forge-glow-3: rgba(217, 116, 66, 0.06);
@@ -61,15 +59,43 @@
   --radius-lg: 14px;
   --radius-xl: 20px;
 
-  /* Font families: self-hosted @font-face rules in fonts.css */
+  /* Font families - self-hosted @font-face rules in fonts.css */
+  --font-lexend: 'Lexend';
+  --font-jetbrains-mono: 'JetBrains Mono';
   --font-sans: var(--font-lexend, 'Lexend'), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: var(--font-lexend, 'Lexend'), serif;
   --font-mono: var(--font-jetbrains-mono, 'JetBrains Mono'), ui-monospace, Menlo, monospace;
 
-  --container: 1280px;
-  --header-h: 91px;
+  --container: 1200px;
+  --site-header-height: 118px;
+  --header-h: var(--site-header-height, 118px);
 
-  /* Layer contract: page content < sticky chrome < modal dialogs. */
+  /* Chrome surface - shared header and footer appearance */
+  --chrome-surface: color-mix(in oklab, var(--bg) 88%, transparent);
+  --chrome-blur: 14px;
+  --chrome-border-line: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(184, 88, 42, 0.25) 12%,
+    rgba(184, 88, 42, 0.75) 32%,
+    #b8582a 50%,
+    rgba(184, 88, 42, 0.75) 68%,
+    rgba(184, 88, 42, 0.25) 88%,
+    transparent 100%
+  );
+  --chrome-border-glow: radial-gradient(
+    50% 100% at 50% 50%,
+    rgba(217, 116, 66, 0.55) 0%,
+    rgba(184, 88, 42, 0.3) 45%,
+    transparent 80%
+  );
+
+  /* Section padding and gaps */
+  --section-padding-block-start: clamp(42px, 4vh, 42px);
+  --section-padding-block-end: clamp(42px, 4vh, 42px);
+  --section-content-gap: clamp(20px, 3vh, 32px);
+
+  /* Layer contract */
   --z-header: 50;
   --z-modal: 100;
 }

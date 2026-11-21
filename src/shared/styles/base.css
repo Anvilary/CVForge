@@ -22,7 +22,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; color: inher
 a { color: inherit; text-decoration: none; }
 
 /* Anchor nav offset for sticky header */
-section[id] { scroll-margin-top: var(--header-h); }
+section[id] { scroll-margin-top: var(--site-header-height, 118px); }
 
 .mono { font-family: var(--font-mono); }
 .muted { color: var(--ink-3); }

@@ -1,7 +1,7 @@
 /* --- Hero ------------------------------------------------------------------- */
 .hero {
-  min-height: calc(100vh - var(--header-h));
-  min-height: calc(100svh - var(--header-h));
+  min-height: calc(100vh - var(--site-header-height, 118px));
+  min-height: calc(100svh - var(--site-header-height, 118px));
   display: grid;
   align-content: center;
   justify-items: center;

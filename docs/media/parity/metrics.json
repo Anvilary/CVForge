@@ -1,0 +1,135 @@
+[
+  {
+    "viewport": "1440x900",
+    "header": {
+      "headerHeight": 118,
+      "innerWidth": 1200,
+      "logoWidth": 80,
+      "logoHeight": 90,
+      "brandFontSize": "28px",
+      "navFontSize": "16px",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)",
+      "backdropBlur": "blur(14px)"
+    },
+    "footer": {
+      "footerHeight": 60,
+      "fontSize": "13px",
+      "color": "rgb(138, 135, 127)",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)"
+    }
+  },
+  {
+    "viewport": "1280x800",
+    "header": {
+      "headerHeight": 118,
+      "innerWidth": 1200,
+      "logoWidth": 80,
+      "logoHeight": 90,
+      "brandFontSize": "28px",
+      "navFontSize": "16px",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)",
+      "backdropBlur": "blur(14px)"
+    },
+    "footer": {
+      "footerHeight": 60,
+      "fontSize": "13px",
+      "color": "rgb(138, 135, 127)",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)"
+    }
+  },
+  {
+    "viewport": "1024x768",
+    "header": {
+      "headerHeight": 118,
+      "innerWidth": 1014,
+      "logoWidth": 80,
+      "logoHeight": 90,
+      "brandFontSize": "28px",
+      "navFontSize": "16px",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)",
+      "backdropBlur": "blur(14px)"
+    },
+    "footer": {
+      "footerHeight": 60,
+      "fontSize": "13px",
+      "color": "rgb(138, 135, 127)",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)"
+    }
+  },
+  {
+    "viewport": "768x1024",
+    "header": {
+      "headerHeight": 72,
+      "innerWidth": 758,
+      "logoWidth": 44,
+      "logoHeight": 49.5,
+      "brandFontSize": "19px",
+      "navFontSize": "14px",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)",
+      "backdropBlur": "blur(14px)"
+    },
+    "footer": {
+      "footerHeight": 95.5,
+      "fontSize": "13px",
+      "color": "rgb(138, 135, 127)",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)"
+    }
+  },
+  {
+    "viewport": "430x932",
+    "header": {
+      "headerHeight": 64,
+      "innerWidth": 420,
+      "logoWidth": 36,
+      "logoHeight": 40.5,
+      "brandFontSize": "19px",
+      "navFontSize": "13px",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)",
+      "backdropBlur": "blur(14px)"
+    },
+    "footer": {
+      "footerHeight": 104.375,
+      "fontSize": "13px",
+      "color": "rgb(138, 135, 127)",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)"
+    }
+  },
+  {
+    "viewport": "390x844",
+    "header": {
+      "headerHeight": 64,
+      "innerWidth": 380,
+      "logoWidth": 36,
+      "logoHeight": 40.5,
+      "brandFontSize": "19px",
+      "navFontSize": "13px",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)",
+      "backdropBlur": "blur(14px)"
+    },
+    "footer": {
+      "footerHeight": 104.375,
+      "fontSize": "13px",
+      "color": "rgb(138, 135, 127)",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)"
+    }
+  },
+  {
+    "viewport": "320x700",
+    "header": {
+      "headerHeight": 60,
+      "innerWidth": 310,
+      "logoWidth": 34,
+      "logoHeight": 38.25,
+      "brandFontSize": "16px",
+      "navFontSize": "13px",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)",
+      "backdropBlur": "blur(14px)"
+    },
+    "footer": {
+      "footerHeight": 126.5625,
+      "fontSize": "13px",
+      "color": "rgb(138, 135, 127)",
+      "bg": "oklab(0.16467 0.00114718 -0.00398837 / 0.88)"
+    }
+  }
+]

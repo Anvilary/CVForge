@@ -34,14 +34,14 @@ export function AppHeader({
           className={`btn sm app-mode-link ${pathname === '/builder' ? 'active' : ''}`}
           aria-current={pathname === '/builder' ? 'page' : undefined}
         >
-          Builder
+          <span className="nav-label">Builder</span>
         </Link>
         <Link
           href="/analyzer"
           className={`btn sm app-mode-link ${pathname === '/analyzer' ? 'active' : ''}`}
           aria-current={pathname === '/analyzer' ? 'page' : undefined}
         >
-          Analyzer
+          <span className="nav-label">Analyzer</span>
         </Link>
       </div>
     </header>

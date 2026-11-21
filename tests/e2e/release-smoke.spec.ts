@@ -40,7 +40,7 @@ test('homepage loads without console errors and exposes one strong builder path'
   await expect(page.locator('.site-header').getByRole('link', { name: 'Source', exact: true })).toHaveCount(0)
   await expect(page.locator('.site-header').getByRole('link', { name: /Open GitHub to star/ })).toBeVisible()
   await expect(page.locator('.site-header').getByRole('button', { name: 'Build your CV' })).toBeVisible()
-  await expect(page.locator('.site-header-inner')).toHaveCSS('max-width', '1280px')
+  await expect(page.locator('.site-header-inner')).toHaveCSS('max-width', '1200px')
   expect(errors).toEqual([])
 })
 
@@ -77,7 +77,7 @@ test('desktop header is constrained and exposes the complete navigation and acti
   expect(headerBox).not.toBeNull()
   expect(innerBox).not.toBeNull()
   expect(innerBox!.width).toBeLessThan(headerBox!.width)
-  expect(innerBox!.width).toBeLessThanOrEqual(1280)
+  expect(innerBox!.width).toBeLessThanOrEqual(1200)
 
   await expect(header.getByRole('link', { name: 'Builder' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'Analyzer' })).toHaveAttribute('href', '/analyzer')
