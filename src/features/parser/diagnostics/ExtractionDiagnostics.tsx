@@ -8,14 +8,14 @@ import { type ParserDocument } from '../upload/parserTypes'
 
 export function ExtractionDiagnostics({ document }: { document: ParserDocument | null }) {
   const [isExpanded, setIsExpanded] = useState(true)
-  if (!document) return <EmptyDiagnostics />
-
-  const extraction = document.extraction
+  const extraction = document?.extraction
   const isForge = extraction ? isCvForgeGenerated(extraction.metadata) : false
   const signals = extraction?.diagnostics.signals ?? []
   const passedChecks = signals.filter((signal) => signal.status === 'pass').length
   const headings = extraction ? readableCoreHeadings(extraction.text) : []
   const hasSelectableText = Boolean(extraction?.text.trim())
+
+  const status = extraction ? (isForge ? 'CVForge Detected' : 'External PDF') : '-'
 
   return (
     <WorkbenchSectionCard
@@ -23,15 +23,15 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
       icon="activity"
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
-      status={isForge ? 'CVForge Detected' : 'External PDF'}
+      status={status}
     >
       <div className="space-y-4">
-        <DiagnosticRow label="File" value={document.fileName} />
-        <DiagnosticRow label="Pages" value={extraction ? String(extraction.pageCount) : 'Unavailable'} />
-        <DiagnosticRow label="Characters" value={extraction ? String(extraction.text.length) : '0'} />
-        <DiagnosticRow label="Text extraction checks" value={extraction ? `${passedChecks} of ${signals.length} passed` : 'Unavailable'} />
-        <DiagnosticRow label="Core headings readable" value={extraction ? describeHeadings(headings) : 'Unavailable'} />
-        {document.heuristic && <DiagnosticRow label="Draft confidence" value={`${document.heuristic.confidence}%`} />}
+        <DiagnosticRow label="File" value={document?.fileName ?? '-'} />
+        <DiagnosticRow label="Pages" value={extraction ? String(extraction.pageCount) : '-'} />
+        <DiagnosticRow label="Characters" value={extraction ? String(extraction.text.length) : '-'} />
+        <DiagnosticRow label="Text extraction checks" value={extraction ? `${passedChecks} of ${signals.length} passed` : '-'} />
+        <DiagnosticRow label="Core headings readable" value={extraction ? describeHeadings(headings) : '-'} />
+        <DiagnosticRow label="Draft confidence" value={document?.heuristic ? `${document.heuristic.confidence}%` : '-'} />
         
         <div className="pt-2">
           {isForge && (
@@ -44,9 +44,14 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
               Text extraction checks and core headings describe what a text extractor returns. Draft confidence is how much of the document the best-effort parser could map. None of them is a CV quality score or a prediction for any ATS.
             </p>
           )}
+          {!extraction && (
+            <p className="text-[10px] text-ink-3 italic leading-relaxed">
+              Upload a PDF to see results.
+            </p>
+          )}
         </div>
 
-        {document.error && (
+        {document?.error && (
           <p className="text-xs text-red-200 font-medium" role="alert">
             {document.error}
           </p>
@@ -86,28 +91,11 @@ function describeHeadings(found: string[]) {
   return found.length ? `${found.length} of ${CORE_HEADING_TOTAL} (${names})` : `0 of ${CORE_HEADING_TOTAL}`
 }
 
-function EmptyDiagnostics() {
-  const [isExpanded, setIsExpanded] = useState(true)
-  return (
-    <WorkbenchSectionCard
-      title="Extraction Analysis"
-      icon="activity"
-      isExpanded={isExpanded}
-      onToggle={() => setIsExpanded(!isExpanded)}
-      status="Waiting"
-    >
-      <p className="text-xs text-ink-3 leading-relaxed">
-        Upload a PDF to inspect page count and extracted text.
-      </p>
-    </WorkbenchSectionCard>
-  )
-}
-
 function DiagnosticRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-16 text-xs">
       <span className="text-ink-4">{label}</span>
-      <span className="text-ink text-right truncate">{value}</span>
+      <span className="font-mono text-ink text-right truncate">{value}</span>
     </div>
   )
 }

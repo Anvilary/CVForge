@@ -7,6 +7,9 @@ interface WorkbenchHeaderProps {
   actions?: ReactNode
   sticky?: boolean
   className?: string
+  descriptionClassName?: string
+  eyebrowClassName?: string
+  actionsClassName?: string
 }
 
 export function WorkbenchHeader({
@@ -16,6 +19,9 @@ export function WorkbenchHeader({
   actions,
   sticky = true,
   className = '',
+  descriptionClassName,
+  eyebrowClassName,
+  actionsClassName,
 }: WorkbenchHeaderProps) {
   const stickyClasses = sticky 
     ? 'sticky top-0 z-20 bg-bg/95 backdrop-blur-md shadow-sm border-b border-border' 
@@ -23,22 +29,22 @@ export function WorkbenchHeader({
 
   return (
     <header className={`${stickyClasses} px-5 lg:px-8 py-3 lg:py-4 ${className}`}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="workspace-head compact !mb-0">
+      <div className="flex flex-col sm:flex-row sm:items-stretch justify-between gap-3 sm:gap-4">
+        <div className="workspace-head compact !mb-0 min-w-0">
           {eyebrow && (
-            <div className="crumbline hidden lg:block">
+            <div className={eyebrowClassName ?? "crumbline hidden sm:block"}>
               {eyebrow}
             </div>
           )}
           <h1>{title}</h1>
           {description && (
-            <p className="muted text-[11px] leading-relaxed max-w-sm mt-1 hidden lg:block">
+            <p className={descriptionClassName ?? "muted text-[11px] leading-relaxed max-w-sm mt-1 hidden lg:block"}>
               {description}
             </p>
           )}
         </div>
         {actions && (
-          <div className="pt-1">
+          <div className={actionsClassName ?? "pt-0.5 shrink-0 self-start sm:self-start"}>
             {actions}
           </div>
         )}

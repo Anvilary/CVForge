@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { PDFDocument, StandardFonts } from 'pdf-lib'
+import { CV_STATE_KEY, seedStorage } from './support/cvStorage'
 
 const RESPONSIVE_VIEWPORTS = [
   { width: 1440, height: 900 },
@@ -388,14 +389,79 @@ test('Builder and Analyzer expose unambiguous route-aware active modes', async (
     .not.toHaveAttribute('aria-current', 'page')
 })
 
-test('Analyzer scoring is multidimensional, prioritized, explainable, and deterministic', async ({ page }) => {
+test('Analyzer direct navigation displays complete uninitialized dashboard with hyphen placeholders', async ({ page }) => {
   await page.goto('/analyzer')
+  await expect(page.getByRole('button', { name: 'Upload PDF' })).toBeVisible()
+  await expect(page.getByText('WORKBENCH / ANALYZER')).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Analyze your CV' })).toBeVisible()
+  await expect(page.getByText('Check PDF readability, structure, and content locally.')).toBeVisible()
+
+  // Verify all panels are present
+  await expect(page.getByText('Extraction Analysis')).toBeVisible()
+  await expect(page.getByText('ATS-Style CV Analysis', { exact: true })).toBeVisible()
+  await expect(page.getByText('Extracted Text')).toBeVisible()
+
+  // Verify all 6 dimensions are visible with hyphen placeholders
+  const dimensionIds = ['completeness', 'structure', 'clarity', 'impact', 'ats-compatibility', 'parseability']
+  for (const id of dimensionIds) {
+    const dim = page.locator(`[data-analysis-dimension="${id}"]`)
+    await expect(dim).toBeVisible()
+    await expect(dim.locator('strong')).toHaveText('-')
+  }
+
+  // Verify overall score and classification are hyphens
+  const scorePanel = page.locator('.workbench-section-card', { hasText: 'ATS-Style CV Analysis' })
+  await expect(scorePanel.locator('strong.text-2xl')).toHaveText('-')
+
+  // Verify extraction statistics are hyphens
+  const extractionPanel = page.locator('.workbench-section-card', { hasText: 'Extraction Analysis' })
+  await expect(extractionPanel.getByText('File').locator('..').locator('.font-mono')).toHaveText('-')
+  await expect(extractionPanel.getByText('Pages').locator('..').locator('.font-mono')).toHaveText('-')
+  await expect(extractionPanel.getByText('Characters').locator('..').locator('.font-mono')).toHaveText('-')
+  await expect(extractionPanel.getByText('Upload a PDF to see results.').first()).toBeVisible()
+})
+
+test('Analyzer scoring is multidimensional, prioritized, explainable, and deterministic', async ({ page }) => {
+  const incompleteState = {
+    schemaVersion: '1.0.0',
+    updatedAt: '2026-09-26T00:00:00.000Z',
+    resume: {
+      profile: {
+        name: 'Alex Morgan',
+        email: '',
+        phone: '',
+        location: '',
+        website: '',
+        github: '',
+        linkedin: '',
+        summary: '',
+      },
+      workExperience: [],
+      education: [],
+      projects: [],
+      skills: { featured: [], featuredWithRating: [], technical: [], soft: [] },
+      languages: [],
+      customSections: [],
+    },
+    settings: {
+      documentSize: 'A4',
+      visibleSections: {},
+      bulletVisibility: {},
+    },
+  }
+  await seedStorage(page, { [CV_STATE_KEY]: JSON.stringify(incompleteState) })
+  await page.goto('/analyzer?source=builder')
   await expect(page.getByText('ATS-Style CV Analysis', { exact: true })).toBeVisible()
   await expect(page.locator('[data-analysis-dimension="completeness"]')).toBeVisible()
   await expect(page.locator('[data-analysis-dimension="structure"]')).toBeVisible()
   await expect(page.locator('[data-analysis-dimension="clarity"]')).toBeVisible()
   await expect(page.locator('[data-analysis-dimension="impact"]')).toBeVisible()
   await expect(page.locator('[data-analysis-dimension="ats-compatibility"]')).toBeVisible()
+
+  // Parseability remains hyphen when evaluated from Builder CV without PDF
+  await expect(page.locator('[data-analysis-dimension="parseability"]').locator('strong')).toHaveText('-')
+
+  // Builder scores are present
   await expect(page.getByText('high priority', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('Why it matters:', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('Improve:', { exact: true }).first()).toBeVisible()
@@ -432,6 +498,47 @@ test('Analyzer accepts PDF only and reports image-only extraction honestly', asy
   })
   await expect(analysisAlert).toContainText('No selectable text was found', { timeout: 20_000 })
   await expect(analysisAlert).toContainText('does not send the file to a cloud OCR service')
+
+  // Dashboard panels remain intact even on failure
+  await expect(page.getByText('ATS-Style CV Analysis', { exact: true })).toBeVisible()
+  await expect(page.locator('[data-analysis-dimension="completeness"]').locator('strong')).toHaveText('-')
+})
+
+test('Analyzer upload, scoring, and clear lifecycle returns to uninitialized state', async ({ page }) => {
+  await page.goto('/analyzer')
+
+  // Create a minimal text PDF
+  const pdfDoc = await PDFDocument.create()
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+  const pdfPage = pdfDoc.addPage([595, 842])
+  pdfPage.drawText('Jane Doe', { x: 50, y: 780, size: 16, font })
+  pdfPage.drawText('jane@example.com | +1 555 0100', { x: 50, y: 760, size: 10, font })
+  pdfPage.drawText('Experience: Senior Engineer at Acme Corp (2020 - Present)', { x: 50, y: 730, size: 10, font })
+  const pdfBytes = await pdfDoc.save()
+
+  const input = page.locator('input[type="file"]')
+  await input.setInputFiles({
+    name: 'test-resume.pdf',
+    mimeType: 'application/pdf',
+    buffer: Buffer.from(pdfBytes),
+  })
+
+  // Verify real calculated results appear
+  const scoreHeading = page.locator('.workbench-section-card', { hasText: 'ATS-Style CV Analysis' }).locator('strong.text-2xl')
+  await expect(scoreHeading).not.toHaveText('-', { timeout: 15_000 })
+  await expect(page.locator('[data-analysis-dimension="completeness"]').locator('strong')).not.toHaveText('-')
+  await expect(page.getByRole('button', { name: 'Replace PDF' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Clear' })).toBeVisible()
+
+  // Clear PDF
+  await page.getByRole('button', { name: 'Clear' }).click()
+
+  // Verify all panels return to uninitialized state with hyphens
+  await expect(scoreHeading).toHaveText('-')
+  await expect(page.locator('[data-analysis-dimension="completeness"]').locator('strong')).toHaveText('-')
+  await expect(page.locator('[data-analysis-dimension="parseability"]').locator('strong')).toHaveText('-')
+  await expect(page.getByRole('button', { name: 'Upload PDF' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Clear' })).toBeHidden()
 })
 
 test('page metadata is unique, canonical, social-ready, and paired with one H1', async ({ page }) => {

@@ -31,7 +31,7 @@ test('Analyzer results survive mobile Analysis and Source switching', async ({ p
   const dimension = page.locator('[data-analysis-dimension="completeness"]')
   await expect(dimension).toBeVisible({ timeout: 20_000 })
   await expect(page.getByText('mobile-candidate.pdf').first()).toBeVisible()
-  await expect.poll(() => dimension.textContent(), { timeout: 20_000 }).not.toMatch(/^Completeness0/)
+  await expect.poll(() => dimension.textContent(), { timeout: 20_000 }).not.toMatch(/^Completeness[-0]/)
   const scores = await page.locator('[data-analysis-dimension]').allTextContents()
 
   const nav = page.locator('.workbench-mobile-nav')

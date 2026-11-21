@@ -10,16 +10,41 @@ export function resolveParserAnalysisTarget(
   document: ParserDocument | null,
   fromBuilder: boolean
 ): ParserAnalysisTarget {
-  if (!document?.extraction) {
+  if (document?.error) {
     return {
-      score: scoreCV(state),
-      isEmpty: isEmptyCV(state),
+      score: null,
+      isEmpty: true,
+      target: {
+        label: 'Analysis Failed',
+        description: document.error,
+        caveat: 'The uploaded file could not be analyzed.',
+      },
+    }
+  }
+
+  if (!document?.extraction) {
+    if (!fromBuilder) {
+      return {
+        score: null,
+        isEmpty: true,
+        target: {
+          label: 'No PDF selected',
+          description: 'Upload a PDF to view its analysis.',
+          caveat: 'No document is currently being analyzed.',
+        },
+      }
+    }
+
+    const isEmpty = isEmptyCV(state)
+    return {
+      score: isEmpty ? null : scoreCV(state),
+      isEmpty,
       target: {
         label: 'Current Builder CV',
-        description: fromBuilder
-          ? 'These checks use the active CV from Builder. No PDF was uploaded and no server storage is used.'
-          : 'These checks use the CV currently stored in the Builder. Upload a PDF to analyze a file instead.',
-        caveat: 'Uploaded PDF results are not mixed into this score until CVForge has a restored session or best-effort draft to evaluate.',
+        description: isEmpty
+          ? 'The current Builder CV is empty. Add profile details or a section in Builder, then return here for analysis.'
+          : 'These checks evaluate the active CV from Builder. No PDF was uploaded and no server storage is used.',
+        caveat: 'Upload a PDF to analyze an exported document instead.',
       },
     }
   }

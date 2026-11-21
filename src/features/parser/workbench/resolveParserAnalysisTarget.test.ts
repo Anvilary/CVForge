@@ -26,13 +26,37 @@ const builder = {
   },
 }
 
-it('scores the Builder CV when no extraction is available', () => {
+it('scores the Builder CV when no extraction is available and fromBuilder is true', () => {
   const result = resolveParserAnalysisTarget(builder, null, true)
   expect(result.target.label).toBe('Current Builder CV')
   expect(result.target.description).toContain('No PDF was uploaded')
   expect(result.score).toEqual(scoreCV(builder))
   expect(result.isEmpty).toBe(false)
-  expect(resolveParserAnalysisTarget(defaultCVState, null, false).isEmpty).toBe(true)
+})
+
+it('does not score the Builder CV when no PDF is uploaded and fromBuilder is false', () => {
+  const result = resolveParserAnalysisTarget(builder, null, false)
+  expect(result.score).toBeNull()
+  expect(result.isEmpty).toBe(true)
+  expect(result.target.label).toBe('No PDF selected')
+  expect(result.target.description).toBe('Upload a PDF to view its analysis.')
+})
+
+it('does not score an empty Builder CV even when fromBuilder is true', () => {
+  const result = resolveParserAnalysisTarget(defaultCVState, null, true)
+  expect(result.score).toBeNull()
+  expect(result.isEmpty).toBe(true)
+  expect(result.target.label).toBe('Current Builder CV')
+  expect(result.target.description).toContain('empty')
+})
+
+it('reports analysis failure on invalid PDF without scoring Builder CV', () => {
+  const badDoc = { fileName: 'corrupt.pdf', objectUrl: '', error: 'Corrupt PDF file' }
+  const result = resolveParserAnalysisTarget(builder, badDoc, false)
+  expect(result.score).toBeNull()
+  expect(result.isEmpty).toBe(true)
+  expect(result.target.label).toBe('Analysis Failed')
+  expect(result.target.description).toBe('Corrupt PDF file')
 })
 
 it('prefers the embedded session over the heuristic draft and Builder state', () => {

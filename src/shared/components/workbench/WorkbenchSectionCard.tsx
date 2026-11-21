@@ -33,7 +33,7 @@ export function WorkbenchSectionCard({
 }: WorkbenchSectionCardProps) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-xl border transition-[background-color,border-color,box-shadow,opacity] duration-200 ${
+      className={`workbench-section-card group relative overflow-hidden rounded-xl border transition-[background-color,border-color,box-shadow,opacity] duration-200 ${
         isExpanded
           ? 'border-border-strong bg-bg-2 shadow-sm'
           : 'border-border bg-bg hover:border-border-strong hover:bg-bg-2/50'

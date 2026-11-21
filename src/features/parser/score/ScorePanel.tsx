@@ -2,13 +2,46 @@
 
 import { useState } from 'react'
 import { WorkbenchSectionCard } from '@/shared/components/workbench/WorkbenchSectionCard'
-import { type ScoreIssue, type ScoreResult } from '@/features/scoring/scoringTypes'
+import { type ScoreDimensionId, type ScoreIssue, type ScoreResult } from '@/features/scoring/scoringTypes'
 
 export interface ScorePanelTarget {
   label: string
   description: string
   caveat: string
 }
+
+const ALL_DIMENSIONS: Array<{ id: ScoreDimensionId; label: string; summary: string }> = [
+  {
+    id: 'completeness',
+    label: 'Completeness',
+    summary: 'Core identity and contact details expected in a professional CV.',
+  },
+  {
+    id: 'structure',
+    label: 'Structure',
+    summary: 'Recognizable sections and entries that make the document easy to navigate.',
+  },
+  {
+    id: 'clarity',
+    label: 'Clarity',
+    summary: 'Consistent dates, roles, summary context, and manageable content length.',
+  },
+  {
+    id: 'impact',
+    label: 'Impact',
+    summary: 'Bullets that communicate actions, outcomes, and honest measures.',
+  },
+  {
+    id: 'ats-compatibility',
+    label: 'ATS-style compatibility',
+    summary: 'Best-practice signals for headings and visible link text.',
+  },
+  {
+    id: 'parseability',
+    label: 'Parseability',
+    summary: 'Whether text extraction returns enough readable, intact text in a sensible order. It does not predict how any ATS reads the document.',
+  },
+]
 
 export function ScorePanel({ result, target }: { result: ScoreResult | null; target: ScorePanelTarget }) {
   const [isExpanded, setIsExpanded] = useState(true)
@@ -17,56 +50,56 @@ export function ScorePanel({ result, target }: { result: ScoreResult | null; tar
   const warnings = orderedIssues.filter((issue) => issue.status === 'warn')
   const passed = orderedIssues.filter((issue) => issue.status === 'pass')
 
+  const status = result ? `${result.score}/100 · ${result.band}` : '-'
+
   return (
     <WorkbenchSectionCard
       title="ATS-Style CV Analysis"
       icon="spark"
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
-      status={result ? `${result.score}/100 · ${result.band}` : 'No score'}
+      status={status}
     >
       <div className="space-y-6">
         <ScoreHeader result={result} target={target} />
-        {result ? (
-          <>
-            <DimensionGrid result={result} />
-            <ScoreIssueGroup
-              title="Highest-priority improvements"
-              description="Failed checks appear first, ordered by priority."
-              issues={improvements}
-              emptyMessage="No failed checks were detected."
-            />
-            {warnings.length > 0 && (
-              <ScoreIssueGroup
-                title="Warnings"
-                description="Partial signals worth reviewing; they are not guarantees of a parsing problem."
-                issues={warnings}
-              />
-            )}
-            <details className="rounded-lg border border-border-faint bg-bg-inset/15 p-4">
-              <summary className="cursor-pointer text-xs font-semibold text-ink-3">
-                Passed checks ({passed.length})
-              </summary>
-              <div className="mt-4 space-y-3">
-                {passed.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
-              </div>
-            </details>
-            <div className="rounded-lg border border-border-faint bg-bg-inset/20 p-4">
-              <h3 className="text-xs font-semibold text-ink">How the overall score works</h3>
-              <p className="mt-2 text-[11px] leading-relaxed text-ink-3">{result.methodology}</p>
-              <p className="mt-2 text-[10px] leading-relaxed text-ink-4">
-                Detected language: {result.language}. Scores are deterministic whole-number rule results,
-                not commercial ATS equivalence, acceptance prediction, or recruiter outcome prediction.
-              </p>
-            </div>
-          </>
-        ) : (
-          <p className="text-xs text-ink-3 leading-relaxed">
-            This upload produced extraction analysis only. CVForge is not scoring your current Builder CV as a stand-in for this PDF.
-          </p>
+        <DimensionGrid result={result} />
+        <ScoreIssueGroup
+          title="Highest-priority improvements"
+          description="Failed checks appear first, ordered by priority."
+          issues={improvements}
+          emptyMessage={result ? 'No failed checks were detected.' : 'Upload a PDF to see results.'}
+        />
+        {warnings.length > 0 && (
+          <ScoreIssueGroup
+            title="Warnings"
+            description="Partial signals worth reviewing; they are not guarantees of a parsing problem."
+            issues={warnings}
+          />
         )}
+        {passed.length > 0 && (
+          <details className="rounded-lg border border-border-faint bg-bg-inset/15 p-4">
+            <summary className="cursor-pointer text-xs font-semibold text-ink-3">
+              Passed checks ({passed.length})
+            </summary>
+            <div className="mt-4 space-y-3">
+              {passed.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
+            </div>
+          </details>
+        )}
+        <div className="rounded-lg border border-border-faint bg-bg-inset/20 p-4">
+          <h3 className="text-xs font-semibold text-ink">How the overall score works</h3>
+          <p className="mt-2 text-[11px] leading-relaxed text-ink-3">
+            {result?.methodology ?? 'Upload a PDF to see how the overall score and rule-based signals are calculated.'}
+          </p>
+          {result && (
+            <p className="mt-2 text-[10px] leading-relaxed text-ink-4">
+              Detected language: {result.language}. Scores are deterministic whole-number rule results,
+              not commercial ATS equivalence, acceptance prediction, or recruiter outcome prediction.
+            </p>
+          )}
+        </div>
         <p className="pt-2 text-[10px] uppercase tracking-[0.18em] text-ink-4">
-          Local rule-based best-practice signals · scoring method v{result?.methodVersion ?? 2}
+          Local rule-based best-practice signals · scoring method v{result?.methodVersion ?? 3}
         </p>
       </div>
     </WorkbenchSectionCard>
@@ -78,17 +111,15 @@ function ScoreHeader({ result, target }: { result: ScoreResult | null; target: S
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
         <p className="text-[10px] uppercase tracking-[0.16em] text-ember font-semibold">{target.label}</p>
-        {result && (
-          <div className="text-right">
-            <strong
-              className="block text-2xl font-bold text-ember"
-              aria-label={`Overall ATS-style analysis score: ${result.score} out of 100`}
-            >
-              {result.score}
-            </strong>
-            <span className="text-[10px] text-ink-4">{result.band}</span>
-          </div>
-        )}
+        <div className="text-right">
+          <strong
+            className={`block text-2xl font-bold ${result ? 'text-ember' : 'text-ink-3'}`}
+            aria-label={result ? `Overall ATS-style analysis score: ${result.score} out of 100` : 'Overall score: -'}
+          >
+            {result ? result.score : '-'}
+          </strong>
+          <span className="text-[10px] text-ink-4">{result ? result.band : '-'}</span>
+        </div>
       </div>
       <div className="space-y-2">
         <p className="text-xs text-ink-3 leading-relaxed">
@@ -100,25 +131,35 @@ function ScoreHeader({ result, target }: { result: ScoreResult | null; target: S
   )
 }
 
-function DimensionGrid({ result }: { result: ScoreResult }) {
+function DimensionGrid({ result }: { result: ScoreResult | null }) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2" aria-label="Analysis dimensions">
-      {result.dimensions.map((dimension) => (
-        <div
-          key={dimension.id}
-          className="rounded-lg border border-border-faint bg-bg-inset/30 p-4"
-          data-analysis-dimension={dimension.id}
-        >
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-xs font-semibold text-ink">{dimension.label}</h3>
-            <strong className="text-sm text-ember">{dimension.score}</strong>
+      {ALL_DIMENSIONS.map((dimension) => {
+        const found = result?.dimensions.find((d) => d.id === dimension.id)
+        const hasScore = Boolean(found && found.weight > 0)
+        const scoreDisplay = hasScore ? String(found!.score) : '-'
+        const weightDisplay = hasScore ? `${found!.weight}% overall weight` : '-'
+        const summary = found?.summary ?? dimension.summary
+
+        return (
+          <div
+            key={dimension.id}
+            className="rounded-lg border border-border-faint bg-bg-inset/30 p-4"
+            data-analysis-dimension={dimension.id}
+          >
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-xs font-semibold text-ink">{dimension.label}</h3>
+              <strong className={`text-sm ${hasScore ? 'text-ember' : 'text-ink-3'}`}>
+                {scoreDisplay}
+              </strong>
+            </div>
+            <p className="mt-2 text-[10px] leading-relaxed text-ink-4">{summary}</p>
+            <p className="mt-1 text-[9px] uppercase tracking-wider text-ink-4">
+              {weightDisplay}
+            </p>
           </div>
-          <p className="mt-2 text-[10px] leading-relaxed text-ink-4">{dimension.summary}</p>
-          <p className="mt-1 text-[9px] uppercase tracking-wider text-ink-4">
-            {dimension.weight}% overall weight
-          </p>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
