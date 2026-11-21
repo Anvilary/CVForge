@@ -78,11 +78,11 @@ When adding a settings field, update `SettingsSchema` and `defaultSettings` in
 
 ## PDF Pipeline
 
-**Two distinct pipelines - never conflate them:**
+**Preview and download share one generated PDF but have separate jobs - never conflate them:**
 
-1. **Builder preview** - `ResumePdfDocument` renders to a blob URL → `usePdfCanvasPreview.tsx` feeds it to `pdfjs-dist` → paints to canvas in `PdfCanvasPreview.tsx`. This is flicker-free. The preview blob must NOT contain embedded session data. Zoom and fit state live in `useZoomControl.ts`; device pixel ratio tracking lives in `useDevicePixelRatio.ts` - both are in `features/builder/workbench/`.
+1. **Builder preview** - one pipeline in `features/builder/preview/`. `usePdfPreview.ts` feeds each CV state to `PreviewEngine`, which assigns it a revision and asks `pdfGenerationWorker.tsx` (a Web Worker running `@react-pdf/renderer`) for the PDF bytes plus an exact key per page. `pdfRasterizer.ts` paints only changed pages with `pdfjs-dist` into an offscreen scratch canvas, and `pageCanvasStore.ts` publishes them into stable per-page canvases in one synchronous step. `UpdateScheduler` decides when a cycle may start (no fixed debounce). Zoom, Fit, width, and DPR only change the painting scale: the displayed PDF is repainted from the retained document and never regenerated. The preview blob must NOT contain embedded session data. Zoom and fit state live in `useZoomControl.ts`; device pixel ratio tracking lives in `useDevicePixelRatio.ts` - both are in `features/builder/workbench/`.
 
-2. **Download export** - `DownloadPdfButton.tsx` calls `@react-pdf/renderer` to generate the PDF, then `embedCVStateAttachment.ts` uses `pdf-lib` to attach the session JSON. Only the downloaded file carries the embedded session.
+2. **Download export** - `DownloadPdfButton.tsx` asks the engine for the displayed document (`exportCurrent`, which waits for an in-flight update), then `embedCVStateAttachment.ts` uses `pdf-lib` to attach that revision's session JSON to the preview's own bytes. There is no second layout pass. Only the downloaded file carries the embedded session.
 
 **Style generation:** `createResumePdfStyles(settings)` in `resumePdfStyles.ts` derives all PDF layout values from `settings` at render time. All spacing, colors, and typography flow through this function. When adding a new PDF-visible setting, this is where it gets consumed.
 

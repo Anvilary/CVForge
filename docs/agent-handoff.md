@@ -56,12 +56,21 @@
 
 ### PDF Preview and Export
 - `src/features/resume-pdf/ResumePdfDocument.tsx`
+- `src/features/resume-pdf/ResumePdfEntry.tsx` (`organizationLink` decoupled from `titleLink`)
 - `src/features/resume-pdf/DownloadPdfButton.tsx`
 - `src/features/resume-pdf/embedCVStateAttachment.ts`
+- `src/features/resume-pdf/workExperiencePdfLink.test.ts`
 - `src/shared/utils/resume-formatting.ts` (cleanText, cleanList, formatDateRange, joinNonEmpty)
-- `src/features/builder/workbench/PdfCanvasPreview.tsx` (canvas render + dock UI)
+- `src/features/builder/preview/previewEngine.ts` (revisions, cycle, export gate; start here)
+- `src/features/builder/preview/updateScheduler.ts` (when a cycle may start)
+- `src/features/builder/preview/pdfGenerationWorker.tsx` and `pdfGenerationClient.ts` (react-pdf worker and its lifecycle)
+- `src/features/builder/preview/pdfPageFingerprints.ts` (exact per-page keys)
+- `src/features/builder/preview/pdfRasterizer.ts` (PDF.js worker, documents, scratch canvas, annotation extraction)
+- `src/features/builder/preview/pageCanvasStore.ts` and `usePdfPreview.ts` (stable canvases, React binding)
+- `src/features/builder/workbench/PdfCanvasPreview.tsx` (stable page containers, dock UI, transparent responsive link overlay)
 - `src/features/builder/workbench/useZoomControl.ts` (zoom/fit state)
 - `src/features/builder/workbench/useDevicePixelRatio.ts` (DPR tracking)
+- `tooling/bench-preview.mjs` and `docs/performance/` (preview benchmark and recorded results)
 
 ### Analyzer Workbench (internal parser modules)
 - `src/features/parser/workbench/ParserWorkbench.tsx`
@@ -154,6 +163,7 @@
 - `playwright.config.ts`
 - `tests/e2e/release-smoke.spec.ts`
 - `tests/e2e/accessibility.spec.ts`
+- `tests/e2e/builder-preview-links.spec.ts`
 - `Dockerfile`
 - `docker-compose.yml`
 - `.github/workflows/validation.yml`

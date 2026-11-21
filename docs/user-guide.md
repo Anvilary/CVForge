@@ -56,7 +56,7 @@ When opening CVForge or clicking **Build your CV**:
 
 The Builder organizes CV data into structured cards:
 - **Personal Profile**: Full Name, Phone, Email, Location, LinkedIn, GitHub, Personal Website, and Professional Summary.
-- **Work Experience**: Job Title, Company, Location, Date Range, and bullet-point descriptions of achievements and responsibilities.
+- **Work Experience**: Job Title, Company, Company Link (optional website or repository URL), Location, Date Range, and bullet-point descriptions of achievements and responsibilities. The company name becomes an interactive hyperlink in both preview and export, while the role remains plain text.
 - **Education**: Degree/Certificate, Institution, Location, Date Range, and honors or relevant coursework.
 - **Projects**: Project Name, URL link, Date Range, and descriptive bullets.
 - **Skills**: Categorized into Featured Skills, Technical Skills, and Soft Skills.
@@ -80,6 +80,7 @@ Need sections for *Certifications*, *Publications*, *Volunteer Work*, or *Patent
 
 The preview panel renders your CV using the exact `@react-pdf/renderer` document pipeline that generates the final exported file:
 - **Instant Updates**: Text edits and spacing changes immediately reflect in the preview canvas.
+- **Interactive Hyperlinks**: Valid web links (profile links, company URLs, project repositories) are interactive directly within the preview canvas, opening safely in a new tab.
 - **Zoom & Fit Controls**: The bottom-right dock provides Zoom In, Zoom Out, and Fit-to-Width controls.
 - **Page Transitions**: Multi-page documents display all pages sequentially with clear page boundaries.
 
@@ -94,7 +95,7 @@ Located in the **Document Settings** card:
 
 ### Exporting PDF and JSON
 
-- **Download PDF**: Generates the machine-readable, ATS-compatible PDF file. It embeds a complete structured session attachment (`cvforge-state.json`) inside the PDF document catalog for seamless future recovery.
+- **Download PDF**: Generates the machine-readable, ATS-compatible PDF file. It embeds a complete structured session attachment (`cvforge-state.json`) inside the PDF document catalog for seamless future recovery, while preserving all interactive hyperlinks exactly as shown in the preview.
 - **Export JSON**: Downloads the full-fidelity raw JSON state file. **This is the primary recommended long-term backup format.**
 
 ---

@@ -115,18 +115,67 @@ State is managed via React's `useReducer`:
 
 CVForge uses two distinct PDF workflows:
 
-### A. Live Canvas Preview
-- `BuilderPreviewPanel.tsx` feeds the active `CVState` to `ResumePdfDocument.tsx`.
-- `@react-pdf/renderer` generates a streaming document tree.
-- `pdfjs-dist` renders each page onto an HTML5 canvas inside `PdfCanvasPreview.tsx`.
-- Hardware device pixel ratio (DPR) is dynamically tracked to maintain crisp rendering on Retina/HiDPI screens.
+### A. Live Canvas Preview and Interactive Annotations
+
+One authoritative PDF drives both the live preview and the download export. There is no second layout engine or HTML approximation.
+
+```text
+CV state ──> revision N ──> UpdateScheduler ──> generation worker ──> PDF N + page keys
+                                                                         │
+            displayed revision N  <── atomic publish <── PDF.js raster of changed pages
+            (with accessible link overlay)
+```
+
+Code lives in `src/features/builder/preview/` and `src/features/resume-pdf/`:
+
+| Module | Responsibility |
+|---|---|
+| `previewEngine.ts` | Owns the revision ledger, the displayed document, and the cycle (generate, rasterize, publish). No DOM or worker code. |
+| `updateScheduler.ts` | Decides when a cycle may start. One cycle at a time, one queued follow-up, always the newest state. |
+| `pdfGenerationWorker.tsx` | Runs `@react-pdf/renderer` off the main thread and returns the PDF bytes plus one exact key per page. |
+| `pdfGenerationClient.ts` | Owns the generation worker: lazy start, job timeout, crash detection, termination, replacement. |
+| `pdfPageFingerprints.ts` | Builds the per-page key (page boxes, content stream bytes, resolved resources, annotations). |
+| `pdfRasterizer.ts` | Owns the PDF.js worker and open documents. Paints pages into a scratch canvas and extracts authoritative PDF link annotations. |
+| `pageCanvasStore.ts` | One stable `<canvas>` per page index, repainted in one synchronous step. |
+| `usePdfPreview.ts` | Binds the engine to React with `useSyncExternalStore` and releases it on unmount. |
+| `PdfCanvasPreview.tsx` | Houses stable page containers, renders the interactive link annotation overlay, and provides zoom/dock controls. |
+| `ResumePdfEntry.tsx` | PDF layout entry component supporting decoupled `titleLink` (role/title) and `organizationLink` (company/school). |
+| `ResumePdfWorkSection.tsx` | Work experience section passing `organizationLink={item.companyLink}` so the company name is hyperlinked while the role remains normal text. |
+
+**Revisions.** Every distinct CV state (`resume` or `settings` identity) gets a revision number that only increases. A generated PDF carries the revision it was made from. A result is published only if it is newer than the displayed one, so a stale result can never replace newer content. Publishing paints every changed page and updates the page list in one synchronous step, so the browser never paints a mix of two revisions.
+
+**Scheduling.** The first update after a quiet period starts immediately. During continuous editing, cycle starts are spaced by `1.5 x` the smoothed cost of recent cycles (capped at 250 ms), so the preview follows typing as closely as the machine allows without the pipeline taking over the main thread. Requests that arrive while a cycle runs collapse into one follow-up that reads the newest state. At most one generation job is running and at most one is queued behind it.
+
+**Interactive PDF Annotations.** While PDF.js renders link text visually onto the canvas bitmap, raw canvas pixels lack native hyperlink events and keyboard focus. During document opening in `pdfRasterizer.ts`, `readGeometry` calls `await page.getAnnotations()` to extract authoritative PDF link annotations. Coordinates (`rect: [x1, y1, x2, y2]`) are converted into scale-1 viewport points using `viewport.convertToViewportPoint`. `PdfCanvasPreview.tsx` renders a transparent overlay with `pointer-events-none` over each page, containing native `<a>` elements (`pointer-events-auto`) positioned via CSS percentages (`left: (link.left / pageWidth) * 100%`). This ensures exact alignment across Fit mode, zoom levels (50% to 200%), and mobile panel switching without re-measuring DOM geometry.
+
+**Work Experience Link Architecture.** In `ResumePdfEntry.tsx`, semantic link properties are strictly decoupled: `titleLink` links the job role or degree, while `organizationLink` links the employer or school. `ResumePdfWorkSection.tsx` supplies `organizationLink={item.companyLink}` and omits `titleLink`. Consequently:
+1. The company name is hyperlinked with `styles.entryOrgLink` (theme color, weight 400, no text decoration).
+2. The role remains clean, normal text.
+3. The separator ` · ` is an independent text glyph excluded from the hyperlink.
+4. URLs are validated with `resolveEntryLink`, strictly permitting safe `http:` and `https:` schemes and rejecting unsafe protocols (`javascript:`, `data:`, `file:`, `ftp:`) or credentials.
+
+**Display scale is separate from content.** Zoom, Fit, panel width, and device pixel ratio only change the painting scale. The engine keeps the displayed PDF open in PDF.js; after the scale settles (150 ms) it repaints that document at the new scale and never regenerates it. Meanwhile the existing bitmaps are scaled by CSS, so Zoom and Fit respond within a frame and no loader appears.
+
+**Page comparison.** The worker returns one key per page: the exact serialization of the page boxes, rotation, content stream bytes, resolved resources (so a font change alters the key), and annotations. It is not a hash. A page whose key equals the one on screen, at the same geometry and scale, is not repainted. When pagination changes, the pages whose keys changed are repainted together. When a hyperlink URL changes, `pdfPageFingerprints.ts` detects changes in `/Annots`, assigning a new page key and triggering an overlay update even if text remains identical.
+
+**Stable pages.** Page `<canvas>` elements are created once per page index and keep their identity across updates, zoom, and resizing. New pixels are rendered into an offscreen scratch canvas, moved into an `ImageBitmap`, and only completed pages are drawn into the visible canvas. The visible canvas is never cleared separately from the draw.
+
+**Failure recovery.** A generation worker that crashes, errors, or does not answer within 12 s is terminated and replaced. The engine resets the PDF.js worker and retries the update once on its own. After a second failure the displayed pages stay on screen, a status and a Retry button appear, and the next edit or Retry starts a fresh attempt. A document that fails deterministically (a layout error) is not retried automatically.
+
+**Lifecycle.** Unmounting the Builder calls `release()`, which aborts the running cycle, terminates the generation worker, destroys the PDF.js worker and every open document, and drops the page canvases. Leaving the Builder leaves no workers behind. While the preview is hidden (zero measured width, as on the inactive mobile panel) the scheduler is paused and resumes with the newest state when the panel is shown.
+
+**Performance.** On the benchmark machine a single edit on a one or two page CV is visible about 60 ms after the last input (before: about 430 to 460 ms), and no scenario blocks the main thread for a long task (before: up to 495 ms at ten pages). Layout cost in `@react-pdf/renderer` grows with page count (about 25 ms per page), so a ten page document takes roughly 0.5 s to update. Details and limitations: [performance/README.md](performance/README.md).
 
 ### B. PDF Export with Embedded Session
-- When the user clicks **Download PDF**:
-  1. `@react-pdf/renderer` renders the document to a raw `Blob`.
-  2. `embedCVStateAttachment.ts` parses the PDF binary using `pdf-lib`.
-  3. It attaches `cvforge-state.json` into the PDF's `/Catalog -> /Names -> /EmbeddedFiles` dictionary (compliant with PDF/A-3 and ISO 32000-1 specifications).
-  4. The resulting hybrid document is downloaded. It functions as a standard, printable PDF in any viewer, while retaining the complete original structured state for 100% loss-free restoration in CVForge.
+
+- The Download button asks the engine for the displayed document (`exportCurrent`). If a newer edit is still being laid out, the download waits for it, so the file is always a revision that was on screen. The wait covers the state at the moment of the click; later keystrokes are not part of that download.
+- The preview's own PDF bytes are used, so nothing is laid out a second time.
+- `embedCVStateAttachment.ts` parses those bytes with `pdf-lib` and attaches `cvforge-state.json`, built from the displayed revision's state, into `/Catalog -> /Names -> /EmbeddedFiles` (compliant with PDF/A-3 and ISO 32000-1).
+- The resulting hybrid document functions as a standard, printable PDF in any viewer, while retaining the complete original structured state for loss-free restoration in CVForge. All hyperlinks present in the preview are preserved identically in the exported document. Visual identity with the preview is covered by `previewExportFidelity.test.ts` (Poppler rasterization, pixel for pixel) and by Playwright browser test suites.
+
+### Reference
+
+The design draws on Reactive Resume's preview (MIT): PDF generation in a Web Worker, PDF.js rendering of each page into an offscreen canvas that is copied over in one step, a short settle delay before repainting at a new scale, and keeping the last valid document on screen after a failed update. CVForge's implementation is independent. It differs by using explicit revisions, a single bounded scheduler instead of fixed debounces, per-page content keys, a retained document for scale changes, and an export that reuses the displayed bytes. No Reactive Resume code is copied.
 
 ---
 
@@ -169,3 +218,32 @@ The scoring engine evaluates candidate resumes deterministically in-browser:
   default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' data: blob:; worker-src 'self' blob:; frame-src 'self' blob:; object-src 'none';
   ```
 - **Origin Isolation**: Different domain origins (e.g., `localhost` vs `cvforge.anvilary.tools`) maintain independent `localStorage` partitions, ensuring isolation between environments.
+
+---
+
+## Anvilary Design System and Surface Parity
+
+CVForge's visual identity is synchronized with the authoritative [Anvilary Main Website](https://anvilary.tools) (`Anvilary/Main-Website`), ensuring complete brand and aesthetic coherence across the product suite:
+
+1. **Shared Token System**:
+   - Palette: Dark forge palette (`--bg: #0e0e10`, `--bg-2: #141417`, `--bg-3: #1a1a1e`, `--panel: #16161a`).
+   - Accents: Ember (`--ember: #d97442`, `--ember-2: #b8582a`) and Molten (`--molten: #ec8a4a`).
+   - Text Tokens: Aligned ink hierarchy (`--ink: #ededea`, `--ink-2: #b8b6b0`, `--ink-3: #8a877f`, `--ink-4: #5a5852`).
+   - Container and Layout: Standardized `--container: 1200px` with dynamic header height tracking (`--site-header-height: 118px`).
+   - Chrome Surfaces: Shared translucent backdrop (`--chrome-surface: color-mix(in oklab, var(--bg) 88%, transparent)` with `backdrop-filter: blur(14px)`).
+   - Illuminated Dividers: Symmetrical orange gradient border line (`--chrome-border-line`) and centered radial glow (`--chrome-border-glow`).
+
+2. **Marketing Chrome (Homepage Header and Footer)**:
+   - **Header Geometry**: Desktop 118px height, `ResizeObserver` dynamic height synchronization with `--site-header-height`, 80px brand mark, and container-aligned gutters.
+   - **Navigation Interaction**: Navigation links feature a subtle bottom molten glow underline (`.nav-label::after`) with active and hover radiance.
+   - **Single-Row Footer**: Standardized single-row layout displaying the official Anvilary Tools parent brand mark, product identity, navigation links, GitHub reference, and copyright.
+
+3. **Workbench Adaptations (Builder and Analyzer)**:
+   - Compact app header (56px) preserving maximum vertical workspace for document editing and PDF canvas inspection.
+   - Adopts Anvilary chrome surface translucency, blur, illuminated bottom border line, and molten navigation underline without adding unnecessary marketing footers or horizontal scrollbars.
+
+4. **Branding Hierarchy and Intentional Differences**:
+   - Header: Emphasizes product identity (CVForge), utilizing the two-tone gradient wordmark (orange "CV" and white "Forge").
+   - Footer: Emphasizes parent organization (Anvilary Tools) with the official Anvilary logo and wordmark.
+   - Navigation: Tailored specifically to product workflows (`Builder`, `Analyzer`, `Star on GitHub`, `Build your CV`) rather than Main Website showcase links.
+   - Relative Positioning: Footer is positioned `relative` at document end to preserve the full-viewport hero fold and avoid obscuring interactive workbench surfaces.

@@ -6,20 +6,20 @@ This document details CVForge's technical approach to PDF generation, text integ
 
 ---
 
-## Technical Approach: Two Distinct PDF Pipelines
+## Technical Approach: One PDF, Shown and Downloaded
 
-CVForge maintains two separate, purpose-built PDF rendering flows:
+CVForge generates one PDF per document revision. The Builder preview paints that PDF along with an interactive hyperlink overlay, and the download is that same PDF plus the session attachment, so they cannot diverge:
 
 ```text
-1. Live Preview Canvas
-   Structured CV State ---> @react-pdf/renderer stream ---> pdfjs-dist canvas renderer
-
-2. Exported Download
-   Structured CV State ---> @react-pdf/renderer binary ---> pdf-lib session embedding ---> Downloadable PDF
+Structured CV State ---> @react-pdf/renderer (Web Worker) ---> authoritative PDF bytes
+                                                                 |-- pdfjs-dist canvas + link overlay ---> Builder preview
+                                                                 `-- pdf-lib session embedding ----------> Downloadable PDF
 ```
 
-1. **Live Preview Pipeline**: Renders in-memory document pages to an HTML5 canvas using `pdfjs-dist`. This avoids DOM discrepancies by verifying that the document model renders identically to real PDF pages during active editing.
-2. **Download Pipeline**: Generates the final PDF binary, applies standard PDF document metadata (Author, Title, Creator: `CVForge`), and attaches `cvforge-state.json` via `pdf-lib` into the `/Names -> /EmbeddedFiles` document catalog.
+1. **Live Preview**: The PDF is generated off the main thread and painted page by page with `pdfjs-dist`. In addition to rasterizing visual content onto the canvas, PDF.js extracts the document's link annotations. Transparent interactive anchor elements are positioned directly above the rendered canvas using viewport coordinate mapping. Because the pixels and links come from the PDF itself, the preview shows and behaves exactly as an exported file. The preview bytes carry no embedded session.
+2. **Download**: Takes the displayed revision's PDF bytes, applies the document metadata already in them (Author, Title, Creator: `CVForge`), and attaches `cvforge-state.json` via `pdf-lib` into the `/Names -> /EmbeddedFiles` document catalog. If an edit is still being laid out, the download waits for it. Poppler rasterization of the preview PDF and the downloaded PDF is identical pixel for pixel (`previewExportFidelity.test.ts`), and link destinations match (`workExperiencePdfLink.test.ts`).
+
+See [Architecture](architecture.md#a-live-canvas-preview) for revisions, scheduling, and failure recovery.
 
 ---
 
@@ -48,6 +48,13 @@ CVForge enforces strict structural rules to maximize parseability:
 
 ### 5. Quantified Impact Signals
 - CVForge's Analyzer evaluates contextual outcome evidence (e.g., percentages, currency, latency reduction, user scale) and distinguishes them from irrelevant numbers like calendar years, software versions, or protocol specifications.
+
+### 6. PDF Hyperlinks and ATS Text Integrity
+- PDF link annotations are isolated in the document catalog's `/Annots` array as `/Subtype /Link` dictionaries with explicit URI actions (`/A << /S /URI /URI (...) >>`).
+- Text streams (`/Contents`) remain clean plain text without injected markup, markdown tags, or escaped query parameters that could confuse parsers.
+- In Work Experience, company URLs attach strictly to the company name annotation rectangle. The job role text remains plain, unlinked text.
+- Separators (such as ` · `) and dates are placed outside link bounding boxes to prevent accidental click target expansion or parsed token distortion.
+- Both the Builder preview and exported PDF reflect identical link targets and boundaries.
 
 ---
 
@@ -104,6 +111,9 @@ CVForge verifies PDF text integrity and ATS extraction through dedicated automat
    - Uses external command-line utilities (Poppler `pdftotext` and Ghostscript) during `make release-check` to confirm that third-party non-JavaScript tools extract identical text streams.
 4. **phantomSpaces.test.ts**:
    - Verifies that character spacing does not inject phantom space characters or corrupt searchable keywords.
+5. **workExperiencePdfLink.test.ts**:
+   - Inspects the raw PDF annotation stream and parsed PDF.js objects to guarantee that company URLs attach strictly to the organization name, leaving roles non-clickable.
+   - Verifies URL sanitization (allowing valid `http:` and `https:`, blocking unsafe schemes).
 
 ---
 
