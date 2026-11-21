@@ -211,42 +211,86 @@ test('zoom and Fit resize pages immediately without the loading screen', async (
   await expectPagesInsideContainer(page)
 })
 
-test('a failed update keeps pages visible, reports the failure, and recovers on Retry', async ({ page }) => {
+// A silently dead worker never answers. The pipeline must notice, replace the
+// worker, retry once, and only then report the failure.
+async function failWorker(page: Page, which: 'generation' | 'pdfjs') {
+  const matches = (url: string) => (which === 'pdfjs' ? url.includes('pdf.worker') : !url.includes('pdf.worker'))
+  const target = page.workers().find((worker) => matches(worker.url()))
+  expect(target, `no ${which} worker is running`).toBeDefined()
+  const url = target!.url()
+  await page.route(url, (route) => route.abort())
+  await Promise.all(page.workers().filter((worker) => worker.url() === url).map((worker) => worker.evaluate(() => self.close()).catch(() => undefined)))
+  return url
+}
+
+for (const which of ['generation', 'pdfjs'] as const) {
+  test(`a persistent ${which} worker failure keeps pages visible, reports it, and recovers on Retry`, async ({ page }) => {
+    test.setTimeout(90_000)
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await openBuilderWithCV(page)
+    await waitForFirstPreview(page)
+    const before = await firstPageSignature(page)
+
+    const url = await failWorker(page, which)
+    await startFrameSampler(page)
+    await page.getByLabel('Professional Summary').fill('Text whose preview update is forced to fail.')
+    const status = page.getByRole('status').filter({ hasText: 'Preview could not be updated' })
+    await expect(status).toBeVisible({ timeout: 45_000 })
+    const retry = page.getByRole('button', { name: 'Retry preview' })
+    await expect(retry).toBeVisible()
+    expect(await firstPageSignature(page)).toBe(before)
+
+    await page.unroute(url)
+    await retry.click()
+    await waitForSignatureChange(page, before)
+    await expect(status).toHaveCount(0)
+    const frames = await stopFrameSampler(page)
+
+    record('frames', frames)
+    expectContinuous(frames)
+  })
+}
+
+test('a worker that dies once is replaced and the update still arrives', async ({ page }) => {
   test.setTimeout(60_000)
   await page.setViewportSize({ width: 1440, height: 900 })
   await openBuilderWithCV(page)
   await waitForFirstPreview(page)
   const before = await firstPageSignature(page)
 
-  // Simulate a crashed pdf.js worker: it stops answering without an error.
-  const workers = page.workers()
-  expect(workers.length).toBeGreaterThan(0)
-  await Promise.all(workers.map((worker) => worker.evaluate(() => self.close()).catch(() => undefined)))
-  await startFrameSampler(page)
-  await page.getByLabel('Professional Summary').fill('Text whose preview update is forced to fail.')
-  const status = page.getByRole('status').filter({ hasText: 'Preview could not be updated' })
-  await expect(status).toBeVisible({ timeout: 20_000 })
-  const retry = page.getByRole('button', { name: 'Retry preview' })
-  await expect(retry).toBeVisible()
-  expect(await firstPageSignature(page)).toBe(before)
-
-  await retry.click()
+  const generation = page.workers().find((worker) => !worker.url().includes('pdf.worker'))!
+  await generation.evaluate(() => self.close()).catch(() => undefined)
+  await page.getByLabel('Professional Summary').fill('Text that must survive a dead worker.')
   await waitForSignatureChange(page, before)
-  await expect(status).toHaveCount(0)
-  const frames = await stopFrameSampler(page)
-
-  record('frames', frames)
-  expectContinuous(frames)
+  await expect(page.getByRole('status').filter({ hasText: 'Preview could not be updated' })).toHaveCount(0)
 })
 
-test('pending updates are announced without hiding the current pages', async ({ page }) => {
+test('slow updates are announced without hiding the current pages, fast ones never flash a status', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await openBuilderWithCV(page)
   await waitForFirstPreview(page)
-  await page.getByLabel('Professional Summary').fill('Summary changed to observe the updating status.')
-  await expect(page.getByRole('status').filter({ hasText: 'Updating preview' })).toBeVisible()
+  const updating = page.getByRole('status').filter({ hasText: 'Updating preview' })
+  const summary = page.getByLabel('Professional Summary')
+
+  await startFrameSampler(page)
+  await page.evaluate(() => {
+    ;(window as unknown as { __sawUpdating: boolean }).__sawUpdating = false
+    new MutationObserver(() => {
+      if (document.body.textContent?.includes('Updating preview')) (window as unknown as { __sawUpdating: boolean }).__sawUpdating = true
+    }).observe(document.body, { subtree: true, childList: true, characterData: true })
+  })
+  await summary.fill('A fast update on a small document.')
+  await page.waitForTimeout(1500)
+  expect(await page.evaluate(() => (window as unknown as { __sawUpdating: boolean }).__sawUpdating)).toBe(false)
+
+  const cdp = await page.context().newCDPSession(page)
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 40 })
+  await summary.fill('An update on a heavily throttled main thread.')
+  await expect(updating).toBeVisible({ timeout: 15_000 })
   await expect(previewCanvases(page).first()).toBeVisible()
-  await expect(page.getByRole('status').filter({ hasText: 'Updating preview' })).toHaveCount(0, { timeout: 15_000 })
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 })
+  await expect(updating).toHaveCount(0, { timeout: 15_000 })
+  expectContinuous(await stopFrameSampler(page))
 })
 
 test.describe('compact preview toolbar', () => {

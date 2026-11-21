@@ -10,7 +10,13 @@ export function useDevicePixelRatio() {
     const mql = window.matchMedia(`(resolution: ${dpr}dppx)`)
     const handler = () => setDpr(getDevicePixelRatio())
     mql.addEventListener('change', handler)
-    return () => mql.removeEventListener('change', handler)
+    // Some engines change the pixel ratio (browser zoom, display change) with
+    // a resize but without a resolution media query event.
+    window.addEventListener('resize', handler)
+    return () => {
+      mql.removeEventListener('change', handler)
+      window.removeEventListener('resize', handler)
+    }
   }, [dpr])
   return dpr
 }

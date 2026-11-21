@@ -1,4 +1,4 @@
-import { type RenderProgress } from './pdfPreviewTypes'
+import { type RenderProgress } from '../preview/previewTypes'
 
 export function progressPct(p: RenderProgress | null): number {
   if (!p || p.stage === 'preparing') return 20

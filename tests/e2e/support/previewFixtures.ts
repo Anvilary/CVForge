@@ -25,8 +25,8 @@ function workItem(index: number) {
   }
 }
 
-export function cvPayload(options: { pages?: 'one' | 'many', documentSize?: DocumentSize } = {}) {
-  const workCount = options.pages === 'many' ? 16 : 1
+export function cvPayload(options: { pages?: 'one' | 'many', documentSize?: DocumentSize, workItems?: number } = {}) {
+  const workCount = options.workItems ?? (options.pages === 'many' ? 16 : 1)
   return JSON.stringify({
     schemaVersion: '1.0.0',
     updatedAt: '2026-09-26T00:00:00.000Z',
@@ -154,4 +154,17 @@ export function expectContinuous(summary: FrameSummary) {
     framesWithLoader: 0,
     framesWithBlankPage: 0,
   })
+}
+
+// Fingerprint of every page, exact to the pixel. Used to prove that an
+// incrementally updated preview equals a preview rendered from scratch.
+export function documentSignature(page: Page) {
+  return page.evaluate(() => Array.from(document.querySelectorAll<HTMLCanvasElement>('.canvas canvas')).map((canvas) => {
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx || canvas.width === 0) return 'empty'
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data
+    let hash = 2166136261
+    for (let i = 0; i < data.length; i += 4) hash = Math.imul(hash ^ (data[i] + (data[i + 1] << 8) + (data[i + 2] << 16)), 16777619)
+    return `${canvas.width}x${canvas.height}:${hash >>> 0}`
+  }))
 }

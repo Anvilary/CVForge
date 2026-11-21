@@ -112,7 +112,7 @@ test('website fonts load from this origin', async ({ page, baseURL }) => {
   expect(fontRequests.every((url) => url.startsWith(new URL(baseURL!).origin + '/fonts/'))).toBe(true)
 })
 
-test('PDF.js workers for the preview and the Analyzer start from this origin', async ({ page, baseURL }) => {
+test('PDF generation, PDF.js, and Analyzer workers start from this origin', async ({ page, baseURL }) => {
   const origin = new URL(baseURL!).origin
   const cspViolations: string[] = []
   page.on('console', (message) => {
@@ -137,6 +137,8 @@ test('PDF.js workers for the preview and the Analyzer start from this origin', a
 
   await expect.poll(pdfWorkerCount).toBeGreaterThanOrEqual(2)
   expect(workerUrls.some((url) => url.includes('pdf.worker')), JSON.stringify(workerUrls)).toBe(true)
+  // The preview's PDF generation worker is a second, separate worker script.
+  expect(workerUrls.some((url) => !url.includes('pdf.worker')), JSON.stringify(workerUrls)).toBe(true)
   // Firefox reports worker URLs relative to the page; resolve before comparing.
   const isSameOrigin = (url: string) => url.startsWith('blob:') || new URL(url, origin).origin === origin
   expect(workerUrls.every(isSameOrigin), JSON.stringify(workerUrls)).toBe(true)

@@ -1,5 +1,5 @@
 import { Icon } from '@/shared/components/ui/Icon'
-import { type RenderProgress } from './pdfPreviewTypes'
+import { type RenderProgress } from '../preview/previewTypes'
 import { progressPct, stageLabel } from './previewProgress'
 
 // Mode A: blocks display until a valid render is available.

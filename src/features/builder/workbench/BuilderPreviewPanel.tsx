@@ -9,7 +9,8 @@ import { MAX_REPORTED_CHARACTERS, unsupportedCharactersInCV } from '@/features/r
 import { Icon } from '@/shared/components/ui/Icon'
 import { PreviewCanvas } from '@/shared/components/workbench/PreviewCanvas'
 import { PdfCanvasPreview } from './PdfCanvasPreview'
-import { usePdfCanvasPreview } from './usePdfCanvasPreview'
+import { useDelayedFlag } from '../preview/useDelayedFlag'
+import { usePdfPreview } from '../preview/usePdfPreview'
 import { PreviewLoadingState } from './PreviewLoadingState'
 import { useCV } from '@/features/cv/state/CVContext'
 
@@ -18,19 +19,22 @@ const DownloadPdfButton = dynamic(
   { ssr: false, loading: () => <span className="btn sm justify-center opacity-60" aria-live="polite">Preparing PDF</span> },
 )
 
+// A status that appears only for slow updates, so fast ones never flash it.
+const UPDATING_STATUS_DELAY_MS = 400
 const PAGE_WIDTH_POINTS = { A4: 595.28, Letter: 612 } as const
 
 export function BuilderPreviewPanel({ state }: { state: CVState }) {
   const { persistence } = useCV()
   const [renderScale, setRenderScale] = useState(0)
-  const preview = usePdfCanvasPreview(state, renderScale)
+  const preview = usePdfPreview(state, renderScale)
+  const showUpdating = useDelayedFlag(preview.view.isUpdating, UPDATING_STATUS_DELAY_MS)
   const isEmpty = isEmptyCV(state)
   const isLoadingSavedCV = persistence.status === 'loading'
-  const hasPages = preview.pages.length > 0
+  const hasPages = preview.view.pages.length > 0
 
   const actionSlot = (
     <>
-      <DownloadPdfButton state={state} />
+      <DownloadPdfButton exportDocument={preview.exportCurrent} />
       <Link
         href="/analyzer?source=builder"
         className="btn sm justify-center bg-bg/50 border-border hover:border-border-strong px-3"
@@ -51,9 +55,10 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
           {!isLoadingSavedCV && isEmpty && <EmptyPdfPreview />}
           {!isLoadingSavedCV && !isEmpty && (
             <PdfCanvasPreview
-              pages={preview.pages}
-              error={preview.error}
-              progress={preview.progress}
+              pages={preview.view.pages}
+              canvasAt={preview.canvasAt}
+              error={preview.view.error}
+              progress={preview.view.progress}
               fallbackBaseWidth={PAGE_WIDTH_POINTS[state.settings.documentSize]}
               actionSlot={actionSlot}
               onRetry={preview.retry}
@@ -63,8 +68,8 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
         </PreviewCanvas>
         {!isEmpty && hasPages && (
           <PreviewStatus
-            isUpdating={preview.isPending || preview.isRendering}
-            error={preview.error}
+            isUpdating={showUpdating}
+            error={preview.view.error}
             onRetry={preview.retry}
           />
         )}

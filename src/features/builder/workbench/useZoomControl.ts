@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { type RenderedPage } from './pdfPreviewTypes'
 
 // Bounds for the manual zoom buttons.
 export const MIN_ZOOM = 0.5
@@ -16,14 +15,15 @@ function fitZoomFor(containerWidth: number, baseWidth: number) {
   return clamp(containerWidth / baseWidth, MIN_FIT_ZOOM, MAX_ZOOM)
 }
 
-// fallbackBaseWidth is the page width in PDF points for the selected document
-// size, used to fit correctly before the first render arrives.
-export function useZoomControl(pages: RenderedPage[], fallbackBaseWidth: number) {
+// pageWidth is the first page's width in PDF points once a document exists.
+// fallbackBaseWidth is the width for the selected document size, used to fit
+// correctly before the first render arrives.
+export function useZoomControl(pageWidth: number | null, fallbackBaseWidth: number) {
   const [zoom, setZoom] = useState(1.0)
   const [fitMode, setFitMode] = useState(true)
   const fitModeRef = useRef(true)
   fitModeRef.current = fitMode
-  const baseWidth = pages.length > 0 ? pages[0].baseWidth : fallbackBaseWidth
+  const baseWidth = pageWidth ?? fallbackBaseWidth
   const baseWidthRef = useRef(baseWidth)
   baseWidthRef.current = baseWidth
   const containerWidthRef = useRef(0)
