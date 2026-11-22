@@ -12,23 +12,24 @@ An open-source product from [Anvilary Tools](https://anvilary.tools).
 
 ## Product Demonstration
 
-Watch the complete **Builder -> PDF Export -> Analyzer** workflow in action (50 seconds, 1440x900, authentic browser recording):
+Watch the complete **Builder -> PDF Export -> Analyzer** workflow in action (high-DPI browser recording, 107 seconds):
 
-[![CVForge Official Demonstration Preview](docs/media/cvforge-demo-poster.png)](docs/media/cvforge-demo.mp4)
+[![CVForge Official Demonstration](docs/media/cvforge-demo.webp)](docs/media/cvforge-demo.mp4)
 
-> 📹 **[Click here to watch the full HD demonstration video (MP4, 1.6 MB)](docs/media/cvforge-demo.mp4)**
+> 📹 **[Click here to watch the full HD demonstration video (MP4, 3.8 MB)](docs/media/cvforge-demo.mp4)**
 
 <details>
 <summary><strong>Video Scene Breakdown & Demonstration Transcript</strong></summary>
 
-1. **Scene 1: Initial Viewport & Navigation (0:00 - 0:05)**: Opening the CVForge homepage, showing the full-viewport hero and launching the Builder through the modal.
-2. **Scene 2: Structured Editing (0:05 - 0:16)**: Editing Maya Chen's candidate profile (contact information, professional summary, work experience, education, and skills).
-3. **Scene 3: Live PDF Canvas Preview (0:16 - 0:24)**: Instant rendering of the document model onto the HTML5 canvas preview; interacting with Zoom In and Fit-to-Width dock controls.
-4. **Scene 4: Layout & Document Customization (0:24 - 0:28)**: Inspecting document styling, typography, spacing margins, and A4/Letter formatting.
-5. **Scene 5: PDF Export (0:28 - 0:32)**: Downloading the generated machine-readable PDF with its embedded full-fidelity structured session (`cvforge-state.json`).
-6. **Scene 6: Navigation to Analyzer (0:32 - 0:37)**: Navigating to `/analyzer` and selecting the freshly exported PDF file.
-7. **Scene 7: Genuine Analysis Results (0:37 - 0:46)**: Local text extraction, detecting the embedded session for instant restoration, displaying the 69/100 ATS-style score, breakdown across six dimensions, and actionable improvement recommendations.
-8. **Scene 8: Conclusion (0:46 - 0:50)**: Returning to the clean workbench overview.
+1. **Scene 1: Initial Viewport & Navigation (0:00 - 0:04)**: Opening the CVForge homepage, showing the full-viewport hero and launching the Builder through the modal.
+2. **Scene 2: Structured CV Creation (0:04 - 0:18)**: Creating John Doe's candidate profile from a blank state (contact details, professional summary) with instant live PDF canvas updates.
+3. **Scene 3: Populating Work Experience & Sections (0:18 - 0:34)**: Adding NovaTech Solutions experience with impact bullet points, populating education, projects, skills, and languages.
+4. **Scene 4: Live PDF Canvas Preview (0:34 - 0:44)**: Interacting with the live PDF preview, demonstrating interactive company link annotations and dock controls (Zoom In, Fit to Panel).
+5. **Scene 5: Typography & Document Customization (0:44 - 0:56)**: Customizing typography (Times serif), accent color (Ember/Copper), and section spacing while keeping standard A4 selected.
+6. **Scene 6: Dual Export Pipeline (0:56 - 1:04)**: Exporting the printable PDF with its embedded structured session and downloading a standalone JSON backup.
+7. **Scene 7: ATS-Style CV Analyzer (1:04 - 1:12)**: Navigating to `/analyzer` with the compact header, displaying the dashboard in its uninitialized state with literal hyphen `-` placeholders.
+8. **Scene 8: Authentic Client-Side ATS Analysis (1:12 - 1:26)**: Uploading the generated PDF to compute the 98/100 ATS score and full dimension breakdown, followed by external PDF parsing.
+9. **Scene 9: Closing Brand Card (1:26 - 1:30)**: Product overview and local-first architecture summary.
 
 *Note: All candidate names, employers, and contact details shown in the demonstration are fictional.*
 </details>
