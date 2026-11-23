@@ -72,8 +72,7 @@ make preview-stop
      http://127.0.0.1/parser 2>&1 | grep -iE 'HTTP/|location'
    ```
 
-   Then sign in through Access in a browser and complete the manual QA checklist
-   (`docs/current-qa-plan.md` and the remediation evidence).
+   Then sign in through Access in a browser and complete manual verification.
 
 ## Phase 2: public launch (owner approval required)
 

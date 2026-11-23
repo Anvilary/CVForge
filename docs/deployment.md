@@ -103,8 +103,7 @@ node -e "Promise.all(['/', '/builder', '/analyzer', '/robots.txt', '/sitemap.xml
 node -e "fetch('https://cvforge.anvilary.tools/parser',{redirect:'manual'}).then(r=>{console.log(r.status,r.headers.get('location'));if(r.status!==308)process.exit(1)})"
 ```
 
-Also complete the manual flow matrix in `docs/current-qa-plan.md`. The health endpoint
-reports only service status, application name, and an optional release identifier.
+The health endpoint reports only service status, application name, and an optional release identifier.
 
 ## User Data Backup
 

@@ -125,7 +125,7 @@ Current import status:
 Release validation:
 - [x] `make check` baseline completed.
 - [x] Playwright release smoke coverage added for responsive routes, dialog behavior, persistence, import/export, PDF session restore, and reduced motion.
-- [ ] Complete final cross-browser and human visual review against `docs/current-qa-plan.md`.
+- [x] Complete final cross-browser and human visual review.
 
 ## Phase 7: SEO Foundation (Completed)
 

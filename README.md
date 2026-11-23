@@ -16,7 +16,7 @@ Watch the complete **Builder -> PDF Export -> Analyzer** workflow in action (hig
 
 [![CVForge Official Demonstration](docs/media/cvforge-demo.webp)](https://github.com/Anvilary/CVForge/issues/4)
 
-> 📹 **[Click here to watch the full HD demonstration video (MP4, 3.8 MB)](https://github.com/Anvilary/CVForge/issues/4)**
+> **[Watch the full HD demonstration video (MP4, 3.8 MB)](https://github.com/Anvilary/CVForge/issues/4)**
 
 <details>
 <summary><strong>Video Scene Breakdown & Demonstration Transcript</strong></summary>
@@ -153,13 +153,12 @@ make preview-stop
 
 ## Documentation Directory
 
-- 📖 **[User Guide](docs/user-guide.md)**: Detailed step-by-step guide for Builder, Analyzer, and data recovery workflows.
-- 📄 **[ATS and PDF Compatibility](docs/ats-and-pdf.md)**: Technical guide on machine-readable PDF generation, text integrity, and parser limits.
-- 🏛️ **[System Architecture](docs/architecture.md)**: Modular design, data contracts, state reducer, and privacy boundaries.
-- ⚡ **[Preview Performance](docs/performance/README.md)**: Benchmark methodology, measured latency, and resource trade-offs.
-- 🚀 **[Deployment Runbook](docs/deployment.md)**: Standalone Docker builds, Nginx reverse proxy, and Cloudflare Tunnel operations.
-- 🔒 **[Clean-Room Specification](docs/clean-room.md)**: Repository origin, independence from third-party derivatives, and licensing policies.
-- 🧪 **[Release QA Plan](docs/current-qa-plan.md)**: Complete manual QA checklist, cross-browser matrices, and viewport test plans.
+- **[User Guide](docs/user-guide.md)**: Detailed step-by-step guide for Builder, Analyzer, and data recovery workflows.
+- **[ATS and PDF Compatibility](docs/ats-and-pdf.md)**: Technical guide on machine-readable PDF generation, text integrity, and parser limits.
+- **[System Architecture](docs/architecture.md)**: Modular design, data contracts, state reducer, and privacy boundaries.
+- **[Preview Performance](docs/performance/README.md)**: Benchmark methodology, measured latency, and resource trade-offs.
+- **[Deployment Runbook](docs/deployment.md)**: Standalone Docker builds, Nginx reverse proxy, and Cloudflare Tunnel operations.
+- **[Clean-Room Specification](docs/clean-room.md)**: Repository origin, independence from third-party derivatives, and licensing policies.
 
 ---
 

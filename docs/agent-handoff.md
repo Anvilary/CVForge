@@ -153,7 +153,6 @@
 - `CLAUDE.md`
 - `docs/agent-handoff.md`
 - `docs/agent-workflow.md`
-- `docs/current-qa-plan.md`
 - `docs/current-focus.md`
 
 ### Tooling
