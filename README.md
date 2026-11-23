@@ -14,9 +14,9 @@ An open-source product from [Anvilary Tools](https://anvilary.tools).
 
 Watch the complete **Builder -> PDF Export -> Analyzer** workflow in action (high-DPI browser recording, 107 seconds):
 
-[![CVForge Official Demonstration](docs/media/cvforge-demo.webp)](http://github.com/user-attachments/assets/1656f534-29c8-459d-a943-b427a51c3f99)
+[![CVForge Official Demonstration](docs/media/cvforge-demo.webp)](https://github.com/Anvilary/CVForge/issues/4)
 
-> 📹 **[Click here to watch the full HD demonstration video (MP4, 3.8 MB)](http://github.com/user-attachments/assets/1656f534-29c8-459d-a943-b427a51c3f99)**
+> 📹 **[Click here to watch the full HD demonstration video (MP4, 3.8 MB)](https://github.com/Anvilary/CVForge/issues/4)**
 
 <details>
 <summary><strong>Video Scene Breakdown & Demonstration Transcript</strong></summary>
