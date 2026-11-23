@@ -32,7 +32,7 @@ export function ThemeColorPicker({ value, onChange }: ThemeColorPickerProps) {
       })}
       <input
         type="text"
-        className="ml-1.5 min-w-[52px] flex-1 bg-bg-2 border border-border rounded-md px-1.5 py-0.5 text-[10px] text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-[border-color,box-shadow] focus-visible:outline-none"
+        className="ml-1.5 min-w-[52px] flex-1 bg-bg-2 border border-border rounded-md px-1.5 py-0.5 text-[10px] text-ink font-mono uppercase focus:border-ember outline-none transition-colors focus-visible:outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => {

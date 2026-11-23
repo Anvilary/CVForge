@@ -162,7 +162,7 @@ function PreviewPage({ canvas, width, height, pageWidth, pageHeight, links }: Pr
               rel="noopener noreferrer"
               aria-label={link.text ? `${link.text}: ${link.url}` : link.url}
               title={link.text ? `${link.text} - ${link.url}` : link.url}
-              className="absolute pointer-events-auto rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-1 focus-visible:ring-2 focus-visible:ring-ember/20"
+              className="absolute pointer-events-auto rounded-[2px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-1"
               style={{
                 left: `${(link.left / safePageWidth) * 100}%`,
                 top: `${(link.top / safePageHeight) * 100}%`,

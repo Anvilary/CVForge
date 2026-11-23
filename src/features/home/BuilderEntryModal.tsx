@@ -82,7 +82,7 @@ export function BuilderEntryModal({
             <div className="modal-head">
               <div className="ic plain">
                 <Image
-                  src="/brand/cvforge-logo.png"
+                  src="/brand/anvilary-tools-256.png"
                   alt=""
                   width={24}
                   height={24}

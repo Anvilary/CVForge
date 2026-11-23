@@ -7,7 +7,7 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 export default async function OpenGraphImage() {
-  const logoBuffer = await readFile(join(process.cwd(), 'public/brand/cvforge-logo.png'))
+  const logoBuffer = await readFile(join(process.cwd(), 'public/brand/anvilary-tools-256.png'))
   const logoDataUri = `data:image/png;base64,${logoBuffer.toString('base64')}`
 
   return new ImageResponse(

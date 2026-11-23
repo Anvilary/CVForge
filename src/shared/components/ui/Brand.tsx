@@ -25,7 +25,7 @@ export function Brand({ href, className = 'brand', size = 'default' }: BrandProp
     <>
       <span className="brand-logo" aria-hidden="true">
         <Image
-          src="/brand/cvforge-logo.png"
+          src="/brand/anvilary-tools-256.png"
           alt=""
           width={logoDim}
           height={logoDim}
@@ -71,7 +71,7 @@ export function AnvilaryBrand({ href, size = 'md' }: AnvilaryBrandProps) {
       <span className="brand-logo" aria-hidden="true">
         <Image
           className="brand-logo"
-          src="/brand/anvilary-tools-logo.png"
+          src="/brand/anvilary-tools-256.png"
           alt=""
           width={logoDim}
           height={logoDim}

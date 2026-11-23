@@ -7,9 +7,10 @@ input, textarea, select {
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus, textarea:focus, select:focus,
+input:focus-visible, textarea:focus-visible, select:focus-visible {
   border-color: var(--ember);
-  box-shadow: 0 0 0 3px var(--lava-glow);
+  box-shadow: none;
   outline: none;
 }
 
