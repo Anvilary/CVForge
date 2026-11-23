@@ -12,24 +12,24 @@ An open-source product from [Anvilary Tools](https://anvilary.tools).
 
 ## Product Demonstration
 
-Watch the complete **Builder -> PDF Export -> Analyzer** workflow in action (high-DPI browser recording, 107 seconds):
+Watch the complete **Builder -> PDF Export -> Analyzer** workflow in action (high-DPI browser recording, 108 seconds):
 
 [![CVForge Official Demonstration](docs/media/cvforge-demo.webp)](https://github.com/Anvilary/CVForge/issues/4)
 
-> **[Watch the full HD demonstration video (MP4, 3.8 MB)](https://github.com/Anvilary/CVForge/issues/4)**
+> **[Watch the full HD demonstration video (MP4, 3.9 MB)](https://github.com/Anvilary/CVForge/issues/4)**
 
 <details>
 <summary><strong>Video Scene Breakdown & Demonstration Transcript</strong></summary>
 
-1. **Scene 1: Initial Viewport & Navigation (0:00 - 0:04)**: Opening the CVForge homepage, showing the full-viewport hero and launching the Builder through the modal.
-2. **Scene 2: Structured CV Creation (0:04 - 0:18)**: Creating John Doe's candidate profile from a blank state (contact details, professional summary) with instant live PDF canvas updates.
+1. **Scene 1: Initial Viewport & Navigation (0:00 - 0:04)**: Opening the CVForge homepage, showing the full-viewport hero with official Anvilary Tools mark and launching the Builder through the modal.
+2. **Scene 2: Structured CV Creation (0:04 - 0:18)**: Creating John Doe's candidate profile from a blank state (contact details, professional summary) with refined focus indicators and instant live PDF canvas updates.
 3. **Scene 3: Populating Work Experience & Sections (0:18 - 0:34)**: Adding NovaTech Solutions experience with impact bullet points, populating education, projects, skills, and languages.
 4. **Scene 4: Live PDF Canvas Preview (0:34 - 0:44)**: Interacting with the live PDF preview, demonstrating interactive company link annotations and dock controls (Zoom In, Fit to Panel).
 5. **Scene 5: Typography & Document Customization (0:44 - 0:56)**: Customizing typography (Times serif), accent color (Ember/Copper), and section spacing while keeping standard A4 selected.
 6. **Scene 6: Dual Export Pipeline (0:56 - 1:04)**: Exporting the printable PDF with its embedded structured session and downloading a standalone JSON backup.
 7. **Scene 7: ATS-Style CV Analyzer (1:04 - 1:12)**: Navigating to `/analyzer` with the compact header, displaying the dashboard in its uninitialized state with literal hyphen `-` placeholders.
-8. **Scene 8: Authentic Client-Side ATS Analysis (1:12 - 1:26)**: Uploading the generated PDF to compute the 98/100 ATS score and full dimension breakdown, followed by external PDF parsing.
-9. **Scene 9: Closing Brand Card (1:26 - 1:30)**: Product overview and local-first architecture summary.
+8. **Scene 8: Authentic Client-Side ATS Analysis (1:12 - 1:44)**: Uploading the generated PDF to compute the 98/100 ATS score and full dimension breakdown, followed by external PDF parsing.
+9. **Scene 9: Closing Brand Card (1:44 - 1:48)**: Product overview and local-first architecture summary with unified Anvilary branding.
 
 *Note: All candidate names, employers, and contact details shown in the demonstration are fictional.*
 </details>
