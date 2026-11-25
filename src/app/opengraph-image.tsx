@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { ImageResponse } from 'next/og'
 
-export const alt = 'CVForge: build and analyze your CV locally'
+export const alt = 'CVForge: Free CV Builder & ATS-Style Resume Analyzer'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -60,7 +60,7 @@ export default async function OpenGraphImage() {
             Analyzer
           </div>
           <div style={{ marginLeft: 'auto', color: '#9a978f', fontSize: '17px' }}>
-            No account · Browser-based · Open source
+            No account · Browser-based · Source-available
           </div>
         </div>
       </div>
