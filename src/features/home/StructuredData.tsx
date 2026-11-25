@@ -8,6 +8,9 @@ export const cvForgeStructuredData = {
       '@id': `${siteConfig.url}/#organization`,
       name: siteConfig.organizationName,
       url: siteConfig.familyUrl,
+      sameAs: [
+        'https://github.com/Anvilary',
+      ],
     },
     {
       '@type': 'WebSite',
@@ -15,6 +18,7 @@ export const cvForgeStructuredData = {
       name: siteConfig.name,
       url: siteConfig.url,
       description: siteConfig.description,
+      inLanguage: 'en',
       publisher: {
         '@id': `${siteConfig.url}/#organization`,
       },
@@ -26,6 +30,10 @@ export const cvForgeStructuredData = {
       applicationCategory: 'BusinessApplication',
       operatingSystem: 'Any',
       url: siteConfig.url,
+      sameAs: [
+        siteConfig.repositoryUrl,
+      ],
+      license: 'https://polyformproject.org/licenses/noncommercial/1.0.0',
       image: absoluteSiteUrl('/opengraph-image'),
       description: siteConfig.description,
       isAccessibleForFree: true,
@@ -37,12 +45,16 @@ export const cvForgeStructuredData = {
       creator: {
         '@id': `${siteConfig.url}/#organization`,
       },
+      publisher: {
+        '@id': `${siteConfig.url}/#organization`,
+      },
       featureList: [
         'Structured browser-based CV and resume editing',
         'Local browser autosave without an account',
-        'Reliable JSON backup and restore',
-        'PDF export with optional embedded CVForge session restoration',
-        'Local ATS-style PDF extraction and CV improvement analysis',
+        'Real-time live PDF canvas preview',
+        'PDF export with optional embedded session restoration',
+        'Reliable portable JSON backup',
+        'Local ATS-style PDF extraction and transparent score breakdown',
         'Review-first best-effort external PDF import',
       ],
     },

@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AppHeader } from '@/shared/components/layout/AppHeader'
 import { EmberBackground } from '@/shared/components/ui/EmberBackground'
@@ -22,11 +23,19 @@ import { resolveParserAnalysisTarget } from './resolveParserAnalysisTarget'
 import { Icon } from '@/shared/components/ui/Icon'
 import { WorkbenchHeader } from '@/shared/components/workbench/WorkbenchHeader'
 
+function SearchParamsSync({ onSourceChange }: { onSourceChange: (fromBuilder: boolean) => void }) {
+  const searchParams = useSearchParams()
+  const fromBuilder = searchParams.get('source') === 'builder'
+  useEffect(() => {
+    onSourceChange(fromBuilder)
+  }, [fromBuilder, onSourceChange])
+  return null
+}
+
 export function ParserWorkbench() {
   const { state } = useCV()
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const fromBuilder = searchParams.get('source') === 'builder'
+  const [fromBuilder, setFromBuilder] = useState(false)
   const { document, isAnalyzing, announcement, handleFile, clearDocument } = useParserDocument()
   const analysis = resolveParserAnalysisTarget(state, document, fromBuilder)
 
@@ -39,6 +48,9 @@ export function ParserWorkbench() {
 
   return (
     <div className="app-shell h-screen overflow-hidden">
+      <Suspense fallback={null}>
+        <SearchParamsSync onSourceChange={setFromBuilder} />
+      </Suspense>
       <EmberBackground subdued />
       <AppHeader title="CV Analyzer" />
       <WorkbenchShell
