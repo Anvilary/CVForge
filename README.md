@@ -4,7 +4,7 @@
 
 **Local-first CV builder and ATS-style CV analyzer.** Create a structured CV with browser autosave, live PDF preview, and portable backups. Then analyze machine readability and get transparent feedback without server-side storage or accounts.
 
-A source-available product from [Anvilary Tools](https://anvilary.tools).
+An open-source product from [Anvilary Tools](https://anvilary.tools).
 
 **Live Application:** [cvforge.anvilary.tools](https://cvforge.anvilary.tools)
 
@@ -175,4 +175,4 @@ make preview-stop
 
 ## License
 
-CVForge is source-available software maintained by [Alexandre Teixeira](https://github.com/alteixeira20) and distributed under the **[PolyForm Noncommercial License 1.0.0](LICENSE)**. The current license allows noncommercial use; commercial use is not permitted under these terms. Previously released MIT-licensed versions remain available under their original license.
+CVForge is open-source software maintained by [Alexandre Teixeira](https://github.com/alteixeira20) and distributed under the **[GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)](LICENSE)**. Commercial and noncommercial use are permitted under the license terms. Applicable source-code obligations apply to distribution and remote network interaction with modified versions. Previously published revisions retain the licenses under which they were received.

@@ -60,7 +60,7 @@ export default async function OpenGraphImage() {
             Analyzer
           </div>
           <div style={{ marginLeft: 'auto', color: '#9a978f', fontSize: '17px' }}>
-            No account · Browser-based · Source-available
+            No account · Browser-based · Open-source
           </div>
         </div>
       </div>

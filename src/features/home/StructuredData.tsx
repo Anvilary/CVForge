@@ -33,7 +33,7 @@ export const cvForgeStructuredData = {
       sameAs: [
         siteConfig.repositoryUrl,
       ],
-      license: 'https://polyformproject.org/licenses/noncommercial/1.0.0',
+      license: 'https://www.gnu.org/licenses/agpl-3.0.html',
       image: absoluteSiteUrl('/opengraph-image'),
       description: siteConfig.description,
       isAccessibleForFree: true,

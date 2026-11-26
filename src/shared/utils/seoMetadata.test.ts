@@ -57,7 +57,7 @@ describe('SEO metadata and configuration', () => {
     expect(ANALYZER_DESCRIPTION).toContain('transparent scoring')
   })
 
-  it('produces valid Schema.org structured data referencing PolyForm Noncommercial license', () => {
+  it('produces valid Schema.org structured data referencing AGPL-3.0-or-later license', () => {
     expect(cvForgeStructuredData['@context']).toBe('https://schema.org')
     const graph = cvForgeStructuredData['@graph']
     expect(graph.map((node) => node['@type'])).toEqual([
@@ -84,7 +84,7 @@ describe('SEO metadata and configuration', () => {
     expect(software.name).toBe('CVForge')
     expect(software.applicationCategory).toBe('BusinessApplication')
     expect(software.isAccessibleForFree).toBe(true)
-    expect(software.license).toBe('https://polyformproject.org/licenses/noncommercial/1.0.0')
+    expect(software.license).toBe('https://www.gnu.org/licenses/agpl-3.0.html')
     expect(software.sameAs).toContain('https://github.com/Anvilary/CVForge')
     expect(software.offers).toEqual({
       '@type': 'Offer',
